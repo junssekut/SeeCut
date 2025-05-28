@@ -7,3 +7,7 @@
 {{-- <link rel="icon" href="{{ asset('assets/images/luckycat-letter.png') }}" type="image/x-icon"> --}}
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+<!-- SwiperJS CSS -->
+<link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
+
