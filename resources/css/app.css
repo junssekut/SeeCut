@@ -8,7 +8,7 @@
 @font-face {
     font-family: 'Kuunari';
     font-style: bold;
-    src: url('/public/assets/fonts/Kuunari/Kuunari-BoldCondensed.otf') format('otf');
+    src: url('/public/assets/fonts/Kuunari/Kuunari-BoldCondensed.otf') format('opentype');
 }
 
 @font-face {

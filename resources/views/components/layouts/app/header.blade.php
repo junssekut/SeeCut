@@ -5,7 +5,7 @@
     @include('partials.head')
 </head>
 
-<body class="font-Poppins min-h-screen min-w-screen bg-cover bg-bottom bg-no-repeat">
+<body class="font-Poppins min-h-screen min-w-screen bg-cover bg-bottom bg-no-repeat bg-[#0C0C0C]">
     @persist('topbar')
     <livewire:topbar />
     @endpersist()
