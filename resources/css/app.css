@@ -137,3 +137,150 @@
     src: url('/public/assets/fonts/Poppins/Poppins-MediumItalic.ttf') format('truetype');
 }
 
+
+/* SWIPER DETAIL STYLE PAGE */
+
+
+.swiper-pagination-bullet {
+    /* background-color:  !important; abu muda */
+    @apply bg-Dun !important;
+    opacity: 1;
+  }
+  
+  /* Warna bullet default */
+  .swiper-pagination-bullet-active {
+    /* background-color:  !important; abu muda */
+    @apply bg-Ecru !important;
+    opacity: 1;
+  }
+  
+  
+  .swiper {
+    width: 90%;
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
+  
+  .swiper {
+    width: 60%;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    margin: 0 auto; /* biar tetap center */
+    transition: width 0.3s ease;
+  }
+  
+  /* Tablet */
+  @media (max-width: 1024px) {
+    .swiper {
+      width: 95%;
+    }
+  }
+  
+  /* Smartphone */
+  @media (max-width: 640px) {
+    .swiper {
+      width: 100%;
+    }
+  }
+  
+  .swiper-slide {
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    border-radius: 10px;
+    width: 90% !important;           /* default lebarnya 90% dari container */
+    max-width: 250px !important;     /* maksimal lebar 250px */
+    max-height: 500px;
+    margin: 0 auto;
+  }
+  
+  /* Lebih kecil dari 640px (mobile), lebar slide lebih besar (90%) */
+  @media (max-width: 640px) {
+    .swiper-slide {
+      width: 90% !important;
+    }
+  }
+  
+  /* Tablet (641px - 1024px), lebar slide 45% */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .swiper-slide {
+      width: 45% !important;
+    }
+  }
+  
+  /* Desktop di atas 1024px, lebar slide tetap 250px */
+  @media (min-width: 1025px) {
+    .swiper-slide {
+      width: 250px !important;
+    }
+  }
+  
+  .card {
+    background-color: #585858;
+    color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+  }
+  
+  .card:hover .top-line {
+    background-color: #FFD700; /* Satin Sheen Yellow */
+  }
+  
+  .top-line {
+    height: 4px;
+    width: 100%;
+    background-color: #C2B280; /* Ecru */
+    transition: background-color 0.3s ease;
+    border-radius: 10px 10px 0 0;
+  }
+  
+  .card-image {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+  }
+  
+  .card-content {
+    padding: 16px;
+  }
+  
+  .card-title {
+    font-family: 'Kuunari', sans-serif; /* Gunakan font custom jika ada */
+    font-size: 32px;
+    margin: 8px;
+    text-transform: uppercase;
+    color: #D2B48C; /* Dun color */
+  }
+  
+  .card-description {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.6;
+  }
+  
+  
+  /* Tablet (lebar layar di bawah 1024px) */
+  @media (max-width: 1024px) {
+    .swiper-slide {
+      width: 300px;
+      height: 300px;
+    }
+  }
+  
+  /* Smartphone (lebar layar di bawah 640px) */
+  @media (max-width: 640px) {
+    .swiper-slide {
+      width: 220px;
+      height: 220px;
+    }
+  }
+  
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+  }
+  

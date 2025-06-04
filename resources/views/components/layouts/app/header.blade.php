@@ -12,6 +12,9 @@
     <div class="flex flex-col max-w-full h-full">
         {{ $slot }}
     </div>
+    @persist('footer')
+    <livewire:footer />
+    @endpersist()
 </body>
 
 </html>
