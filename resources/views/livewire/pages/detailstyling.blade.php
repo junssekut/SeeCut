@@ -41,10 +41,10 @@
         <div class="relative w-full h-[500px]">
             <!-- Background Gambar -->
             <img src="{{ asset('assets/images/wave.png') }}"
-                 class="absolute inset-0 w-full h-full object-cover z-0 opacity-50" alt="Background" />
+                 class="absolute inset-0 w-full h-full object-cover z-0 opacity-10" alt="Background" />
         
             <!-- Overlay (Opsional) -->
-            <div class="absolute inset-0 bg-black/40 z-0"></div>
+            <div class="absolute inset-0 z-0"></div>
         
             <!-- Swiper Content -->
             <div class="swiper mySwiper relative z-10 flex items-center">

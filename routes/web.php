@@ -9,5 +9,9 @@ Route::get('/style', [StyleController::class, 'index'])->name('style');
 
 Route::view('/recomendation', view: 'livewire.pages.airecomendation')->name('recomendation');
 
+Route::view('/masuksekarang', view: 'livewire.pages.masuksekarang')->name('masuksekarang');
+
+Route::view('/card-langganan', view: 'livewire.pages.cardlangganan')->name('langganan');
+
 
 // require __DIR__.'/auth.php';

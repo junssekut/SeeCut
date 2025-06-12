@@ -4,10 +4,10 @@ namespace App\Livewire\Pages;
 
 use Livewire\Component;
 
-class Home extends Component
+class masuksekarang extends Component
 {
     public function render()
     {
-        return view('livewire.pages.Home');
+        return view('livewire.pages.masuksekarang');
     }
 }

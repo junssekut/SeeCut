@@ -9,9 +9,17 @@
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-@if (Route::is('style')) 
-    @vite('resources/css/stylePage.css')
-@endif
 
+@switch(Route::currentRouteName())
+    @case('style')
+        @vite('resources/css/stylePage.css')
+        @break
+
+    @case('masuksekarang')
+        @vite('resources/css/register.css')
+        @break
+
+        
+@endswitch
 <!-- SwiperJS CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
