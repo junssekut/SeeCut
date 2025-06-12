@@ -40,6 +40,11 @@ class StyleController extends Controller
                 'description' => 'Potongan samping tipis dengan bagian atas lebih panjang, sempurna.',
                 'image' => 'tapercut.jpg',
             ],
+            [
+                'name' => 'CEPAK NGENTOD',
+                'description' => 'Potongan samping tipis dengan bagian atas lebih panjang, sempurna.',
+                'image' => 'tapercut.jpg',
+            ],
         ];
 
         

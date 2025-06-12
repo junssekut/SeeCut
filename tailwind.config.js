@@ -18,6 +18,8 @@ export default {
                 'Satin-Sheen-Yellow': '#B5964D',
                 'Dun': '#E6CFAC',
                 'Ecru': '#E9BF80',
+                'Taupe': '#39332A',
+                'Field-Drab' : '#6B592E'
             },
             fontFamily: {
                 'Kuunari': ['Kuunari'],
