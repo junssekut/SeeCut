@@ -26,6 +26,8 @@ export default {
                 'Charcoal': '#151515',
                 'Dark-Charcoal': '#2A2A2A',
                 'Dark-Charcoal-2': '#39332A',
+                'Taupe': '#39332A',
+                'Field-Drab' : '#6B592E'
             },
             fontFamily: {
                 'Kuunari': ['Kuunari'],
