@@ -9,7 +9,7 @@
         <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out"
             href="{{ 'CARI BARBERSHOP' }}">CARI BARBERSHOP</a>
         <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out"
-            href="{{ 'CHAT LANGSUNG' }}">CHAT LANGSUNG</a>
+            href="{{ 'CHAT LANGSUNG' }}">REKOMENDASI GAYA</a>
     </div>
     <div class="">
         <a class="font-Kuunari ring-1 ring-Seasalt text-Seasalt px-4 py-2 text-md hover:ring-Satin-Sheen-Yellow hover:bg-Satin-Sheen-Yellow transition-all duration-300 ease-in-out"
