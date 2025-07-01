@@ -41,11 +41,11 @@
         <div class="relative w-full h-[500px]">
             <!-- Background Gambar -->
             <img src="{{ asset('assets/images/wave.png') }}"
-                 class="absolute inset-0 w-full h-full object-cover z-0 opacity-10" alt="Background" />
-        
+                class="absolute inset-0 w-full h-full object-cover z-0 opacity-10" alt="Background" />
+
             <!-- Overlay (Opsional) -->
             <div class="absolute inset-0 z-0"></div>
-        
+
             <!-- Swiper Content -->
             <div class="swiper mySwiper relative z-10 flex items-center">
                 <div class="swiper-wrapper mb-8">
@@ -54,11 +54,11 @@
                             <div class="group rounded-md overflow-hidden  bg-[#1A1A1A] text-center">
                                 <!-- Garis atas -->
                                 <div class="h-1 bg-Ecru w-full group-hover:bg-Satin-Sheen-Yellow"></div>
-        
+
                                 <!-- Gambar -->
                                 <img src="{{ asset('assets/images/' . $style['image']) }}" alt="{{ $style['name'] }}"
-                                     class="w-full h-72 object-cover">
-        
+                                    class="w-full h-72 object-cover">
+
                                 <!-- Konten -->
                                 <div class="p-4">
                                     <h3 class="text-Dun font-Kuunari text-4xl mb-2 uppercase">{{ $style['name'] }}</h3>
@@ -70,7 +70,7 @@
                         </div>
                     @endforeach
                 </div>
-        
+
                 <div class="swiper-pagination"></div>
             </div>
         </div>
