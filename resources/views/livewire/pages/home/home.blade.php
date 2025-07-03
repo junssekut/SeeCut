@@ -1,3 +1,28 @@
+@push('styles')
+    <style>
+        .swiper {
+            width: 491px;
+            height: 438px;
+        }
+
+        .swiper-slide {
+            width: 391px;
+            height: 438px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .swiper-slide img {
+            width: 391px;
+            height: 438px;
+            object-fit: cover;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+    </style>
+@endpush
+
 <div>
     <div
         class="relative flex flex-col items-center justify-center h-[701px] bg-landing bg-center bg-cover bg-no-repeat p-48">
@@ -22,7 +47,7 @@
         </div>
     </div>
 
-    <div class="mt-20  relative">
+    <div class="mt-20 relative">
         <div class="absolute inset-0 bg-s-logo bg-no-repeat bg-center bg-contain z-0"></div>
 
         <div class="relative container z-10 mx-auto px-48 pt-12 flex flex-col items-center justify-center">
@@ -228,8 +253,15 @@
         </div>
 
         <div class="relative z-10 flex flex-row justify-center items-center gap-6 px-48">
-            <div class="flex w-96 bg-white">
-                card
+            <div class="swiper swiperCut">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide"><img src="{{ asset('assets/images/home/image 7.png') }}"
+                            alt=""></div>
+                    <div class="swiper-slide"><img src="{{ asset('assets/images/home/image 10.png') }}"
+                            alt=""></div>
+                    <div class="swiper-slide"><img src="{{ asset('assets/images/home/image 11.png') }}"
+                            alt=""></div>
+                </div>
             </div>
             <div class="flex flex-col items-start justify-center gap-6 w-[600px] px-12">
                 <h1 class="font-Kuunari text-Ecru text-4xl font-bold">NEMUIN GAYA RAMBUT YANG PAS NGGAK PERNAH
@@ -242,5 +274,46 @@
                     SEKARANG</button>
             </div>
         </div>
+
+        <div class="relative flex flex-col justify-content-center px-48 mt-16">
+            <div class="absolute inset-0 bg-[#090909]/60 z-0 "></div>
+
+
+            {{-- <div class="relative"> --}}
+            {{-- <div class="absolute inset-0 bg-[#]/60 bg-no-repeat bg-center bg-contain z-0"></div> --}}
+            {{-- <img src="{{ asset('assets/images/home/bgtest.png') }}" alt="" class="w-[343px] h-[282px]"> --}}
+            {{-- <img src="{{ asset('assets/images/home/background-blur.png') }}" alt="" class="blur-xs"> --}}
+            {{-- </div> --}}
+
+            <div
+                class="relative flex flex-col justify-content-center items-center py-48 border-t-8 border-Ecru rounded-lg text-center gap-8 overflow-hidden">
+                <div class="absolute inset-0 bg-home-ad bg-cover blur-sm z-0"></div>
+                <div class="absolute inset-0 bg-[#090909]/80 z-1"></div>
+
+                <h1 class="text-5xl font-Kuunari text-Ecru z-10">BISNIS BARBERSHOP KAMU, LEVEL-UP SEKARANG.
+                </h1>
+                <p class="text-xl font-Poppins text-Seasalt z-10 w-[80%]">Kamu punya usaha barbershop dan mau tampil
+                    lebih
+                    profesional? Pakai fitur Seecut:
+                    dari sistem booking
+                    otomatis, halaman profil digital, sampai laporan harian—semua langsung dari satu tempat. Kelola
+                    bisnismu tanpa ribet!</p>
+                <a href="/"
+                    class="bg-Ecru z-10 py-4 px-8 rounded-sm font-Kuunari text-xl text-Eerie-Black hover:bg-Satin-Sheen-Yellow transition-colors duration-300 hover:text-Seasalt">COBA
+                    FITURNYA
+                    SEKARANG</a>
+            </div>
+        </div>
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        const swiper = new Swiper(".swiperCut", {
+            effect: "cards",
+            grabCursor: true,
+            loop: true,
+            initialSlide: 1,
+        });
+    </script>
+@endpush
