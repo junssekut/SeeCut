@@ -29,4 +29,6 @@ Route::get('/subscription', SubscriptionPage::class);
 
 Route::get('/masuk', MasukDev::class)->name('masuk.dev');
 
+Route::view('/test', 'test');
+
 require __DIR__.'/auth.php';
