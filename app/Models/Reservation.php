@@ -2,27 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Reservation extends Model
 {
-    /** @use HasFactory<\Database\Factories\ReservationFactory> */
-    use HasFactory;
+    //
+    protected $table = 'reservations';
+    protected $primaryKey = 'id';
+    public $timestamps = false;
+    protected $guarded = [];
 
-    protected $primaryKey = 'reservation_id';
-
-    protected $fillable = [
-        'user_id', 'vendor_id', 'reservation_date', 'reservation_time', 'status'
-    ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
+    public function user() {
+        return $this->belongsTo(User::class);
     }
 
-    public function vendor()
-    {
-        return $this->belongsTo(Vendor::class, 'vendor_id', 'vendor_id');
+    public function vendor() {
+        return $this->belongsTo(Vendor::class);
+    }
+
+    public function slot() {
+        return $this->hasOne(ReservationSlot::class);
     }
 }

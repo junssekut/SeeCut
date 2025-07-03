@@ -1,17 +1,32 @@
 <?php
 
+use App\Livewire\Pages\Style\AiRecommendation;
+use App\Livewire\Pages\Subscription\SubscriptionPage;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\StyleController;
+use App\Livewire\Pages\Home\Home;
+use App\Livewire\Pages\Style\StylingDetail;
+use App\Livewire\MasukDev;
 
-Route::view('/', view: 'livewire.pages.home')->name('home');
+// Route::view('/', 'welcome');
 
-Route::get('/style', [StyleController::class, 'index'])->name('style');
+Route::view('dashboard', 'dashboard')
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
-Route::view('/recomendation', view: 'livewire.pages.airecomendation')->name('recomendation');
+Route::view('profile', 'profile')
+    ->middleware(['auth'])
+    ->name('profile');
 
-Route::view('/masuksekarang', view: 'livewire.pages.masuksekarang')->name('masuksekarang');
+Route::get('/', Home::class)->name('home');
 
-Route::view('/card-langganan', view: 'livewire.pages.cardlangganan')->name('langganan');
+Route::prefix('style')
+    ->group(function () {
+        Route::get('/', StylingDetail::class)->name('style');
+        Route::get('/recommendation', AiRecommendation::class)->name('style.recommendation');
+    });
 
+Route::get('/subscription', SubscriptionPage::class);
 
-// require __DIR__.'/auth.php';
+Route::get('/masuk', MasukDev::class)->name('masuk.dev');
+
+require __DIR__.'/auth.php';

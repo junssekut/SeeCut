@@ -10,24 +10,14 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
-
     use Notifiable;
 
-    protected $primaryKey = 'user_id';
-
-    protected $fillable = [
-        'username', 'email', 'password', 'role', 'name', 'telephone'
-    ];
-
+    protected $primaryKey = 'id';
+    protected $guarded = [];
     protected $hidden = ['password'];
+    public $timestamps = false;
 
-    public function subscriptions()
-    {
-        return $this->hasMany(Subscription::class, 'user_id', 'user_id');
-    }
-
-    public function reservations()
-    {
-        return $this->hasMany(Reservation::class, 'user_id', 'user_id');
+    public function profile() {
+        return $this->hasOne(Profile::class);
     }
 }

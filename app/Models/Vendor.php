@@ -10,14 +10,24 @@ class Vendor extends Model
     /** @use HasFactory<\Database\Factories\VendorFactory> */
     use HasFactory;
 
-    protected $primaryKey = 'vendor_id';
+    protected $table = 'vendors';
+    protected $primaryKey = 'id';
+    public $timestamps = false;
+    protected $guarded = [];
 
-    protected $fillable = [
-        'name', 'telephone', 'description', 'location'
-    ];
+    public function photos() {
+        return $this->hasMany(VendorPhoto::class);
+    }
 
-    public function reservations()
-    {
-        return $this->hasMany(Reservation::class, 'vendor_id', 'vendor_id');
+    public function openHours() {
+        return $this->hasMany(VendorOpenHour::class);
+    }
+
+    public function reviews() {
+        return $this->hasMany(VendorReview::class);
+    }
+
+    public function services() {
+        return $this->hasMany(VendorService::class);
     }
 }

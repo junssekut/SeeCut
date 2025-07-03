@@ -11,6 +11,7 @@ export default {
         './resources/views/**/*.blade.php',
     ],
 
+    
     theme: {
         extend: {
             backgroundImage: {
@@ -27,7 +28,7 @@ export default {
                 'Dark-Charcoal': '#2A2A2A',
                 'Dark-Charcoal-2': '#39332A',
                 'Taupe': '#39332A',
-                'Field-Drab' : '#6B592E'
+                'Field-Drab' : '#6B592E',
             },
             fontFamily: {
                 'Kuunari': ['Kuunari'],
@@ -36,5 +37,5 @@ export default {
         },
     },
 
-    plugins: [forms, daisyui, textstroke],   
+    plugins: [forms, daisyui, textstroke],
 };
