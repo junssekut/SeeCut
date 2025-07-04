@@ -13,5 +13,6 @@ Route::view('/masuksekarang', view: 'livewire.pages.masuksekarang')->name('masuk
 
 Route::view('/card-langganan', view: 'livewire.pages.cardlangganan')->name('langganan');
 
+Route::view('/perpanjangan', view: 'livewire.pages.perpanjangan')->name('perpanjangan');
 
 // require __DIR__.'/auth.php';

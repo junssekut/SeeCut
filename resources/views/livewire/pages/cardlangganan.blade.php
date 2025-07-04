@@ -62,11 +62,11 @@
 
                         <!-- Isi Card -->
                         <div class="p-5 flex flex-col gap-y-4">
-                            <h3>BASIC PLAN</h3>
-                            <h1 class="text-8xl font-Kuunari text-Satin-Sheen-Yellow text-shadow-up">99K</h1>
+                            <h3>STANDARD PLAN</h3>
+                            <h1 class="text-8xl font-Kuunari text-Satin-Sheen-Yellow text-shadow-up">179K</h1>
 
                             <div class="flex flex-col gap-y-3 text-white">
-                                <h3>3 Bulan</h3>
+                                <h3>6 Bulan</h3>
                                 <h3>Fitur Booking Otomatis</h3>
                                 <h3>Halaman Profil Digital</h3>
                             </div>
@@ -90,11 +90,11 @@
 
                         <!-- Isi Card -->
                         <div class="p-5 flex flex-col gap-y-4">
-                            <h3>BASIC PLAN</h3>
-                            <h1 class="text-8xl font-Kuunari text-Satin-Sheen-Yellow text-shadow-up">99K</h1>
+                            <h3>PRO PLAN</h3>
+                            <h1 class="text-8xl font-Kuunari text-Satin-Sheen-Yellow text-shadow-up">299K</h1>
 
                             <div class="flex flex-col gap-y-3 text-white">
-                                <h3>3 Bulan</h3>
+                                <h3>12 Bulan</h3>
                                 <h3>Fitur Booking Otomatis</h3>
                                 <h3>Halaman Profil Digital</h3>
                             </div>
@@ -108,9 +108,9 @@
                         </div>
                     </div>
 
-                    </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </x-layouts.app>
