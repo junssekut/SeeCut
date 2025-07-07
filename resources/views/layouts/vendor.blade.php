@@ -29,7 +29,7 @@
 <body class="font-Poppins min-h-screen min-w-screen bg-cover bg-bottom bg-no-repeat bg-white">
     @if (!Request::is(''))
         @persist('topbar')
-        <livewire:topbar-vendor />
+        <livewire:navigation.navbar-vendor />
         @endpersist()
     @endif
     <div class="flex flex-col max-w-full h-full">

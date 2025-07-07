@@ -8,6 +8,6 @@ class SubscriptionPage extends Component
 {
     public function render()
     {
-        return view('livewire.pages.subscription.subscription-page')->layout('layouts.app');
+        return view('livewire.pages.subscription.subscription-page')->layout('layouts.vendor');
     }
 }

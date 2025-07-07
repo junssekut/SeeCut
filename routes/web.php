@@ -2,6 +2,7 @@
 
 use App\Livewire\Pages\Style\AiRecommendation;
 use App\Livewire\Pages\Subscription\SubscriptionPage;
+use App\Livewire\Pages\Subscription\Extend;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Pages\Home\Home;
 use App\Livewire\Pages\Style\StylingDetail;
@@ -26,6 +27,7 @@ Route::prefix('style')
     });
 
 Route::get('/subscription', SubscriptionPage::class);
+Route::get('/subscription/extend', Extend::Class);
 
 Route::get('/masuk', MasukDev::class)->name('masuk.dev');
 
