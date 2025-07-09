@@ -23,8 +23,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-    @livewireStyles
     @stack('styles')
+
+    @livewireStyles
 </head>
 
 <body class="font-Poppins min-h-screen min-w-screen bg-cover bg-bottom bg-no-repeat bg-[#0C0C0C]">
@@ -46,13 +47,15 @@
         <livewire:navigation.footer />
         @endpersist()
     @endif
+
+    @livewireScripts
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-@livewireScripts
 @stack('scripts')
+
 
 
 </html>
