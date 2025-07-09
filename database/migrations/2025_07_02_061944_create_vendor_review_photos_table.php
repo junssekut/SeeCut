@@ -11,9 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_roles', function (Blueprint $table) {
+        Schema::create('vendor_review_photos', function (Blueprint $table) {
             $table->id();
-            $table->string('role')->unique();
+            $table->unsignedBigInteger('review_id');
+
+            $table->enum('type', ['local', 'link']);
+            $table->string('source');
+
+            $table->foreign('review_id')->references('id')->on('vendor_reviews')->onDelete('cascade');
         });
     }
 
@@ -22,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_roles');
+        Schema::dropIfExists('vendor_review_photos');
     }
 };
