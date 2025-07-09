@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Pages\Home;
+namespace App\Livewire;
 
 use Livewire\Component;
 
@@ -8,7 +8,7 @@ class Home extends Component
 {
     public function render()
     {
-        return view('livewire.pages.home.home')
+        return view('livewire.home')
             ->layout('layouts.app');
     }
 }

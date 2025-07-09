@@ -1,6 +1,6 @@
 <svg version="1.0" xmlns="http://www.w3.org/2000/svg" {{ $attributes->merge(['class' => 'w-full h-full']) }}
     viewBox="0 0 710.000000 710.000000" preserveAspectRatio="xMidYMid meet">
-    <g transform="translate(0.000000,710.000000) scale(0.100000,-0.100000)" fill="#6B592E" stroke="none">
+    <g transform="translate(0.000000,710.000000) scale(0.100000,-0.100000)" fill="currentColor" stroke="none">
         <path d="M3435 7083 c-408 -23 -783 -161 -1115 -407 -392 -292 -675 -740 -765
 -1210 -37 -198 -45 -294 -45 -608 l0 -287 -57 -6 c-96 -12 -242 -63 -329 -117
 -206 -125 -339 -337 -365 -578 -12 -117 -12 -3052 1 -3160 21 -182 102 -352

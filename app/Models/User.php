@@ -2,14 +2,11 @@
 
 namespace App\Models;
 
-use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Filament\Panel;
-use Filament\Models\Contracts\FilamentUser;
 
-class User extends Authenticatable implements FilamentUser, HasName
+class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
@@ -33,22 +30,22 @@ class User extends Authenticatable implements FilamentUser, HasName
         return $this->hasOne(Profile::class);
     }
 
-    public function getFilamentName(): string
-    {
-        return "{$this->profile->first_name} {$this->profile->last_name}";
-    }
+    // public function getFilamentName(): string
+    // {
+    //     return "{$this->profile->first_name} {$this->profile->last_name}";
+    // }
 
-    public function canAccessPanel(Panel $panel): bool
-    {
-        switch ($panel->getId()) {
-            case "vendor":
-                return $this->profile->role == 'vendor';
-            case "admin":
-                break;
-            default:
-                break;
-        }
+    // public function canAccessPanel(Panel $panel): bool
+    // {
+    //     switch ($panel->getId()) {
+    //         case "vendor":
+    //             return $this->profile->role == 'vendor';
+    //         case "admin":
+    //             break;
+    //         default:
+    //             break;
+    //     }
 
-        return false;
-    }
+    //     return false;
+    // }
 }
