@@ -20,6 +20,33 @@
             object-fit: cover;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
+        .glow-star {
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));
+            /* Golden glow */
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .glow-star:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 12px rgba(255, 215, 0, 1));
+        }
+
+        @keyframes glow-pulse {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 12px rgba(255, 215, 0, 1));
+            }
+        }
+
+        .glow-star {
+            animation: glow-pulse 2s infinite ease-in-out;
+        }
     </style>
 @endpush
 
@@ -27,23 +54,29 @@
     <div
         class="relative flex flex-col items-center justify-center h-[701px] bg-landing bg-center bg-cover bg-no-repeat p-48">
 
-        <div class="absolute inset-0 bg-[#090909]/60 z-0"></div>
+        {{-- <div class="absolute inset-0 bg-[#090909]/60 z-0"></div> --}}
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-[#0C0C0C] z-0"></div>
 
         <div class="relative z-10 max-w-7xl w-full p-6 flex flex-col items-center justify-center text-center">
             <div class="flex flex-row items-center justify-center gap-2">
                 @for ($i = 0; $i < 5; $i++)
-                    <img src="{{ asset('assets/images/home/material-symbols_star.png') }}" alt="" class="w-8">
+                    <img data-aos="zoom-in-up" data-aos-duration="500" data-aos-delay="{{ 1000 + ($i + 1) * 250 }}"
+                        src="{{ asset('assets/images/home/material-symbols_star.png') }}" alt=""
+                        class="w-8 glow-star" style="animation-delay: {{ $i * 0.5 }}s;">
                 @endfor
             </div>
-            <h1 class="text-6xl font-Kuunari text-Seasalt text-wide">WUJUDKAN GAYA TERBAIK ANDA.</h1>
-            <p
+            <h1 data-aos="zoom-in" data-aos-duration="1500" class="text-6xl font-Kuunari text-Seasalt text-wide">
+                WUJUDKAN GAYA TERBAIK ANDA.
+            </h1>
+            <p data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-delay="1000" data-aos-duration="500"
                 class="tracking-normal text-5xl font-Kuunari font-extrabold text-transparent text-stroke-1 text-stroke-Ecru">
                 TEMUKAN BARBERSHOP TERDEKAT DENGAN LAYANAN TERPERCAYA
             </p>
         </div>
 
-        <div class="flex flex-col items-center justify-center px-48 w-full absolute top-[631px]">
-            <livewire:pages.home.components.search-bar />
+        <div data-aos="fade-up" data-aos-anchor-placement="center-bottom" data-aos-delay="500" data-aos-duration="500"
+            class="flex flex-col items-center justify-center px-48 w-full absolute top-[631px]">
+            <livewire:components.search-bar />
         </div>
     </div>
 
@@ -309,6 +342,8 @@
 
 @push('scripts')
     <script>
+        AOS.init();
+
         const swiper = new Swiper(".swiperCut", {
             effect: "cards",
             grabCursor: true,
