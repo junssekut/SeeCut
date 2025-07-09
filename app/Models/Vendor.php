@@ -15,6 +15,10 @@ class Vendor extends Model
     public $timestamps = false;
     protected $guarded = [];
 
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+
     public function photos() {
         return $this->hasMany(VendorPhoto::class);
     }
