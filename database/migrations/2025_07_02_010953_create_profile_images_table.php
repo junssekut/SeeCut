@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_profiles', function (Blueprint $table) {
-            $table->id('profile_id');
-            $table->string('first_name');
-            $table->string('last_name');
+        Schema::create('profile_images', function (Blueprint $table) {
+            $table->id();
+
+            $table->enum('type', ['local', 'link']);
+            $table->string('source');
         });
     }
 
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_profiles');
+        Schema::dropIfExists('profile_images');
     }
 };

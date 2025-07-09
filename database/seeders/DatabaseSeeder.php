@@ -14,14 +14,13 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
         $this->call([
-            UserRoleSeeder::class,
+            VendorSeeder::class,
         ]);
 
         User::factory()->create([
             'username' => 'arjuna andio',
             'email' => 'arzunadio@gmail.com',
             'password' => bcrypt('anjing123'),
-            'role_id' => 2,
         ]);
     }
 }
