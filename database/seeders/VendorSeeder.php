@@ -9,6 +9,7 @@ use App\Models\VendorPhoto;
 use App\Models\VendorOpenHour;
 use App\Models\VendorReview;
 use App\Models\VendorReviewPhoto;
+use App\Models\User;
 
 class VendorSeeder extends Seeder
 {
@@ -24,17 +25,30 @@ class VendorSeeder extends Seeder
             DB::beginTransaction();
             try {
                 $this->command->info('Seeding vendor: ' . $vendorData['name']);
-                // 1. Create Vendor (without thumbnail_id for now)
+
+                // Create or get a user for this vendor
+                $user = User::factory()->create([
+                    'username' => 'vendor_' . \Str::slug($vendorData['name']) . '_' . uniqid(),
+                    'email' => \Str::slug($vendorData['name']) . '+' . uniqid() . '@example.com',
+                    'password' => bcrypt('password'), // Default password
+                ]);
+
+                $user->profile()->updateOrCreate([], [
+                    'role' => 'vendor',
+                ]);
+
+                // Create Vendor with user_id
                 $vendor = Vendor::create([
+                    'user_id' => $user->id,
                     'name' => $vendorData['name'],
                     'address' => $vendorData['address'],
                     'phone' => $vendorData['phone'],
-                    'rating' => isset($vendorData['rating']) && $vendorData['rating'] !== null ? $vendorData['rating'] : 0.0,
+                    'rating' => $vendorData['rating'] ?? 0.0,
                     'reviews_count' => $vendorData['reviews_count'],
                     'latitude' => $vendorData['latitude'],
                     'longitude' => $vendorData['longitude'],
                     'place_id' => $vendorData['place_id'],
-                    // thumbnail_id will be set later
+                    // thumbnail_id to be set later
                 ]);
                 $this->command->info('Created vendor: ' . $vendor->id);
 
@@ -54,7 +68,7 @@ class VendorSeeder extends Seeder
                 }
                 $vendor->thumbnail_id = $mainPhoto->id;
                 $vendor->save();
-                $this->command->info('Created photos for vendor: ' . $vendor->id);
+                // $this->command->info('Created photos for vendor: ' . $vendor->id);
 
                 // 3. Create VendorOpenHour records
                 if (!empty($vendorData['open_hours'])) {
@@ -62,10 +76,10 @@ class VendorSeeder extends Seeder
                         if (preg_match('/^(\w+):\s*(.+)$/', $openHour, $matches)) {
                             $day = $matches[1];
                             $times = $matches[2];
-                            $this->command->info('Parsing open hour times: "' . $times . '"');
+                            // $this->command->info('Parsing open hour times: "' . $times . '"');
                             $dashPos = preg_match('/\d+\s*[AP]M\s*(.)\s*\d+\s*[AP]M/', $times, $dashMatch) ? $dashMatch[1] : null;
                             if ($dashPos) {
-                                $this->command->info('Dash character code: ' . mb_ord($dashPos, 'UTF-8'));
+                                // $this->command->info('Dash character code: ' . mb_ord($dashPos, 'UTF-8'));
                             }
                             if (preg_match('/(\d{1,2}(?::\d{2})?\s*[AP]M)\s*[\x{2013}\x{2014}\x{2012}\x{2010}-]\s*(\d{1,2}(?::\d{2})?\s*[AP]M)/u', $times, $timeMatches)) {
                                 $open = date('H:i:s', strtotime($timeMatches[1]));
@@ -94,7 +108,7 @@ class VendorSeeder extends Seeder
                         ]);
                     }
                 }
-                $this->command->info('Created open hours for vendor: ' . $vendor->id);
+                // $this->command->info('Created open hours for vendor: ' . $vendor->id);
 
                 // 4. Create VendorReview and VendorReviewPhoto records
                 foreach ($vendorData['reviews_data'] as $reviewData) {
@@ -115,7 +129,7 @@ class VendorSeeder extends Seeder
                         ]);
                     }
                 }
-                $this->command->info('Created reviews for vendor: ' . $vendor->id);
+                // $this->command->info('Created reviews for vendor: ' . $vendor->id);
 
                 DB::commit();
                 $this->command->info('Committed vendor: ' . $vendor->id);

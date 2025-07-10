@@ -20,6 +20,6 @@ class EnsureUserIsVendor
             return $next($request);
         }
 
-        abort(403, 'Unauthorized');
+        return redirect()->guest(route('vendor.login'));
     }
 }

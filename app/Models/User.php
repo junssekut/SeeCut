@@ -30,6 +30,10 @@ class User extends Authenticatable
         return $this->hasOne(Profile::class);
     }
 
+    public function vendor() {
+        return $this->hasOne(Vendor::class);
+    }
+
     // public function getFilamentName(): string
     // {
     //     return "{$this->profile->first_name} {$this->profile->last_name}";

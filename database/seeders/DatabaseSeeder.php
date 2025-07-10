@@ -13,14 +13,18 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
-        $this->call([
-            VendorSeeder::class,
-        ]);
-
-        User::factory()->create([
-            'username' => 'arjuna andio',
+        $user = User::factory()->create([
+            'username' => 'arjunaandio',
             'email' => 'arzunadio@gmail.com',
             'password' => bcrypt('anjing123'),
+        ]);
+        $user->profile()->updateOrCreate([], [
+            'role' => 2,
+        ]);
+
+        $this->call([
+            VendorSeeder::class,
+            ReservationSeeder::class,
         ]);
     }
 }

@@ -1,5 +1,5 @@
 <div
-    class="flex flex-col lg:flex-row justify-between items-center gap-4 px-8 md:px-16 lg:px-48 py-4 bg-Eerie-Black z-[1000]">
+    class="flex flex-col lg:flex-row justify-between items-center gap-4 px-8 md:px-16 lg:px-48 py-4 bg-Dark-Teal z-[1000]">
     <div>
         <a href="{{ route('home') }}"><img class="w-24" src="{{ asset(path: 'assets/images/logo-text.png') }}"
                 alt="SeeCut"></a>

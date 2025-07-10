@@ -18,6 +18,8 @@ return new class extends Migration
             $table->date('date');
             $table->time('start_time');
             $table->time('end_time');
+
+            $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
         });
     }
 

@@ -49,7 +49,7 @@ $execLogin = function () {
 
     Session::regenerate();
 
-    $this->redirect(route('home', absolute: false), navigate: true);
+    $this->redirect(route('vendor.reservation'));
 };
 ?>
 
