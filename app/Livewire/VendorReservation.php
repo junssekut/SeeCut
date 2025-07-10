@@ -13,20 +13,20 @@ class VendorReservation extends Component
 
     public $status = 'all';
     public $search = '';
-    public $reservations = [];
+    public $reservationStatuses = [];
 
     public function mount()
     {
-        // Initialize $reservations as an associative array for status binding
-        $this->reservations = [];
+        // Initialize $reservationStatuses as an associative array for status binding
+        $this->reservationStatuses = [];
         $vendorId = Auth::user()->vendor->id ?? null;
         $query = Reservation::query()->where('vendor_id', $vendorId);
         foreach ($query->get() as $reservation) {
-            $this->reservations[$reservation->id]['status'] = $reservation->status;
+            $this->reservationStatuses[$reservation->id]['status'] = $reservation->status;
         }
     }
 
-    public function updatedReservations($value, $key)
+    public function updatedReservationStatuses($value, $key)
     {
         // $key is like '123.status'
         [$id, $field] = explode('.', $key);
@@ -62,16 +62,16 @@ class VendorReservation extends Component
             $queryStatus = null;
 
             switch($this->status) {
-                case 'Masuk':
+                case 'masuk':
                     $queryStatus = 'confirmed';
                     break;
-                case 'Proses':
+                case 'proses':
                     $queryStatus = 'pending';
                     break;
-                case 'Selesai':
+                case 'selesai':
                     $queryStatus = 'finished';
                     break;
-                case 'Batal':
+                case 'batal':
                     $queryStatus = 'cancelled';
                     break;
                 default:
@@ -92,10 +92,9 @@ class VendorReservation extends Component
 
         $reservations = $query->paginate(10);
 
-        // Sync $this->reservations with the latest paginated data
         foreach ($reservations as $reservation) {
-            if (!isset($this->reservations[$reservation->id]['status'])) {
-                $this->reservations[$reservation->id]['status'] = $reservation->status;
+            if (!isset($this->reservationStatuses[$reservation->id]['status'])) {
+                $this->reservationStatuses[$reservation->id]['status'] = $reservation->status;
             }
         }
 

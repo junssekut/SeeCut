@@ -33,6 +33,7 @@
                 </thead>
                 <tbody>
                     @forelse($reservations as $reservation)
+                        {{-- {{ dd($reservation) }} --}}
                         <tr class="{{ $loop->even ? 'bg-gray-100' : 'bg-white' }} hover:bg-[#f5f5e9] transition-colors">
                             <td class="px-4 py-2">{{ $reservation->slot?->date }}</td>
                             <td class="px-4 py-2">{{ $reservation->slot?->start_time }}</td>
@@ -41,7 +42,7 @@
                             <td class="px-4 py-2">{{ $reservation->phone }}</td>
                             <td class="px-4 py-2">{{ $reservation->note ?? '-' }}</td>
                             <td class="px-4 py-2">
-                                <select wire:model="reservations.{{ $reservation->id }}.status"
+                                <select wire:model="reservationStatuses.{{ $reservation->id }}.status"
                                     class="rounded-full bg-gray-200 px-4 py-1">
                                     <option value="confirmed">Masuk</option>
                                     <option value="pending">Proses</option>

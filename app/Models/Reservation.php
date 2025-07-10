@@ -21,6 +21,6 @@ class Reservation extends Model
     }
 
     public function slot() {
-        return $this->belongsTo(ReservationSlot::class);
+        return $this->belongsTo(ReservationSlot::class, 'reservation_id');
     }
 }
