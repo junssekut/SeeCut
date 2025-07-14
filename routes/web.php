@@ -2,7 +2,7 @@
 
 use App\Livewire\Pages\Style\AiRecommendation;
 use App\Livewire\Pages\Subscription\SubscriptionPage;
-use App\Livewire\Pages\Subscription\Extend;
+use App\Livewire\Extend;
 use App\Livewire\VendorReservation;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Home;
@@ -29,10 +29,12 @@ Route::prefix('vendor')
     ->middleware('vendor')
     ->group(function() {
         Route::get('/reservation', VendorReservation::class)->name('reservation');
+        Route::get('/subscription/extend', Extend::Class);
+
+        // Route::post('/logout');
     });
 
 Route::get('/subscription', SubscriptionPage::class);
-Route::get('/subscription/extend', Extend::Class);
 
 Route::view('/test', 'test');
 

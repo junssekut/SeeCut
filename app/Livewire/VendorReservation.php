@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\Auth;
+use function Flasher\Toastr\Prime\toastr;
 
 class VendorReservation extends Component
 {
@@ -13,29 +14,14 @@ class VendorReservation extends Component
 
     public $status = 'all';
     public $search = '';
-    public $reservationStatuses = [];
 
-    public function mount()
+    public function updateStatus($id, $status)
     {
-        // Initialize $reservationStatuses as an associative array for status binding
-        $this->reservationStatuses = [];
-        $vendorId = Auth::user()->vendor->id ?? null;
-        $query = Reservation::query()->where('vendor_id', $vendorId);
-        foreach ($query->get() as $reservation) {
-            $this->reservationStatuses[$reservation->id]['status'] = $reservation->status;
-        }
-    }
-
-    public function updatedReservationStatuses($value, $key)
-    {
-        // $key is like '123.status'
-        [$id, $field] = explode('.', $key);
-        if ($field === 'status') {
-            $reservation = Reservation::find($id);
-            if ($reservation) {
-                $reservation->status = $value;
-                $reservation->save();
-            }
+        $reservation = Reservation::find($id);
+        if ($reservation) {
+            $reservation->status = $status;
+            $reservation->save();
+            toastr()->addSuccess('Status updated!');
         }
     }
 
@@ -86,17 +72,12 @@ class VendorReservation extends Component
             $query->where(function ($q) {
                 $q->where('name', 'like', '%' . $this->search . '%')
                   ->orWhere('email', 'like', '%' . $this->search . '%')
-                  ->orWhere('phone', 'like', '%' . $this->search . '%');
+                  ->orWhere('phone', 'like', '%' . $this->search . '%')
+                  ->orWhere('note', 'like', '%' . $this->search . '%');
             });
         }
 
         $reservations = $query->paginate(10);
-
-        foreach ($reservations as $reservation) {
-            if (!isset($this->reservationStatuses[$reservation->id]['status'])) {
-                $this->reservationStatuses[$reservation->id]['status'] = $reservation->status;
-            }
-        }
 
         return view('livewire.vendor-reservation', [
             'reservations' => $reservations,

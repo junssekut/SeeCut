@@ -31,6 +31,7 @@ export default {
 				Taupe: "#39332A",
 				"Field-Drab": "#6B592E",
 				"Dark-Olive": "#284123",
+				"Dark-Muted-Olive": "#495b3c",
 				"Dark-Teal": "#011C19",
 			},
 			fontFamily: {

@@ -8,11 +8,14 @@ use App\Models\ReservationSlot;
 use App\Models\Vendor;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Faker\Factory as Faker;
 
 class ReservationSeeder extends Seeder
 {
     public function run(): void
     {
+        $faker = Faker::create();
+
         // Create or get a vendor
         $vendor = Vendor::first() ?? Vendor::factory()->create();
         // Create or get a user
@@ -38,8 +41,8 @@ class ReservationSeeder extends Seeder
                 'user_id' => $user->id,
                 'vendor_id' => $vendor->id,
                 'reservation_id' => $slot->id,
-                'name' => $user->name,
-                'email' => $user->email,
+                'name' => $user->name == '' ? $faker->name() : '',
+                'email' => $faker->unique()->safeEmail,
                 'phone' => '0812345678' . $i,
                 'status' => ['pending', 'confirmed', 'cancelled', 'finished'][rand(0,2)],
                 'note' => 'Sample reservation #' . ($i+1),
