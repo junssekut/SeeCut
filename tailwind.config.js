@@ -30,6 +30,7 @@ export default {
 				"Dark-Charcoal-2": "#39332A",
 				Taupe: "#39332A",
 				"Field-Drab": "#6B592E",
+				"Dark-Olive": "#284123",
 			},
 			fontFamily: {
 				Kuunari: ["Kuunari"],

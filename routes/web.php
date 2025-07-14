@@ -2,13 +2,12 @@
 
 use App\Livewire\Pages\Style\AiRecommendation;
 use App\Livewire\Pages\Subscription\SubscriptionPage;
+use App\Livewire\Pages\Subscription\Extend;
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Pages\Home\Home;
+use App\Livewire\Home;
 use App\Livewire\Pages\Style\StylingDetail;
-use App\Livewire\MasukDev;
-use App\Livewire\Information;
 
-// Route::view('/', 'welcome');
+Route::get('/', Home::class)->name('home');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -18,8 +17,6 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-Route::get('/', Home::class)->name('home');
-
 Route::prefix('style')
     ->group(function () {
         Route::get('/', StylingDetail::class)->name('style');
@@ -27,8 +24,7 @@ Route::prefix('style')
     });
 
 Route::get('/subscription', SubscriptionPage::class);
-
-Route::get('/masuk', MasukDev::class)->name('masuk.dev');
+Route::get('/subscription/extend', Extend::Class);
 
 Route::view('/test', 'test');
 
