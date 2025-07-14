@@ -2,7 +2,8 @@
 
 use App\Livewire\Pages\Style\AiRecommendation;
 use App\Livewire\Pages\Subscription\SubscriptionPage;
-use App\Livewire\Pages\Subscription\Extend;
+use App\Livewire\Extend;
+use App\Livewire\VendorReservation;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Home;
 use App\Livewire\Pages\Style\StylingDetail;
@@ -23,8 +24,17 @@ Route::prefix('style')
         Route::get('/recommendation', AiRecommendation::class)->name('style.recommendation');
     });
 
+Route::prefix('vendor')
+    ->as('vendor.')
+    ->middleware('vendor')
+    ->group(function() {
+        Route::get('/reservation', VendorReservation::class)->name('reservation');
+        Route::get('/subscription/extend', Extend::Class);
+
+        // Route::post('/logout');
+    });
+
 Route::get('/subscription', SubscriptionPage::class);
-Route::get('/subscription/extend', Extend::Class);
 
 Route::view('/test', 'test');
 
