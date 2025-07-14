@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'arzunadio@gmail.com',
             'password' => bcrypt('anjing123'),
         ]);
+
         $user->profile()->updateOrCreate([], [
             'role' => 2,
         ]);
@@ -25,6 +26,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             VendorSeeder::class,
             ReservationSeeder::class,
+            SubscriptionSeeder::class,
+            VendorSubscriptionSeeder::class
         ]);
     }
 }

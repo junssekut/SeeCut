@@ -43,7 +43,7 @@ class ReservationSeeder extends Seeder
                 'reservation_id' => $slot->id,
                 'name' => $user->name == '' ? $faker->name() : '',
                 'email' => $faker->unique()->safeEmail,
-                'phone' => '0812345678' . $i,
+                'phone' => $faker->phoneNumber,
                 'status' => ['pending', 'confirmed', 'cancelled', 'finished'][rand(0,2)],
                 'note' => 'Sample reservation #' . ($i+1),
             ]);

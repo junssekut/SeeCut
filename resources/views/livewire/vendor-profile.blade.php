@@ -1,3 +1,5 @@
+@section('title', 'Vendor - Profile')
+
 <div class="flex">
     <div id="unggahFoto" class="w-[30%] h-screen">
         <div class="flex justify-center pt-32 h-screen">
