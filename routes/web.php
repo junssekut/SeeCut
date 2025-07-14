@@ -28,4 +28,6 @@ Route::get('/subscription/extend', Extend::Class);
 
 Route::view('/test', 'test');
 
+Route::get('/information', Information::class);
+
 require __DIR__.'/auth.php';
