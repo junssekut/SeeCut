@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Pages\Home\Home;
 use App\Livewire\Pages\Style\StylingDetail;
 use App\Livewire\MasukDev;
+use App\Livewire\Information;
 
 // Route::view('/', 'welcome');
 
@@ -30,5 +31,7 @@ Route::get('/subscription', SubscriptionPage::class);
 Route::get('/masuk', MasukDev::class)->name('masuk.dev');
 
 Route::view('/test', 'test');
+
+Route::get('/information', Information::class);
 
 require __DIR__.'/auth.php';
