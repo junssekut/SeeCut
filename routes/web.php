@@ -24,8 +24,11 @@ Route::prefix('style')
     });
 
 Route::get('/subscription', SubscriptionPage::class);
-Route::get('/subscription/extend', Extend::Class);
+Route::get('/subscription/extend', Extend::class);
 
+Route::get('/product-detail', function () {
+    return view('product-detail');
+})->name('product.detail');
 Route::view('/test', 'test');
 
 require __DIR__.'/auth.php';
