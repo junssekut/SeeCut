@@ -2,10 +2,12 @@
 
 use App\Livewire\Pages\Style\AiRecommendation;
 use App\Livewire\Pages\Subscription\SubscriptionPage;
-use App\Livewire\Pages\Subscription\Extend;
+use App\Livewire\Extend;
+use App\Livewire\VendorReservation;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Home;
 use App\Livewire\Pages\Style\StylingDetail;
+use App\Livewire\Information;
 
 Route::get('/', Home::class)->name('home');
 
@@ -23,12 +25,23 @@ Route::prefix('style')
         Route::get('/recommendation', AiRecommendation::class)->name('style.recommendation');
     });
 
+Route::prefix('vendor')
+    ->as('vendor.')
+    ->middleware('vendor')
+    ->group(function() {
+        Route::get('/reservation', VendorReservation::class)->name('reservation');
+        Route::get('/subscription/extend', Extend::Class);
+
+        // Route::post('/logout');
+    });
+
 Route::get('/subscription', SubscriptionPage::class);
-Route::get('/subscription/extend', Extend::class);
 
 Route::get('/product-detail', function () {
     return view('product-detail');
 })->name('product.detail');
 Route::view('/test', 'test');
+
+Route::get('/information', Information::class);
 
 require __DIR__.'/auth.php';

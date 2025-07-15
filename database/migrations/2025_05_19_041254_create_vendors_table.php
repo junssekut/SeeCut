@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('vendors', function (Blueprint $table) {
             $table->id('id');
+            $table->unsignedBigInteger('user_id');
             $table->string('name');
             $table->text('address')->nullable()->default('');
             $table->string('phone')->nullable();
@@ -23,6 +24,7 @@ return new class extends Migration
             $table->float('longitude');
             $table->string('place_id');
 
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('thumbnail_id')->references('id')->on('vendor_photos')->onDelete('cascade');
         });
     }
