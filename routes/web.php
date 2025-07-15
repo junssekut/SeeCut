@@ -7,6 +7,7 @@ use App\Livewire\VendorReservation;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Home;
 use App\Livewire\Pages\Style\StylingDetail;
+use App\Livewire\UserProfile;
 
 Route::get('/', Home::class)->name('home');
 
@@ -38,6 +39,7 @@ Route::get('/subscription', SubscriptionPage::class);
 
 Route::view('/test', 'test');
 
-Route::get('/information', Information::class);
+//Route::get('/information', Information::class);
+Route::get('/profile', UserProfile::class)->name('profile');
 
 require __DIR__.'/auth.php';
