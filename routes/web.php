@@ -7,6 +7,7 @@ use App\Livewire\VendorReservation;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Home;
 use App\Livewire\Pages\Style\StylingDetail;
+use App\Livewire\Information;
 
 Route::get('/', Home::class)->name('home');
 
@@ -36,6 +37,9 @@ Route::prefix('vendor')
 
 Route::get('/subscription', SubscriptionPage::class);
 
+Route::get('/product-detail', function () {
+    return view('product-detail');
+})->name('product.detail');
 Route::view('/test', 'test');
 
 Route::get('/information', Information::class);
