@@ -436,95 +436,7 @@
 
 @push('scripts')
     <script>
-        // GSAP timeline for table animations only
-        let tableTimeline = gsap.timeline();
-
-        // GSAP Table Animation Functions
-        function animateTableOut() {
-            const rows = document.querySelectorAll('tbody tr');
-            if (rows.length === 0) return;
-
-            gsap.to(rows, {
-                opacity: 0,
-                y: -20,
-                duration: 0.3,
-                stagger: 0.03,
-                ease: "power2.out"
-            });
-        }
-
-        function animateTableIn() {
-            const rows = document.querySelectorAll('tbody tr');
-            if (rows.length === 0) return;
-
-            gsap.fromTo(rows, {
-                opacity: 0,
-                y: 30,
-                scale: 0.95
-            }, {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                duration: 0.5,
-                stagger: 0.05,
-                ease: "back.out(1.7)",
-                delay: 0.1
-            });
-        }
-
-        // Track search/filter state
-        let isTableUpdating = false;
-        let searchTimeout;
-
-        // Listen for search input changes
-        document.addEventListener('input', function(event) {
-            if (event.target.matches('input[wire\\:model*="search"]')) {
-                clearTimeout(searchTimeout);
-
-                if (!isTableUpdating) {
-                    isTableUpdating = true;
-                    animateTableOut();
-                }
-
-                searchTimeout = setTimeout(() => {
-                    isTableUpdating = false;
-                }, 600);
-            }
-        });
-
-        // Listen for filter button clicks
-        document.addEventListener('click', function(event) {
-            if (event.target.closest('button[wire\\:click^="setStatus"]')) {
-                const button = event.target.closest('button');
-
-                // Keep the original button animation (CSS)
-                button.classList.add('filter-active');
-                setTimeout(() => {
-                    button.classList.remove('filter-active');
-                }, 500);
-
-                // Animate table out for filter change
-                animateTableOut();
-            }
-        });
-
-        // Listen for Livewire updates (search/filter results)
-        document.addEventListener('livewire:update', function(event) {
-            if (event.detail.component.fingerprint.name === 'vendor-reservation') {
-                setTimeout(() => {
-                    animateTableIn();
-                }, 100);
-            }
-        });
-
-        // Initial page load - animate table in
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(() => {
-                animateTableIn();
-            }, 200);
-        });
-
-        // Keep original functionality for status selects (non-GSAP)
+        // Keep original functionality for status selects
         document.addEventListener('change', function(event) {
             if (event.target.matches('select[wire\\:change^="updateStatus"]')) {
                 const select = event.target;
@@ -553,7 +465,18 @@
             }
         });
 
-        // Keep search input focus effects (non-GSAP)
+        // Filter button animations
+        document.addEventListener('click', function(event) {
+            if (event.target.closest('button[wire\\:click^="setStatus"]')) {
+                const button = event.target.closest('button');
+                button.classList.add('filter-active');
+                setTimeout(() => {
+                    button.classList.remove('filter-active');
+                }, 500);
+            }
+        });
+
+        // Search input focus effects
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.querySelector('input[wire\\:model*="search"]');
             if (searchInput) {
