@@ -25,7 +25,6 @@
 
     @stack('styles')
     @livewireStyles
-    @flasher_styles
 </head>
 
 <body class="font-Poppins min-h-screen min-w-screen bg-cover bg-bottom bg-no-repeat bg-white">

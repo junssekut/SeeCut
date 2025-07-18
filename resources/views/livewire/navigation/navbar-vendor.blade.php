@@ -1,7 +1,7 @@
 <div class="flex flex-col lg:flex-row justify-between items-center gap-4 px-8 md:px-16 lg:px-48 py-4 bg-Dark-Teal">
     <div>
-        <a href="{{ route('home') }}"><img class="w-24" src="{{ asset(path: 'assets/images/logo-text.png') }}"
-                alt="SeeCut"></a>
+        <a href="{{ route('vendor.reservation') }}"><img class="w-24"
+                src="{{ asset(path: 'assets/images/logo-text.png') }}" alt="SeeCut"></a>
     </div>
     <div class="flex flex-col sm:flex-row gap-7 justify-center items-center">
         <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out"
