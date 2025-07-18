@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('name');
             $table->text('address')->nullable()->default('');
+            $table->text('description')->nullable()->default('');
             $table->string('phone')->nullable();
             $table->float('rating')->nullable()->default(0.0);
             $table->integer("reviews_count")->nullable()->default(0);

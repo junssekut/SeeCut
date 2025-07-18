@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->enum('type', ['local', 'link']);
+            $table->enum('category', ['general', 'hairstylist'])->nullable()->default('general');
             $table->string('source');
         });
     }

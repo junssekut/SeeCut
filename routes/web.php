@@ -33,6 +33,11 @@ Route::prefix('vendor')
         Route::get('/reservation', VendorReservation::class)->name('reservation');
         Route::get('/subscription/extend', Extend::Class)->name('extend');
         Route::get('/profile', VendorProfile::class)->name('profile');
+
+        Route::get('/logout', function () {
+            auth()->logout();
+            return redirect()->route('vendor.login');
+        })->name('logout');
         // Route::post('/logout');
     });
 
