@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vendor_photos', function (Blueprint $table) {
+        Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
-
-            $table->enum('type', ['local', 'link']);
-            $table->enum('category', ['general', 'hairstylist'])->nullable()->default('general');
-            $table->string('source');
+            $table->string('name');
+            $table->float('price');
+            $table->integer('duration_days');
         });
     }
 
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('vendor_photos');
+        Schema::dropIfExists('subscriptions');
     }
 };

@@ -3,6 +3,7 @@
 use App\Livewire\Pages\Style\AiRecommendation;
 use App\Livewire\Pages\Subscription\SubscriptionPage;
 use App\Livewire\Extend;
+use App\Livewire\VendorProfile;
 use App\Livewire\VendorReservation;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Home;
@@ -30,8 +31,13 @@ Route::prefix('vendor')
     ->middleware('vendor')
     ->group(function() {
         Route::get('/reservation', VendorReservation::class)->name('reservation');
-        Route::get('/subscription/extend', Extend::Class);
+        Route::get('/subscription/extend', Extend::Class)->name('extend');
+        Route::get('/profile', VendorProfile::class)->name('profile');
 
+        Route::get('/logout', function () {
+            auth()->logout();
+            return redirect()->route('vendor.login');
+        })->name('logout');
         // Route::post('/logout');
     });
 
@@ -41,7 +47,5 @@ Route::get('/product-detail', function () {
     return view('product-detail');
 })->name('product.detail');
 Route::view('/test', 'test');
-
-Route::get('/information', Information::class);
 
 require __DIR__.'/auth.php';

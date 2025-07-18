@@ -57,12 +57,14 @@ class VendorSeeder extends Seeder
                 $mainPhoto = VendorPhoto::create([
                     'type' => 'link',
                     'source' => $vendorData['main_thumbnail_url'],
+                    'category' => 'general'
                 ]);
                 $photoIds[] = $mainPhoto->id;
                 foreach ($vendorData['all_photos_urls'] as $photoUrl) {
                     $photo = VendorPhoto::create([
                         'type' => 'link',
                         'source' => $photoUrl,
+                        'category' => 'general'
                     ]);
                     $photoIds[] = $photo->id;
                 }
