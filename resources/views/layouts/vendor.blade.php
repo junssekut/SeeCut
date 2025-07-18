@@ -38,7 +38,6 @@
     </div>
 
     @livewireScripts
-    @flasher_scripts
     @stack('scripts')
 </body>
 
