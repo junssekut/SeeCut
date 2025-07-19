@@ -8,7 +8,8 @@ use App\Livewire\VendorReservation;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Home;
 use App\Livewire\Pages\Style\StylingDetail;
-use App\Livewire\Information;
+use App\Livewire\UserProfile;
+// use App\Livewire\Information;
 
 Route::get('/', Home::class)->name('home');
 
@@ -53,5 +54,8 @@ Route::get('/product-detail', function () {
     return view('product-detail');
 })->name('product.detail');
 Route::view('/test', 'test');
+
+//Route::get('/information', Information::class);
+Route::get('/profile', UserProfile::class)->name('profile');
 
 require __DIR__.'/auth.php';
