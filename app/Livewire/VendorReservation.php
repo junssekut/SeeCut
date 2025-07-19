@@ -6,7 +6,6 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\Auth;
-use function Flasher\Toastr\Prime\toastr;
 
 class VendorReservation extends Component
 {
@@ -21,7 +20,12 @@ class VendorReservation extends Component
         if ($reservation) {
             $reservation->status = $status;
             $reservation->save();
-            toastr()->addSuccess('Status updated!');
+            
+            // Use notyf for notifications
+            notyf()
+                ->duration(3000)
+                ->ripple(true)
+                ->addSuccess('Status reservasi IDX-' . $reservation->id . ' berhasil diganti!');
         }
     }
 
@@ -33,6 +37,12 @@ class VendorReservation extends Component
 
     public function updatingSearch()
     {
+        $this->resetPage();
+    }
+
+    public function updatedSearch()
+    {
+        // Add a small delay to prevent excessive queries
         $this->resetPage();
     }
 

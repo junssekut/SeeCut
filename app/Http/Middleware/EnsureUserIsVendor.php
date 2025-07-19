@@ -16,7 +16,7 @@ class EnsureUserIsVendor
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->profile->role === 'vendor') {
+        if (Auth::check() && Auth::user()->profile?->role === 'vendor') {
             return $next($request);
         }
 

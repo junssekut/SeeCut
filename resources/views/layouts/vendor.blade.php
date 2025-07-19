@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>SeeCut {{ isset($title) ? ' - ' . $title : '' }}</title>
+    <title>@yield('title', 'SeeCut')</title>
 
-    @vite(['resources/css/app.css', 'resources/css/toastr-custom.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @switch(Route::currentRouteName())
         @case('style')
@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 
     @stack('styles')
+    @livewireStyles
 </head>
 
 <body class="font-Poppins min-h-screen min-w-screen bg-cover bg-bottom bg-no-repeat bg-white">
@@ -35,6 +36,9 @@
     <div class="flex flex-col max-w-full h-full">
         {{ $slot }}
     </div>
+
+    @livewireScripts
+    @stack('scripts')
 </body>
 
 </html>

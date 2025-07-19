@@ -34,4 +34,8 @@ class Vendor extends Model
     public function services() {
         return $this->hasMany(VendorService::class);
     }
+
+    public function hairstylists() {
+        return $this->hasMany(VendorHairstylist::class);
+    }
 }

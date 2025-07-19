@@ -3,11 +3,13 @@
 use App\Livewire\Pages\Style\AiRecommendation;
 use App\Livewire\Pages\Subscription\SubscriptionPage;
 use App\Livewire\Extend;
+use App\Livewire\VendorProfile;
 use App\Livewire\VendorReservation;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Home;
 use App\Livewire\Pages\Style\StylingDetail;
 use App\Livewire\UserProfile;
+// use App\Livewire\Information;
 
 Route::get('/', Home::class)->name('home');
 
@@ -30,13 +32,27 @@ Route::prefix('vendor')
     ->middleware('vendor')
     ->group(function() {
         Route::get('/reservation', VendorReservation::class)->name('reservation');
-        Route::get('/subscription/extend', Extend::Class);
+        Route::get('/subscription/extend', Extend::Class)->name('extend');
+        Route::get('/profile', VendorProfile::class)->name('profile');
 
-        // Route::post('/logout');
+        Route::get('/logout', function () {
+            auth()->logout();
+            return redirect()->route('vendor.login');
+        })->name('logout');
+        
+        Route::post('/logout', function () {
+            auth()->logout();
+            request()->session()->invalidate();
+            request()->session()->regenerateToken();
+            return redirect()->route('vendor.login');
+        })->name('logout.post');
     });
 
 Route::get('/subscription', SubscriptionPage::class);
 
+Route::get('/product-detail', function () {
+    return view('product-detail');
+})->name('product.detail');
 Route::view('/test', 'test');
 
 //Route::get('/information', Information::class);
