@@ -33,7 +33,7 @@ class VendorInformation extends Component
         if ($profile && $profile->image_id) {
             $profileImage = ProfileImage::find($profile->image_id);
             if ($profileImage) {
-                $this->currentLogoPath = $profileImage->image_path;
+                $this->currentLogoPath = $profileImage->source;
             }
         }
     }
@@ -66,13 +66,13 @@ class VendorInformation extends Component
             if ($profile && $profile->image_id) {
                 $profileImage = ProfileImage::find($profile->image_id);
                 if ($profileImage) {
-                    $profileImage->update(['image_path' => $logoPath]);
+                    $profileImage->update(['source' => $logoPath]);
                 } else {
-                    $profileImage = ProfileImage::create(['image_path' => $logoPath]);
+                    $profileImage = ProfileImage::create(['source' => $logoPath]);
                     $profile->update(['image_id' => $profileImage->id]);
                 }
             } else {
-                $profileImage = ProfileImage::create(['image_path' => $logoPath]);
+                $profileImage = ProfileImage::create(['source' => $logoPath]);
                 if ($profile) {
                     $profile->update(['image_id' => $profileImage->id]);
                 }

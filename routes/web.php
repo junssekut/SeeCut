@@ -38,7 +38,13 @@ Route::prefix('vendor')
             auth()->logout();
             return redirect()->route('vendor.login');
         })->name('logout');
-        // Route::post('/logout');
+        
+        Route::post('/logout', function () {
+            auth()->logout();
+            request()->session()->invalidate();
+            request()->session()->regenerateToken();
+            return redirect()->route('vendor.login');
+        })->name('logout.post');
     });
 
 Route::get('/subscription', SubscriptionPage::class);
