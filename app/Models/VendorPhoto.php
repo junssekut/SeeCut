@@ -12,7 +12,13 @@ class VendorPhoto extends Model
     public $timestamps = false;
     protected $guarded = [];
 
-    public function vendor() {
-        return $this->belongsTo(Vendor::class);
+    public function vendors() {
+        // Photos can be referenced as thumbnails by vendors
+        return $this->hasMany(Vendor::class, 'thumbnail_id');
+    }
+    
+    public function hairstylists() {
+        // Photos can be used by hairstylists
+        return $this->hasMany(VendorHairstylist::class, 'image_id');
     }
 }

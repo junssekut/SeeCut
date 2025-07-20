@@ -18,7 +18,7 @@ class VendorSeeder extends Seeder
      */
     public function run(): void
     {
-        $jsonPath = base_path('backend/barbershops_data_with_image_links.json');
+        $jsonPath = base_path('backend/barbershops_enhanced_descriptions.json');
         $vendorsData = json_decode(file_get_contents($jsonPath), true);
 
         foreach ($vendorsData as $vendorData) {
@@ -48,27 +48,45 @@ class VendorSeeder extends Seeder
                     'latitude' => $vendorData['latitude'],
                     'longitude' => $vendorData['longitude'],
                     'place_id' => $vendorData['place_id'],
+                    'description' => $vendorData['description'],
                     // thumbnail_id to be set later
                 ]);
                 $this->command->info('Created vendor: ' . $vendor->id);
 
                 // 2. Create VendorPhoto records
                 $photoIds = [];
-                $mainPhoto = VendorPhoto::create([
-                    'type' => 'link',
-                    'source' => $vendorData['main_thumbnail_url'],
-                    'category' => 'general'
-                ]);
-                $photoIds[] = $mainPhoto->id;
-                foreach ($vendorData['all_photos_urls'] as $photoUrl) {
-                    $photo = VendorPhoto::create([
+                $thumbnailPhoto = null;
+                
+                // Use the first photo from all_photos_urls as thumbnail (better quality than main_thumbnail_url)
+                if (!empty($vendorData['all_photos_urls'])) {
+                    $thumbnailPhoto = VendorPhoto::create([
                         'type' => 'link',
-                        'source' => $photoUrl,
+                        'source' => $vendorData['all_photos_urls'][0], // Use first photo as thumbnail
                         'category' => 'general'
                     ]);
-                    $photoIds[] = $photo->id;
+                    $photoIds[] = $thumbnailPhoto->id;
+                    
+                    // Create remaining photos (skip first one since we already used it as thumbnail)
+                    foreach (array_slice($vendorData['all_photos_urls'], 1) as $photoUrl) {
+                        $photo = VendorPhoto::create([
+                            'type' => 'link',
+                            'source' => $photoUrl,
+                            'category' => 'general'
+                        ]);
+                        $photoIds[] = $photo->id;
+                    }
+                } else {
+                    // Fallback: create a photo from main_thumbnail_url if all_photos_urls is empty
+                    $thumbnailPhoto = VendorPhoto::create([
+                        'type' => 'link',
+                        'source' => $vendorData['main_thumbnail_url'],
+                        'category' => 'general'
+                    ]);
+                    $photoIds[] = $thumbnailPhoto->id;
                 }
-                $vendor->thumbnail_id = $mainPhoto->id;
+                
+                // Set thumbnail_id to the first/best quality photo
+                $vendor->thumbnail_id = $thumbnailPhoto->id;
                 $vendor->save();
                 // $this->command->info('Created photos for vendor: ' . $vendor->id);
 

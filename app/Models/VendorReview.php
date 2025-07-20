@@ -17,6 +17,6 @@ class VendorReview extends Model
     }
 
     public function photos() {
-        return $this->hasMany(VendorReviewPhoto::class);
+        return $this->hasMany(VendorReviewPhoto::class, 'review_id');
     }
 }
