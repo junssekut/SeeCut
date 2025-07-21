@@ -27,7 +27,7 @@
     @livewireStyles
 </head>
 
-<body class="font-Poppins min-h-screen min-w-screen bg-cover bg-bottom bg-no-repeat bg-white">
+<body class="font-Poppins min-h-screen min-w-screen bg-cover bg-bottom bg-no-repeat bg-transparent">
     @if (!Request::is(''))
         @persist('topbar')
         <livewire:navigation.navbar-vendor />

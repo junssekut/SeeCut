@@ -29,7 +29,7 @@
     @livewireStyles
 </head>
 
-<body class="font-Poppins min-h-screen min-w-screen bg-cover bg-bottom bg-no-repeat bg-[#0C0C0C]">
+<body class="font-Poppins min-h-screen min-w-screen bg-cover bg-bottom bg-no-repeat bg-[#0A0A0A]">
     @if (!str_contains(Route::currentRouteName(), 'login'))
         @persist('navbar')
         <livewire:navigation.navbar />

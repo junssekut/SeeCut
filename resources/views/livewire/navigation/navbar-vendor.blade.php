@@ -1,4 +1,5 @@
-<div class="flex flex-col lg:flex-row justify-between items-center gap-4 px-8 md:px-16 lg:px-48 py-4 bg-Dark-Teal">
+<div
+    class="flex flex-col lg:flex-row justify-between items-center gap-4 px-8 md:px-16 lg:px-48 py-4 bg-Dark-Teal relative z-50">
     <div>
         <a href="{{ route('vendor.reservation') }}"><img class="w-24"
                 src="{{ asset(path: 'assets/images/logo-text.png') }}" alt="SeeCut"></a>
@@ -18,7 +19,7 @@
             <!-- Profile Image -->
             @php
                 $profileImage = null;
-                if (auth()->user()->profile && auth()->user()->profile->image_id) {
+                if (auth()->user() && auth()->user()->profile && auth()->user()->profile?->image_id) {
                     $profileImage = \App\Models\ProfileImage::find(auth()->user()->profile->image_id);
                 }
             @endphp
@@ -36,7 +37,7 @@
 
             <!-- Vendor Name -->
             <span class="hidden sm:block">
-                {{ auth()->user()->vendor->name ?? 'Vendor' }}
+                {{ auth()->user()?->vendor?->name ?? 'Guest' }}
             </span>
 
             <!-- Dropdown Arrow -->
@@ -61,7 +62,7 @@
                 <div class="flex items-center gap-4">
                     @php
                         $profileImage = null;
-                        if (auth()->user()->profile && auth()->user()->profile->image_id) {
+                        if (auth()->user() && auth()->user()->profile && auth()->user()->profile->image_id) {
                             $profileImage = \App\Models\ProfileImage::find(auth()->user()->profile->image_id);
                         }
                     @endphp
@@ -79,10 +80,10 @@
                     @endif
                     <div class="flex-1 min-w-0">
                         <h3 class="text-lg font-bold text-gray-900 truncate font-Kuunari">
-                            {{ auth()->user()->vendor->name ?? 'Vendor Name' }}
+                            {{ auth()->user()?->vendor?->name ?? 'Guest User' }}
                         </h3>
                         <p class="text-sm text-gray-500 truncate">
-                            {{ auth()->user()->email }}
+                            {{ auth()->user()?->email ?? 'Not logged in' }}
                         </p>
                     </div>
                 </div>

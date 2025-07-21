@@ -39,7 +39,7 @@ class VendorSeeder extends Seeder
 
                 // Create Vendor with user_id
                 $vendor = Vendor::create([
-                    'user_id' => $user->id,
+                    'user_id' => $user->getKey(),
                     'name' => $vendorData['name'],
                     'address' => $vendorData['address'],
                     'phone' => $vendorData['phone'],
@@ -49,44 +49,52 @@ class VendorSeeder extends Seeder
                     'longitude' => $vendorData['longitude'],
                     'place_id' => $vendorData['place_id'],
                     'description' => $vendorData['description'],
-                    // thumbnail_id to be set later
+                    // thumbnail_url to be set later
                 ]);
-                $this->command->info('Created vendor: ' . $vendor->id);
+                $vendor->refresh(); // Refresh to get the ID since timestamps are disabled
+                $this->command->info('Created vendor: ' . $vendor->getKey());
 
                 // 2. Create VendorPhoto records
                 $photoIds = [];
-                $thumbnailPhoto = null;
+                $thumbnailUrl = null;
                 
                 // Use the first photo from all_photos_urls as thumbnail (better quality than main_thumbnail_url)
                 if (!empty($vendorData['all_photos_urls'])) {
+                    $thumbnailUrl = $vendorData['all_photos_urls'][0]; // Use first photo URL as thumbnail
+                    
+                    // Create VendorPhoto record for thumbnail
                     $thumbnailPhoto = VendorPhoto::create([
+                        'vendor_id' => $vendor->getKey(),
                         'type' => 'link',
-                        'source' => $vendorData['all_photos_urls'][0], // Use first photo as thumbnail
+                        'source' => $thumbnailUrl,
                         'category' => 'general'
                     ]);
-                    $photoIds[] = $thumbnailPhoto->id;
+                    $photoIds[] = $thumbnailPhoto->getKey();
                     
                     // Create remaining photos (skip first one since we already used it as thumbnail)
                     foreach (array_slice($vendorData['all_photos_urls'], 1) as $photoUrl) {
                         $photo = VendorPhoto::create([
+                            'vendor_id' => $vendor->getKey(),
                             'type' => 'link',
                             'source' => $photoUrl,
                             'category' => 'general'
                         ]);
-                        $photoIds[] = $photo->id;
+                        $photoIds[] = $photo->getKey();
                     }
                 } else {
-                    // Fallback: create a photo from main_thumbnail_url if all_photos_urls is empty
+                    // Fallback: use main_thumbnail_url if all_photos_urls is empty
+                    $thumbnailUrl = $vendorData['main_thumbnail_url'];
                     $thumbnailPhoto = VendorPhoto::create([
+                        'vendor_id' => $vendor->getKey(),
                         'type' => 'link',
-                        'source' => $vendorData['main_thumbnail_url'],
+                        'source' => $thumbnailUrl,
                         'category' => 'general'
                     ]);
-                    $photoIds[] = $thumbnailPhoto->id;
+                    $photoIds[] = $thumbnailPhoto->getKey();
                 }
                 
-                // Set thumbnail_id to the first/best quality photo
-                $vendor->thumbnail_id = $thumbnailPhoto->id;
+                // Set thumbnail_url to the first/best quality photo URL
+                $vendor->thumbnail_url = $thumbnailUrl;
                 $vendor->save();
                 // $this->command->info('Created photos for vendor: ' . $vendor->id);
 
@@ -109,7 +117,7 @@ class VendorSeeder extends Seeder
                                 $close = null;
                             }
                             VendorOpenHour::create([
-                                'vendor_id' => $vendor->id,
+                                'vendor_id' => $vendor->getKey(),
                                 'day' => $day,
                                 'open_time' => $open,
                                 'close_time' => $close,
@@ -121,7 +129,7 @@ class VendorSeeder extends Seeder
                     $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
                     foreach ($days as $day) {
                         VendorOpenHour::create([
-                            'vendor_id' => $vendor->id,
+                            'vendor_id' => $vendor->getKey(),
                             'day' => $day,
                             'open_time' => '08:00:00',
                             'close_time' => '22:00:00',
@@ -133,7 +141,7 @@ class VendorSeeder extends Seeder
                 // 4. Create VendorReview and VendorReviewPhoto records
                 foreach ($vendorData['reviews_data'] as $reviewData) {
                     $review = VendorReview::create([
-                        'vendor_id' => $vendor->id,
+                        'vendor_id' => $vendor->getKey(),
                         'user_name' => $reviewData['user_name'],
                         'contributor_id' => $reviewData['contributor_id'],
                         'rating' => $reviewData['rating'],
@@ -143,7 +151,7 @@ class VendorSeeder extends Seeder
                     ]);
                     foreach ($reviewData['review_images_urls'] as $reviewPhotoUrl) {
                         VendorReviewPhoto::create([
-                            'review_id' => $review->id,
+                            'review_id' => $review->getKey(),
                             'type' => 'link',
                             'source' => $reviewPhotoUrl,
                         ]);
@@ -152,7 +160,7 @@ class VendorSeeder extends Seeder
                 // $this->command->info('Created reviews for vendor: ' . $vendor->id);
 
                 DB::commit();
-                $this->command->info('Committed vendor: ' . $vendor->id);
+                $this->command->info('Committed vendor: ' . $vendor->getKey());
             } catch (\Exception $e) {
                 DB::rollBack();
                 $this->command->error('Rolled back vendor: ' . ($vendorData['name'] ?? 'unknown') . ' - ' . $e->getMessage());

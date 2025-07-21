@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $thumbnail_url
+ * @property int $reviews_count
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\VendorPhoto[] $photos
+ */
 class Vendor extends Model
 {
     /** @use HasFactory<\Database\Factories\VendorFactory> */
@@ -13,7 +19,11 @@ class Vendor extends Model
     protected $table = 'vendors';
     protected $primaryKey = 'id';
     public $timestamps = false;
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id', 'name', 'address', 'description', 'phone', 
+        'rating', 'reviews_count', 'thumbnail_url', 'latitude', 
+        'longitude', 'place_id'
+    ];
 
     protected $casts = [
         'rating' => 'float',
@@ -30,10 +40,10 @@ class Vendor extends Model
         $photos = collect();
         
         // Add thumbnail if exists
-        if ($this->thumbnail) {
-            $photos->push([
-                'id' => $this->thumbnail->id,
-                'url' => $this->thumbnail->source, // Direct external URL
+        if ($this->thumbnail_url) {
+            $photos->push((object) [
+                'id' => 'thumbnail',
+                'url' => $this->thumbnail_url, // Direct external URL
                 'type' => 'thumbnail'
             ]);
         }
@@ -51,11 +61,18 @@ class Vendor extends Model
             });
         }
         
+        // Add vendor photos from photos relationship
+        if ($this->relationLoaded('photos')) {
+            $this->getRelation('photos')->each(function($photo) use ($photos) {
+                $photos->push([
+                    'id' => $photo->id,
+                    'url' => $photo->source,
+                    'type' => 'gallery'
+                ]);
+            });
+        }
+        
         return $photos->unique('id');
-    }
-
-    public function thumbnail() {
-        return $this->belongsTo(VendorPhoto::class, 'thumbnail_id');
     }
 
     public function openHours() {
@@ -74,6 +91,14 @@ class Vendor extends Model
         return $this->hasMany(VendorHairstylist::class);
     }
 
+    public function photos() {
+        return $this->hasMany(VendorPhoto::class);
+    }
+
+    public function vendorSubscriptions() {
+        return $this->hasMany(VendorSubscription::class);
+    }
+
     // Computed Properties
     public function getFormattedRatingAttribute()
     {
@@ -90,9 +115,9 @@ class Vendor extends Model
 
     public function getMainImageAttribute()
     {
-        if ($this->thumbnail) {
+        if ($this->thumbnail_url) {
             // Since all images are now stored as external URLs, return the source directly
-            return $this->thumbnail->source;
+            return $this->thumbnail_url;
         }
         // Try to get first hairstylist photo as fallback
         $firstHairstylist = $this->hairstylists()->with('vendorPhoto')->first();
@@ -106,7 +131,7 @@ class Vendor extends Model
     public function scopeWithFullDetails($query)
     {
         return $query->with([
-            'thumbnail',
+            'photos',
             'openHours',
             'reviews' => function($query) {
                 $query->orderBy('rating', 'desc')->orderBy('id', 'desc');
@@ -128,6 +153,22 @@ class Vendor extends Model
     }
 
     // Helper methods
+    public function hasActiveSubscription()
+    {
+        return $this->vendorSubscriptions()
+            ->where('end_date', '>=', now())
+            ->exists();
+    }
+
+    public function getActiveSubscription()
+    {
+        return $this->vendorSubscriptions()
+            ->with('subscription')
+            ->where('end_date', '>=', now())
+            ->latest('end_date')
+            ->first();
+    }
+
     public function getOperatingHours($day)
     {
         $openHour = $this->openHours->firstWhere('day', $day);
