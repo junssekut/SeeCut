@@ -4,7 +4,7 @@
     <div class="relative">
         <!-- Tombol Panah -->
         <div class="pl-9 pt-9 pb-6">
-            <a href="#">
+            <a href="{{ route('barbershop.index') }}">
                 <button
                     class="circle-button w-12 h-12 rounded-full bg-[#E9BF80] text-3xl flex justify-center items-center">
                     <img src="{{ asset('assets/images/panah.svg') }}" alt="panah" class="w-6 h-6">
@@ -246,7 +246,7 @@ while (count($galleryImages) < 4) {
                                 <h3 class="text-white text-sm font-Poppins font-semibold mb-1">
                                     {{ strtoupper($service->service_name) }}</h3>
                                 <div class="text-[#B5964D] text-6xl font-Kuunari font-bold mb-3">
-                                    {{ number_format($service->price, 0, ',', '.') }}K</div>
+                                    RP{{ number_format($service->price, 0, ',', '.') }}</div>
                                 <ul class="text-white text-sm mb-4 space-y-4">
                                     <li>{{ $service->service_name }}</li>
                                     @if ($service->service_name != 'Kids Haircut')
