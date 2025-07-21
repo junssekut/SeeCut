@@ -4,6 +4,7 @@ use App\Livewire\Pages\Style\AiRecommendation;
 use App\Livewire\Pages\Subscription\SubscriptionPage;
 use App\Livewire\Extend;
 use App\Livewire\ProductDetail;
+use App\Livewire\BarbershopListing;
 use App\Livewire\VendorProfile;
 use App\Livewire\VendorReservation;
 use Illuminate\Support\Facades\Route;
@@ -55,9 +56,20 @@ Route::get('/product-detail', function () {
     return view('product-detail-sisil');
 })->name('product.detail');
 Route::view('/test', 'test');
-Route::get('/barbershop/{id?}', ProductDetail::class)->name('barbershop.view');
+
+// Barbershop routes
+Route::get('/barbershop', BarbershopListing::class)->name('barbershop.index');
+Route::get('/barbershop/{id}', ProductDetail::class)->name('barbershop.view');
 
 //Route::get('/information', Information::class);
 Route::get('/profile', UserProfile::class)->name('profile');
+
+// User logout route
+Route::post('/logout', function () {
+    auth()->logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect()->route('home');
+})->name('logout');
 
 require __DIR__.'/auth.php';

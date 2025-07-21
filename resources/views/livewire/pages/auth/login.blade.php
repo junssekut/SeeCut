@@ -3,6 +3,8 @@
 use App\Models\User;
 use App\Livewire\Forms\LoginForm;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rules;
@@ -77,7 +79,9 @@ $register = function () {
 };
 ?>
 
-@vite(['resources/js/pages/login.js'])
+@push('styles')
+    @vite(['resources/js/pages/login.js'])
+@endpush
 
 <div>
     <div class="flex justify-center items-center h-screen bg-black">
@@ -88,7 +92,7 @@ $register = function () {
             <div class="forms-container relative w-[50%] text-center">
                 <div
                     class="form-control signin-form absolute w-[100%] flex justify-center flex-col h-[600px] transition duration-300 ease-in opacity-1 z-2 left-[0%]">
-                    <form wire:submit="login" class="flex flex-col mx-[50px]" x-data="{ username: @entangle('form.username').defer, password: @entangle('form.password').defer }">
+                    <form wire:submit="login" class="flex flex-col mx-[50px]" x-data="{ username: @entangle('email').defer, password: @entangle('password').defer }">
                         {{-- INTRODUCTION --}}
                         <div class="text-[#6B592E] text-5xl font-Kuunari font-bold text-center sm:text-start">
                             <h1>MASUK</h1>
@@ -98,9 +102,9 @@ $register = function () {
                             <p>Yuk mulai gaya barumu di sini!</p>
                         </div>
 
-                        {{-- USERNAME INPUT FIELD --}}
+                        {{-- EMAIL INPUT FIELD --}}
                         <div x-data="{ isFocused: false }" x-init="$nextTick(() => {
-                            if ($el.querySelector('#username') === document.activeElement) {
+                            if ($el.querySelector('#email-login') === document.activeElement) {
                                 isFocused = true;
                             }
                         })"
@@ -111,19 +115,19 @@ $register = function () {
                             class="mb-4 text-[#6B592E] flex flex-row py-4 border-none rounded-md items-center cursor-text
                shadow-sm has-[:focus]:shadow-md transition-all duration-200">
                             {{-- Label: Clicking this will focus the input, but cursor remains text --}}
-                            <label for="username"
+                            <label for="email-login"
                                 class="flex flex-1 flex-wrap border-none items-center w-full h-full cursor-text">
                                 <div class="w-4 h-4 mx-4 text-center">
                                     {{-- User Icon Component --}}
                                     <x-svg.user-icon />
                                 </div>
 
-                                <input wire:model="form.username" id="username"
+                                <input wire:model="email" id="email-login"
                                     class="peer flex-1 p-0 border-none bg-transparent placeholder-[#6B592E] font-Poppins text-sm focus:outline-none focus:ring-0"
-                                    type="username" name="username" required autofocus autocomplete="username"
-                                    placeholder="Username" x-model="username" @focus="isFocused = true"
+                                    type="email" name="email" required autofocus autocomplete="email"
+                                    placeholder="Email" x-model="username" @focus="isFocused = true"
                                     @blur="isFocused = false" />
-                                <x-input-error :messages="$errors->get('form.username')" class="mt-2" />
+                                <x-input-error :messages="$errors->get('email')" class="mt-2" />
                             </label>
                         </div>
 
@@ -142,13 +146,13 @@ $register = function () {
                                     <x-svg.lock-icon />
                                 </div>
 
-                                <input wire:model="form.password" id="passwordlogin"
+                                <input wire:model="password" id="passwordlogin"
                                     class="peer flex-1 p-0 border-none bg-transparent placeholder-[#6B592E] font-Poppins text-sm focus:outline-none focus:ring-0"
                                     type="password" name="password" required autocomplete="current-password"
                                     placeholder="Password" x-model="password" @focus="isFocused = true"
                                     @blur="isFocused = false" />
 
-                                <x-input-error :messages="$errors->get('form.password')" class="mt-2" />
+                                <x-input-error :messages="$errors->get('password')" class="mt-2" />
                             </label>
                             <div id="passwordToggle" class="w-4 h-4 mx-4 cursor-pointer">
                                 <x-svg.eye-icon />
@@ -157,7 +161,7 @@ $register = function () {
 
                         {{-- LOGIN BUTTON --}}
                         <div class="flex justify-center">
-                            <button type="submit" :disabled="!username || !password" {{-- Button is disabled if either username OR password is empty --}}
+                            <button type="submit" :disabled="!username || !password" {{-- Button is disabled if either email OR password is empty --}}
                                 class="mt-5 bg-[#6B592E] text-[#FFEDB7] w-full text-sm py-4 rounded-md font-bold
                    transition duration-300 ease-in-out shadow-lg font-Poppins
                    hover:text-white hover:bg-[#B5964D] focus:outline-2
