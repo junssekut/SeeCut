@@ -5,11 +5,11 @@
                 alt="SeeCut"></a>
     </div>
     <div class="flex flex-col sm:flex-row gap-7 justify-center items-center">
-        <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out {{ request()->routeIs('home') ? 'text-Ecru' : '' }}"
+        <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out focus:outline-none {{ request()->routeIs('home') ? 'text-Ecru' : '' }}"
             href="{{ route('home') }}">BERANDA</a>
-        <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out {{ request()->routeIs('barbershop.*') ? 'text-Ecru' : '' }}"
+        <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out focus:outline-none {{ request()->routeIs('barbershop.*') ? 'text-Ecru' : '' }}"
             href="{{ route('barbershop.index') }}">CARI BARBERSHOP</a>
-        <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out {{ request()->routeIs('style.*') ? 'text-Ecru' : '' }}"
+        <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out focus:outline-none {{ request()->routeIs('style.*') ? 'text-Ecru' : '' }}"
             href="{{ route('style.recommendation') }}">REKOMENDASI GAYA</a>
     </div>
     <div class="flex items-center">
@@ -51,7 +51,7 @@
                 </button>
 
                 <!-- Dropdown Menu -->
-                <div x-show="open" x-transition:enter="transition ease-out duration-200"
+                <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
                     x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
                     x-transition:enter-end="opacity-100 scale-100 translate-y-0"
                     x-transition:leave="transition ease-in duration-150"
@@ -75,7 +75,8 @@
                             @else
                                 <div
                                     class="w-12 h-12 rounded-full bg-gradient-to-br from-Eerie-Black to-Satin-Sheen-Yellow flex items-center justify-center shadow-sm">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                     </svg>
@@ -125,7 +126,7 @@
         @else
             {{-- User is not logged in --}}
             <div class="flex items-center">
-                <a class="font-Kuunari ring-1 ring-Seasalt text-Seasalt px-4 py-2 text-md hover:ring-Satin-Sheen-Yellow hover:bg-Satin-Sheen-Yellow hover:text-black transition-all duration-300 ease-in-out rounded"
+                <a class="font-Kuunari ring-1 ring-Seasalt text-Seasalt px-4 py-2 text-md hover:ring-Satin-Sheen-Yellow hover:bg-Satin-Sheen-Yellow hover:text-black transition-all duration-300 ease-in-out rounded focus:outline-none"
                     href="{{ route('login') }}">MASUK SEKARANG</a>
             </div>
         @endauth

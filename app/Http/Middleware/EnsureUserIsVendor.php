@@ -16,10 +16,19 @@ class EnsureUserIsVendor
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->profile?->role === 'vendor') {
+        // If user is not logged in at all, redirect to vendor login
+        if (!Auth::check()) {
+            return redirect()->guest(route('vendor.login'));
+        }
+        
+        // If user is logged in and is a vendor, allow access
+        if (Auth::user()->profile?->role === 'vendor') {
             return $next($request);
         }
-
-        return redirect()->guest(route('vendor.login'));
+        
+        // If user is logged in but NOT a vendor, show access denied page
+        return response()->view('errors.vendor-access-denied', [
+            'previousUrl' => url()->previous()
+        ], 403);
     }
 }

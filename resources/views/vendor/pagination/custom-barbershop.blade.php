@@ -12,8 +12,8 @@
                 </span>
             </span>
         @else
-            <a class="page-item group mx-1 relative" href="{{ $paginator->previousPageUrl() }}" rel="prev"
-                aria-label="@lang('pagination.previous')">
+            <a class="page-item group mx-1 relative focus:outline-none" href="{{ $paginator->previousPageUrl() }}"
+                rel="prev" aria-label="@lang('pagination.previous')">
                 <span
                     class="page-link relative overflow-hidden text-gray-300 hover:text-white px-5 py-3 rounded-2xl border border-gray-600/40 hover:border-Ecru/80 transition-all duration-500 backdrop-blur-sm bg-gray-800/30 hover:bg-gray-700/40 shadow-lg hover:shadow-Ecru/20 hover:shadow-xl transform group-hover:scale-105 block">
 
@@ -89,7 +89,7 @@
                             </span>
                         </span>
                     @else
-                        <a class="page-item group mx-1 transform transition-all duration-300 hover:scale-110"
+                        <a class="page-item group mx-1 transform transition-all duration-300 hover:scale-110 focus:outline-none"
                             href="{{ $url }}">
                             <span
                                 class="page-link relative overflow-hidden transition-all duration-500 px-4 py-3 min-w-[3rem] rounded-2xl border border-gray-600/40 hover:border-Ecru/80 backdrop-blur-sm bg-gray-800/30 hover:bg-gray-700/40 shadow-md hover:shadow-Ecru/20 hover:shadow-xl flex items-center justify-center">
@@ -131,8 +131,8 @@
 
         {{-- Next Page Link --}}
         @if ($paginator->hasMorePages())
-            <a class="page-item group mx-1 relative" href="{{ $paginator->nextPageUrl() }}" rel="next"
-                aria-label="@lang('pagination.next')">
+            <a class="page-item group mx-1 relative focus:outline-none" href="{{ $paginator->nextPageUrl() }}"
+                rel="next" aria-label="@lang('pagination.next')">
                 <span
                     class="page-link relative overflow-hidden text-gray-300 hover:text-white px-5 py-3 rounded-2xl border border-gray-600/40 hover:border-Ecru/80 transition-all duration-500 backdrop-blur-sm bg-gray-800/30 hover:bg-gray-700/40 shadow-lg hover:shadow-Ecru/20 hover:shadow-xl transform group-hover:scale-105 block">
 

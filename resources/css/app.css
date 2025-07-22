@@ -5,6 +5,11 @@
 
 @plugin 'daisyui';
 
+/* Alpine.js cloak directive to prevent flickering */
+[x-cloak] { 
+    display: none !important; 
+}
+
 @font-face {
     font-family: 'Kuunari';
     font-style: bold;
