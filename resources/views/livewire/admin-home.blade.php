@@ -333,7 +333,18 @@
                             <div class="flex items-center space-x-2">
                                 <div class="w-3 h-3 bg-green-500 rounded-full"></div>
                                 <span class="text-sm text-gray-600 font-medium">Pertumbuhan:
-                                    +{{ number_format(count($chartData['revenues']) > 1 ? (end($chartData['revenues']) / reset($chartData['revenues'])) * 100 - 100 : 0, 1) }}%</span>
+                                    @php
+                                        $revenues = $chartData['revenues'] ?? [];
+                                        $growth = 0;
+                                        if (count($revenues) > 1) {
+                                            $firstRevenue = reset($revenues);
+                                            $lastRevenue = end($revenues);
+                                            if ($firstRevenue > 0) {
+                                                $growth = (($lastRevenue / $firstRevenue) * 100) - 100;
+                                            }
+                                        }
+                                    @endphp
+                                    +{{ number_format($growth, 1) }}%</span>
                             </div>
                         </div>
                         <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6" style="height: 400px;">
@@ -886,10 +897,10 @@
                                 ctx.textAlign = 'center';
                                 ctx.textBaseline = 'middle';
                                 const total = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-                                ctx.fillText(`${total}`, width / 2, height / 2 - 10);
+                                
                                 ctx.font = '12px Arial';
                                 ctx.fillStyle = '#6b7280';
-                                ctx.fillText('Total Pengguna', width / 2, height / 2 + 10);
+                            
                                 ctx.restore();
                             }
                         }
