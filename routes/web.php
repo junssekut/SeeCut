@@ -1,5 +1,7 @@
 <?php
 
+use App\Livewire\Berlangganan;
+use App\Livewire\AdminHome;
 use App\Livewire\Pages\Style\AiRecommendation;
 use App\Livewire\Pages\Subscription\SubscriptionPage;
 use App\Livewire\Extend;
@@ -9,9 +11,11 @@ use App\Livewire\Home;
 use App\Livewire\Pages\Style\StylingDetail;
 use App\Livewire\Information;
 
+Route::get('/berlangganan', Berlangganan::class)->name('berlangganan');
+
 Route::get('/', Home::class)->name('home');
 
-Route::view('dashboard', 'dashboard')
+Route::get('/dashboard', AdminHome::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
@@ -40,7 +44,9 @@ Route::get('/subscription', SubscriptionPage::class);
 Route::get('/product-detail', function () {
     return view('product-detail');
 })->name('product.detail');
-Route::view('/test', 'test');
+
+Route::get('/dashboard', AdminHome::class)->name('dashboard');
+
 
 Route::get('/information', Information::class);
 

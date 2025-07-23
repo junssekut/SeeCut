@@ -34,4 +34,12 @@ class Vendor extends Model
     public function services() {
         return $this->hasMany(VendorService::class);
     }
+
+    public function subscription() {
+        return $this->hasOne(VendorSubscription::class)->latest();
+    }
+
+    public function subscriptions() {
+        return $this->hasMany(VendorSubscription::class);
+    }
 }
