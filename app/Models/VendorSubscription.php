@@ -7,40 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class VendorSubscription extends Model
 {
-    use HasFactory;
-
+    protected $table = 'vendor_subscriptions';
+    protected $primaryKey = 'id';
+    public $timestamps = false;
+    
     protected $fillable = [
         'vendor_id',
-        'plan',
-        'price',
+        'subscription_id', 
         'start_date',
-        'end_date',
-        'status'
+        'end_date'
     ];
-
-    protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
-        'price' => 'decimal:2'
-    ];
-
-    public function vendor()
-    {
+    
+    public function vendor() {
         return $this->belongsTo(Vendor::class);
     }
 
-    public function scopeActive($query)
-    {
-        return $query->where('status', 'active');
-    }
-
-    public function isActive()
-    {
-        return $this->status === 'active' && $this->end_date >= now();
-    }
-
-    public function isExpired()
-    {
-        return $this->end_date < now();
+    public function subscription() {
+        return $this->belongsTo(Subscription::class);
     }
 }

@@ -1,0 +1,207 @@
+/* Custom Animations for Product Detail Page */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes bounceSubtle {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-2px);
+    }
+}
+
+@keyframes cardsUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes numberBounce {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes reviewsFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Animation Classes */
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
+.animate-fade-in-delay {
+    animation: fadeIn 1s ease-out 0.3s backwards;
+}
+
+.animate-slide-in-left {
+    animation: slideInLeft 0.8s ease-out forwards;
+}
+
+.animate-slide-in-up {
+    animation: slideInUp 0.8s ease-out forwards;
+}
+
+.animate-zoom-in {
+    animation: zoomIn 0.8s ease-out forwards;
+}
+
+.animate-bounce-subtle {
+    animation: bounceSubtle 2s ease-in-out infinite;
+}
+
+.animate-cards-up {
+    animation: cardsUp 0.8s ease-out forwards;
+}
+
+.animate-number-bounce {
+    animation: numberBounce 2s ease-in-out infinite;
+}
+
+.animate-reviews-fade-in {
+    animation: reviewsFadeIn 0.8s ease-out forwards;
+}
+
+/* Smooth scrolling for the entire page */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Loading state optimization */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Improved focus states */
+button:focus,
+a:focus {
+    outline: 2px solid #E9BF80;
+    outline-offset: 2px;
+}
+
+/* Enhanced hover transitions */
+.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom backdrop blur for better visual hierarchy */
+.backdrop-blur-subtle {
+    backdrop-filter: blur(2px);
+}
+
+/* Staggered animation delays for child elements */
+.animate-cards-up > * {
+    animation: cardsUp 0.8s ease-out forwards;
+}
+
+.animate-cards-up > *:nth-child(1) { animation-delay: 0.1s; }
+.animate-cards-up > *:nth-child(2) { animation-delay: 0.2s; }
+.animate-cards-up > *:nth-child(3) { animation-delay: 0.3s; }
+.animate-cards-up > *:nth-child(4) { animation-delay: 0.4s; }
+
+.animate-reviews-fade-in > * {
+    animation: reviewsFadeIn 0.8s ease-out forwards;
+}
+
+.animate-reviews-fade-in > *:nth-child(1) { animation-delay: 0.1s; }
+.animate-reviews-fade-in > *:nth-child(2) { animation-delay: 0.2s; }
+.animate-reviews-fade-in > *:nth-child(3) { animation-delay: 0.3s; }
+.animate-reviews-fade-in > *:nth-child(4) { animation-delay: 0.4s; }
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .animate-bounce-subtle,
+    .animate-number-bounce {
+        animation: none;
+    }
+}
+
+/* Performance optimizations */
+.animate-fade-in,
+.animate-slide-in-left,
+.animate-slide-in-up,
+.animate-zoom-in,
+.animate-cards-up,
+.animate-reviews-fade-in {
+    will-change: transform, opacity;
+}
+
+/* Ensure animations don't repeat on scroll */
+.animate-fade-in,
+.animate-slide-in-left,
+.animate-slide-in-up,
+.animate-zoom-in,
+.animate-cards-up,
+.animate-reviews-fade-in {
+    animation-fill-mode: forwards;
+}

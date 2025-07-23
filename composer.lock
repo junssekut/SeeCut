@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "538e562ec0d050f53b5b7ceec8b317c5",
+    "content-hash": "198e4858f64423ecd4144fefcb1cde4d",
     "packages": [
         {
             "name": "brick/math",
@@ -2799,17 +2799,17 @@
             "time": "2025-02-21T20:05:00+00:00"
         },
         {
-            "name": "php-flasher/flasher-toastr",
+            "name": "php-flasher/flasher-notyf",
             "version": "v2.1.6",
             "source": {
                 "type": "git",
-                "url": "https://github.com/php-flasher/flasher-toastr.git",
-                "reference": "e9772b7d4e7a2780e41caf0e2f142e3c1670358f"
+                "url": "https://github.com/php-flasher/flasher-notyf.git",
+                "reference": "16790007fec9a641b4d82ae8493843b85660b56a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-flasher/flasher-toastr/zipball/e9772b7d4e7a2780e41caf0e2f142e3c1670358f",
-                "reference": "e9772b7d4e7a2780e41caf0e2f142e3c1670358f",
+                "url": "https://api.github.com/repos/php-flasher/flasher-notyf/zipball/16790007fec9a641b4d82ae8493843b85660b56a",
+                "reference": "16790007fec9a641b4d82ae8493843b85660b56a",
                 "shasum": ""
             },
             "require": {
@@ -2823,7 +2823,7 @@
                     "helpers.php"
                 ],
                 "psr-4": {
-                    "Flasher\\Toastr\\Prime\\": ""
+                    "Flasher\\Notyf\\Prime\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2838,7 +2838,7 @@
                     "role": "Developer"
                 }
             ],
-            "description": "PHPFlasher Toastr - An extension for PHPFlasher to integrate Toastr notifications seamlessly in Laravel or Symfony. Enhances UX with elegant, responsive toast messages.",
+            "description": "PHPFlasher - A powerful & easy-to-use package for adding flash messages to Laravel or Symfony projects. Provides feedback to users, improves engagement & enhances user experience. Intuitive design for beginners & experienced developers. A reliable, flexible solution.",
             "homepage": "https://php-flasher.io",
             "keywords": [
                 "customizable-alerts-php",
@@ -2870,38 +2870,38 @@
             "time": "2025-02-21T20:05:00+00:00"
         },
         {
-            "name": "php-flasher/flasher-toastr-laravel",
+            "name": "php-flasher/flasher-notyf-laravel",
             "version": "v2.1.6",
             "source": {
                 "type": "git",
-                "url": "https://github.com/php-flasher/flasher-toastr-laravel.git",
-                "reference": "db6c6d98405643236c47735b5352ee41f4e4691e"
+                "url": "https://github.com/php-flasher/flasher-notyf-laravel.git",
+                "reference": "751a94e92f04d733ee79aaeccd2469bdfabf6381"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-flasher/flasher-toastr-laravel/zipball/db6c6d98405643236c47735b5352ee41f4e4691e",
-                "reference": "db6c6d98405643236c47735b5352ee41f4e4691e",
+                "url": "https://api.github.com/repos/php-flasher/flasher-notyf-laravel/zipball/751a94e92f04d733ee79aaeccd2469bdfabf6381",
+                "reference": "751a94e92f04d733ee79aaeccd2469bdfabf6381",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.2",
                 "php-flasher/flasher-laravel": "^2.1.6",
-                "php-flasher/flasher-toastr": "^2.1.6"
+                "php-flasher/flasher-notyf": "^2.1.6"
             },
             "type": "library",
             "extra": {
                 "laravel": {
                     "aliases": {
-                        "Toastr": "Flasher\\Toastr\\Laravel\\Facade\\Toastr"
+                        "Notyf": "Flasher\\Notyf\\Laravel\\Facade\\Notyf"
                     },
                     "providers": [
-                        "Flasher\\Toastr\\Laravel\\FlasherToastrServiceProvider"
+                        "Flasher\\Notyf\\Laravel\\FlasherNotyfServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Flasher\\Toastr\\Laravel\\": ""
+                    "Flasher\\Notyf\\Laravel\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2916,15 +2916,15 @@
                     "role": "Developer"
                 }
             ],
-            "description": "Leverage Toastr for stylish toast notifications in Laravel with PHPFlasher. Add Toastr's sleek notifications to your Laravel projects effortlessly.",
+            "description": "Integrate Notyf's minimalist flash notifications with Laravel via PHPFlasher. Enhance your Laravel apps with sleek, concise user notifications.",
             "homepage": "https://php-flasher.io",
             "keywords": [
-                "dynamic-notifications",
                 "flash-notifications",
                 "laravel",
+                "minimalist-notifications",
+                "notyf",
                 "open-source",
                 "phpflasher",
-                "toastr",
                 "user-feedback"
             ],
             "support": {

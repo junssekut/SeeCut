@@ -16,16 +16,16 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('name');
             $table->text('address')->nullable()->default('');
+            $table->text('description')->nullable()->default('');
             $table->string('phone')->nullable();
             $table->float('rating')->nullable()->default(0.0);
             $table->integer("reviews_count")->nullable()->default(0);
-            $table->unsignedBigInteger('thumbnail_id')->nullable(); # foreign to VendorPhoto, just get the fucking thumbnail from VendorPhoto model
+            $table->string('thumbnail_url')->nullable()->default('');
             $table->float('latitude');
             $table->float('longitude');
             $table->string('place_id');
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('thumbnail_id')->references('id')->on('vendor_photos')->onDelete('cascade');
         });
     }
 

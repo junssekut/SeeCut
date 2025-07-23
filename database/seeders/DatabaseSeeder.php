@@ -16,15 +16,19 @@ class DatabaseSeeder extends Seeder
         $user = User::factory()->create([
             'username' => 'arjunaandio',
             'email' => 'arzunadio@gmail.com',
-            'password' => bcrypt('anjing123'),
+            'password' => bcrypt('password'),
         ]);
+
         $user->profile()->updateOrCreate([], [
-            'role' => 2,
+            'role' => 1,
         ]);
 
         $this->call([
             VendorSeeder::class,
             ReservationSeeder::class,
+            SubscriptionSeeder::class,
+            VendorSubscriptionSeeder::class,
+            VendorServiceSeeder::class,
         ]);
     }
 }

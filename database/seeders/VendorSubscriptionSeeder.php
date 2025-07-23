@@ -2,45 +2,57 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Vendor;
 use App\Models\VendorSubscription;
+use App\Models\Subscription;
+use App\Models\Vendor;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 
 class VendorSubscriptionSeeder extends Seeder
 {
-    public function run()
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
     {
-        // Get all vendors
-        $vendors = Vendor::with('user')->get();
-        
-        if ($vendors->isEmpty()) {
-            $this->command->error('No vendors found! Please run VendorSeeder first.');
-            return;
-        }
+        // Example: assign each vendor a random subscription
+        $vendors = Vendor::all();
+        $subscriptions = Subscription::all();
 
-        $plans = ['BRONZE', 'SILVER', 'GOLD', 'PLATINUM'];
-        $prices = [
-            'BRONZE' => 100000,
-            'SILVER' => 200000,
-            'GOLD' => 300000,
-            'PLATINUM' => 500000,
-        ];
-
-        // Create subscriptions for all vendors
         foreach ($vendors as $vendor) {
-            // Random plan
-            $plan = $plans[array_rand($plans)];
-            
-            VendorSubscription::create([
-                'vendor_id' => $vendor->id,
-                'plan' => $plan,
-                'price' => $prices[$plan],
-                'start_date' => now()->subDays(rand(30, 365)),
-                'end_date' => now()->addDays(rand(30, 365)),
-                'status' => 'active'
-            ]);
+            // Special rules for specific vendor IDs
+            if ($vendor->id == 1) {
+                // ID 1 = always subscribed
+                $subscription = $subscriptions->random();
+                VendorSubscription::updateOrCreate(
+                    [
+                        'vendor_id' => $vendor->id,
+                    ],
+                    [
+                        'subscription_id' => $subscription->id,
+                        'start_date' => now(),
+                        'end_date' => now()->addDays($subscription->duration_days),
+                    ]
+                );
+            } elseif ($vendor->id == 2) {
+                // ID 2 = not subscribed (skip)
+                continue;
+            } else {
+                // Others = 30% chance of subscription
+                if (mt_rand(1, 100) > 30) continue;
+                
+                $subscription = $subscriptions->random();
+                VendorSubscription::updateOrCreate(
+                    [
+                        'vendor_id' => $vendor->id,
+                    ],
+                    [
+                        'subscription_id' => $subscription->id,
+                        'start_date' => now(),
+                        'end_date' => now()->addDays($subscription->duration_days),
+                    ]
+                );
+            }
         }
-
-        $this->command->info('Created subscriptions for ' . $vendors->count() . ' vendors.');
     }
 }

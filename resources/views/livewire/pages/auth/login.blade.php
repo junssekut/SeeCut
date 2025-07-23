@@ -3,6 +3,8 @@
 use App\Models\User;
 use App\Livewire\Forms\LoginForm;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rules;
@@ -18,32 +20,48 @@ layout('layouts.app');
 // form(LoginForm::class);
 
 state([
-    'username' => '',
-    'email' => '',
+    'login_field' => '',
     'password' => '',
     'password_confirmation' => '',
     'role_id' => 1,
 ]);
 
 $login = function () {
-    $data = [
-        'email' => $this->email,
-        'password' => $this->password,
-    ];
+    // Validate login field and password
+    $this->validate(
+        [
+            'login_field' => 'required|string',
+            'password' => 'required|string',
+        ],
+        [
+            'login_field.required' => 'Email atau Username wajib diisi.',
+            'password.required' => 'Password wajib diisi.',
+        ],
+    );
 
-    $rules = [
-        'email' => ['required', 'string', 'email'],
-        'password' => ['required', 'string'],
-    ];
+    // Find user by email or username
+    $user = User::where('email', $this->login_field)->orWhere('username', $this->login_field)->first();
 
-    Validator::make($data, $rules)->validate();
-
-    if (!Auth::attempt($data, remember: true)) {
+    if (!$user) {
         throw ValidationException::withMessages([
-            'email' => __('auth.failed'),
+            'login_field' => 'Email atau Username tidak ditemukan.',
         ]);
     }
 
+    if (!Hash::check($this->password, $user->password)) {
+        throw ValidationException::withMessages([
+            'password' => 'Password salah.',
+        ]);
+    }
+
+    // Check if user is a vendor trying to login as customer
+    if ($user->profile && $user->profile->role === 'vendor') {
+        throw ValidationException::withMessages([
+            'role_error' => 'Anda terdaftar sebagai vendor. Silakan masuk melalui halaman login vendor.',
+        ]);
+    }
+
+    Auth::login($user, remember: true);
     Session::regenerate();
 
     $this->redirect(route('home', absolute: false), navigate: true);
@@ -77,7 +95,9 @@ $register = function () {
 };
 ?>
 
-@vite(['resources/js/pages/login.js'])
+@push('styles')
+    @vite(['resources/js/pages/login.js'])
+@endpush
 
 <div>
     <div class="flex justify-center items-center h-screen bg-black">
@@ -88,7 +108,7 @@ $register = function () {
             <div class="forms-container relative w-[50%] text-center">
                 <div
                     class="form-control signin-form absolute w-[100%] flex justify-center flex-col h-[600px] transition duration-300 ease-in opacity-1 z-2 left-[0%]">
-                    <form wire:submit="login" class="flex flex-col mx-[50px]" x-data="{ username: @entangle('form.username').defer, password: @entangle('form.password').defer }">
+                    <form wire:submit="login" class="flex flex-col mx-[50px]" x-data="{ login_field: @entangle('login_field').defer, password: @entangle('password').defer }">
                         {{-- INTRODUCTION --}}
                         <div class="text-[#6B592E] text-5xl font-Kuunari font-bold text-center sm:text-start">
                             <h1>MASUK</h1>
@@ -98,34 +118,36 @@ $register = function () {
                             <p>Yuk mulai gaya barumu di sini!</p>
                         </div>
 
-                        {{-- USERNAME INPUT FIELD --}}
+                        {{-- USERNAME/EMAIL INPUT FIELD --}}
                         <div x-data="{ isFocused: false }" x-init="$nextTick(() => {
-                            if ($el.querySelector('#username') === document.activeElement) {
+                            if ($el.querySelector('#login-field') === document.activeElement) {
                                 isFocused = true;
                             }
                         })"
                             :class="{
-                                'bg-[#E9BF80]': isFocused || username,
-                                'bg-[#E9BF80]/60': !isFocused && !username
+                                'bg-[#E9BF80]': isFocused || login_field,
+                                'bg-[#E9BF80]/60': !isFocused && !login_field
                             }"
                             class="mb-4 text-[#6B592E] flex flex-row py-4 border-none rounded-md items-center cursor-text
                shadow-sm has-[:focus]:shadow-md transition-all duration-200">
                             {{-- Label: Clicking this will focus the input, but cursor remains text --}}
-                            <label for="username"
+                            <label for="login-field"
                                 class="flex flex-1 flex-wrap border-none items-center w-full h-full cursor-text">
                                 <div class="w-4 h-4 mx-4 text-center">
                                     {{-- User Icon Component --}}
                                     <x-svg.user-icon />
                                 </div>
 
-                                <input wire:model="form.username" id="username"
+                                <input wire:model="login_field" id="login-field"
                                     class="peer flex-1 p-0 border-none bg-transparent placeholder-[#6B592E] font-Poppins text-sm focus:outline-none focus:ring-0"
-                                    type="username" name="username" required autofocus autocomplete="username"
-                                    placeholder="Username" x-model="username" @focus="isFocused = true"
+                                    type="text" name="login_field" required autofocus autocomplete="username"
+                                    placeholder="Email atau Username" x-model="login_field" @focus="isFocused = true"
                                     @blur="isFocused = false" />
-                                <x-input-error :messages="$errors->get('form.username')" class="mt-2" />
                             </label>
                         </div>
+
+                        {{-- LOGIN FIELD ERROR --}}
+                        <x-input-error :messages="$errors->get('login_field')" class="mb-4" />
 
                         {{-- PASSWORD INPUT FIELD --}}
                         <div x-data="{ isFocused: false }"
@@ -142,22 +164,56 @@ $register = function () {
                                     <x-svg.lock-icon />
                                 </div>
 
-                                <input wire:model="form.password" id="passwordlogin"
+                                <input wire:model="password" id="passwordlogin"
                                     class="peer flex-1 p-0 border-none bg-transparent placeholder-[#6B592E] font-Poppins text-sm focus:outline-none focus:ring-0"
                                     type="password" name="password" required autocomplete="current-password"
                                     placeholder="Password" x-model="password" @focus="isFocused = true"
                                     @blur="isFocused = false" />
-
-                                <x-input-error :messages="$errors->get('form.password')" class="mt-2" />
                             </label>
                             <div id="passwordToggle" class="w-4 h-4 mx-4 cursor-pointer">
                                 <x-svg.eye-icon />
                             </div>
                         </div>
 
+                        {{-- PASSWORD ERROR --}}
+                        <x-input-error :messages="$errors->get('password')" class="mb-4" />
+
+                        {{-- ROLE ERROR MESSAGE --}}
+                        @error('role_error')
+                            <div
+                                class="mt-4 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 border border-red-200 rounded-xl p-5 shadow-xl backdrop-blur-sm">
+                                <div class="flex items-start space-x-4">
+                                    <div class="flex-shrink-0 bg-red-100 rounded-full p-2">
+                                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="text-lg font-bold text-red-900 font-Kuunari mb-2">Oops! Akun Salah</h3>
+                                        <p class="text-sm text-red-800 font-Poppins leading-relaxed mb-4">
+                                            {{ $message }}</p>
+                                        <div class="flex flex-col sm:flex-row gap-3">
+                                            <a href="{{ route('vendor.login') }}"
+                                                class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white text-sm font-bold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-Poppins">
+                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                                </svg>
+                                                Masuk Sebagai Vendor
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @enderror
+
                         {{-- LOGIN BUTTON --}}
                         <div class="flex justify-center">
-                            <button type="submit" :disabled="!username || !password" {{-- Button is disabled if either username OR password is empty --}}
+                            <button type="submit" :disabled="!login_field || !password" {{-- Button is disabled if login_field OR password is empty --}}
                                 class="mt-5 bg-[#6B592E] text-[#FFEDB7] w-full text-sm py-4 rounded-md font-bold
                    transition duration-300 ease-in-out shadow-lg font-Poppins
                    hover:text-white hover:bg-[#B5964D] focus:outline-2
@@ -168,7 +224,7 @@ $register = function () {
                     </form>
                 </div>
                 <div
-                    class="form-control signup-form absolute w-[100%] flex justify-center flex-col h-[600px] transition duration-300 ease-in opacity-0 z-1 left-[200%]">
+                    class="form-control signup-form absolute w-[100%] flex justify-center flex-col h-[600px] transition duration-300 ease-in opacity-0 z-1 left-[100%]">
                     <form wire:submit="register" class="flex flex-col mx-[50px]">
                         {{-- INTRODUCTION --}}
                         <div class="text-[#6B592E] text-5xl font-Kuunari font-bold text-center sm:text-start">
@@ -762,6 +818,60 @@ c-531 412 -450 371 -684 341 -112 -15 -182 -17 -350 -13 -230 6 -367 24 -573
         </div>
     </div>
 </div>
+
+<style>
+    .change .forms-container .form-control.signup-form {
+        opacity: 1;
+        z-index: 2;
+        transform: translateX(-100%);
+        left: 0%;
+    }
+
+    .change .forms-container .form-control.signin-form {
+        opacity: 0;
+        z-index: 1;
+        transform: translateX(-100%);
+        left: -100%;
+    }
+
+    .change .intros-container .intro-control {
+        transform: translateX(-100%);
+    }
+
+    .change .intros-container .intro-control.signin-intro {
+        opacity: 0;
+        z-index: 1;
+    }
+
+    .change .intros-container .intro-control.signup-intro {
+        opacity: 1;
+        z-index: 2;
+    }
+</style>
+
+<script>
+    // Initialize login form functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize form switching
+        const signupBtn = document.getElementById('signup-btn');
+        const signinBtn = document.getElementById('signin-btn');
+        const mainContainer = document.querySelector('.container');
+
+        if (signupBtn && mainContainer) {
+            signupBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                mainContainer.classList.add('change');
+            });
+        }
+
+        if (signinBtn && mainContainer) {
+            signinBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                mainContainer.classList.remove('change');
+            });
+        }
+    });
+</script>
 
 @if (1 == 0)
     <div class="hidden">

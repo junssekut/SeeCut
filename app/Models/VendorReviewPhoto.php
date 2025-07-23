@@ -13,6 +13,6 @@ class VendorReviewPhoto extends Model
     protected $guarded = [];
 
     public function review() {
-        return $this->belongsTo(VendorReview::class);
+        return $this->belongsTo(VendorReview::class, 'review_id');
     }
 }

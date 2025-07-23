@@ -96,193 +96,108 @@
         </div>
 
         <div class="relative z-10 flex justify-center m-12 gap-8">
-            {{-- <livewire:pages.home.barbershop-carousel /> --}}
-
-            <div class="flex flex-col bg-Eerie-Black">
-                <div class="relative">
-                    <div class="absolute inset-0 bg-[#6B592E]/40 bg-no-repeat bg-center bg-contain z-0"></div>
-                    <img src="{{ asset('assets/images/home/bgtest.png') }}" alt="" class="w-[343px] h-[282px]">
-                </div>
-
-                <div class="flex flex-col p-4">
-                    <p class="font-Poppins font-extralight text-sm text-Ecru">BARBERSHOP</p>
-                    <h1 class="font-Kuunari font-bold text-2xl text-Seasalt">CAPTAIN BARBERSHOP</h1>
-                    <div class="flex flex-row gap-1 text-center items-center pt-2">
-                        <svg viewBox="0 0 37 52" fill="none" class="w-3 h-3" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M0.73587 17.258C0.73587 7.7 7.76387 0 18.3169 0C28.8699 0 35.8979 7.7 35.8979 17.258C35.8979 31.146 18.3169 51.65 18.3169 51.65C18.3169 51.65 0.73587 31.147 0.73587 17.258Z"
-                                fill="#E9BF80" />
-                            <circle cx="18.3169" cy="17.258" r="7.29167" fill="#1A1A1A" />
-                        </svg>
-
-                        <p class="font-Poppins font-extralight text-sm text-Ecru">Bogor, Jawa Barat</p>
-                    </div>
-                </div>
-                <div class="divider divider-horizontal"></div>
-                <div class="flex flex-row justify-between items-center border-t-[1px] border-Seasalt py-3 px-4">
-                    <div class="flex flex-row gap-1">
-                        <svg viewBox="0 0 15 15" fill="none" class="w-4 h-4" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M12.5 1.25H2.5C1.8125 1.25 1.25 1.8125 1.25 2.5V13.75L3.75 11.25H12.5C13.1875 11.25 13.75 10.6875 13.75 10V2.5C13.75 1.8125 13.1875 1.25 12.5 1.25ZM3.75 8.75V7.20625L8.05 2.90625C8.175 2.78125 8.36875 2.78125 8.49375 2.90625L9.6 4.0125C9.725 4.1375 9.725 4.33125 9.6 4.45625L5.29375 8.75H3.75ZM10.625 8.75H6.5625L7.8125 7.5H10.625C10.9688 7.5 11.25 7.78125 11.25 8.125C11.25 8.46875 10.9688 8.75 10.625 8.75Z"
-                                fill="#FAFAFA" />
-                        </svg>
-
-                        <p class="font-Poppins font-light text-[10px] text-Ecru">169 Orang</p>
+            @forelse($topVendors as $vendor)
+                <div wire:click="viewVendor({{ $vendor->id }})"
+                    class="flex flex-col bg-Eerie-Black cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl w-80">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-[#6B592E]/40 bg-no-repeat bg-center bg-contain z-0"></div>
+                        @if ($vendor->thumbnail_url)
+                            <img src="{{ $vendor->thumbnail_url }}" alt="{{ $vendor->name }}"
+                                class="w-full h-56 object-cover">
+                        @else
+                            <img src="{{ asset('assets/images/home/bgtest.png') }}" alt="{{ $vendor->name }}"
+                                class="w-full h-56 object-cover">
+                        @endif
                     </div>
 
-                    @php $rating = 5; @endphp
+                    <div class="flex flex-col p-4">
+                        <p class="font-Poppins font-extralight text-sm text-Ecru">BARBERSHOP</p>
+                        <h1 class="font-Kuunari font-bold text-2xl text-Seasalt truncate">{{ $vendor->name }}</h1>
+                        <div class="flex flex-row gap-1 text-center items-center pt-2">
+                            <svg viewBox="0 0 37 52" fill="none" class="w-3 h-3" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M0.73587 17.258C0.73587 7.7 7.76387 0 18.3169 0C28.8699 0 35.8979 7.7 35.8979 17.258C35.8979 31.146 18.3169 51.65 18.3169 51.65C18.3169 51.65 0.73587 31.147 0.73587 17.258Z"
+                                    fill="#E9BF80" />
+                                <circle cx="18.3169" cy="17.258" r="7.29167" fill="#1A1A1A" />
+                            </svg>
+                            <p class="font-Poppins font-extralight text-sm text-Ecru truncate">{{ $vendor->address }}
+                            </p>
+                        </div>
+                    </div>
 
-                    <div class="flex space-x-1">
-                        @for ($i = 0; $i < 5; $i++)
-                            @php
-                                $fillAmount = max(0, min(1, $rating - $i));
-                            @endphp
+                    <div class="flex flex-row justify-between items-center border-t-[1px] border-Seasalt py-3 px-4">
+                        <div class="flex flex-row gap-1 items-center">
+                            <svg viewBox="0 0 15 15" fill="none" class="w-4 h-4" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M12.5 1.25H2.5C1.8125 1.25 1.25 1.8125 1.25 2.5V13.75L3.75 11.25H12.5C13.1875 11.25 13.75 10.6875 13.75 10V2.5C13.75 1.8125 13.1875 1.25 12.5 1.25ZM3.75 8.75V7.20625L8.05 2.90625C8.175 2.78125 8.36875 2.78125 8.49375 2.90625L9.6 4.0125C9.725 4.1375 9.725 4.33125 9.6 4.45625L5.29375 8.75H3.75ZM10.625 8.75H6.5625L7.8125 7.5H10.625C10.9688 7.5 11.25 7.78125 11.25 8.125C11.25 8.46875 10.9688 8.75 10.625 8.75Z"
+                                    fill="#FAFAFA" />
+                            </svg>
+                            <p class="font-Poppins font-light text-[10px] text-Ecru">{{ $vendor->reviews_count }} Orang
+                            </p>
+                        </div>
 
-                            @if ($fillAmount === 1)
-                                <x-star-icon fill="#E9BF80" />
-                            @elseif ($fillAmount === 0)
-                                <x-star-icon fill="#E5E7EB" />
-                            @else
-                                <div class="relative w-6 h-6">
-                                    <x-star-icon fill="#E5E7EB" class="absolute top-0 left-0" />
+                        <div class="flex space-x-1">
+                            @for ($i = 0; $i < 5; $i++)
+                                @php
+                                    $fillAmount = max(0, min(1, $vendor->rating - $i));
+                                @endphp
 
-                                    <div class="absolute top-0 left-0 h-full overflow-hidden"
-                                        style="width: {{ $fillAmount * 100 }}%">
-                                        <x-star-icon fill="#E9BF80" />
+                                @if ($fillAmount === 1)
+                                    <x-star-icon fill="#E9BF80" />
+                                @elseif ($fillAmount === 0)
+                                    <x-star-icon fill="#E5E7EB" />
+                                @else
+                                    <div class="relative w-6 h-6">
+                                        <x-star-icon fill="#E5E7EB" class="absolute top-0 left-0" />
+                                        <div class="absolute top-0 left-0 h-full overflow-hidden"
+                                            style="width: {{ $fillAmount * 100 }}%">
+                                            <x-star-icon fill="#E9BF80" />
+                                        </div>
                                     </div>
-                                </div>
-                            @endif
-                        @endfor
-                    </div>
-
-                </div>
-
-            </div>
-
-            {{--  --}}
-            <div class="flex flex-col bg-Eerie-Black">
-                <div class="relative">
-                    <div class="absolute inset-0 bg-[#6B592E]/40 bg-no-repeat bg-center bg-contain z-0"></div>
-                    <img src="{{ asset('assets/images/home/bgtest.png') }}" alt="" class="w-[343px] h-[282px]">
-                </div>
-
-                <div class="flex flex-col p-4">
-                    <p class="font-Poppins font-extralight text-sm text-Ecru">BARBERSHOP</p>
-                    <h1 class="font-Kuunari font-bold text-2xl text-Seasalt">CAPTAIN BARBERSHOP</h1>
-                    <div class="flex flex-row gap-1 text-center items-center pt-2">
-                        <svg viewBox="0 0 37 52" fill="none" class="w-3 h-3" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M0.73587 17.258C0.73587 7.7 7.76387 0 18.3169 0C28.8699 0 35.8979 7.7 35.8979 17.258C35.8979 31.146 18.3169 51.65 18.3169 51.65C18.3169 51.65 0.73587 31.147 0.73587 17.258Z"
-                                fill="#E9BF80" />
-                            <circle cx="18.3169" cy="17.258" r="7.29167" fill="#1A1A1A" />
-                        </svg>
-
-                        <p class="font-Poppins font-extralight text-sm text-Ecru">Bogor, Jawa Barat</p>
+                                @endif
+                            @endfor
+                        </div>
                     </div>
                 </div>
-                <div class="divider divider-horizontal"></div>
-                <div class="flex flex-row justify-between items-center border-t-[1px] border-Seasalt py-3 px-4">
-                    <div class="flex flex-row gap-1">
-                        <svg viewBox="0 0 15 15" fill="none" class="w-4 h-4" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M12.5 1.25H2.5C1.8125 1.25 1.25 1.8125 1.25 2.5V13.75L3.75 11.25H12.5C13.1875 11.25 13.75 10.6875 13.75 10V2.5C13.75 1.8125 13.1875 1.25 12.5 1.25ZM3.75 8.75V7.20625L8.05 2.90625C8.175 2.78125 8.36875 2.78125 8.49375 2.90625L9.6 4.0125C9.725 4.1375 9.725 4.33125 9.6 4.45625L5.29375 8.75H3.75ZM10.625 8.75H6.5625L7.8125 7.5H10.625C10.9688 7.5 11.25 7.78125 11.25 8.125C11.25 8.46875 10.9688 8.75 10.625 8.75Z"
-                                fill="#FAFAFA" />
-                        </svg>
-
-                        <p class="font-Poppins font-light text-[10px] text-Ecru">169 Orang</p>
+            @empty
+                {{-- Fallback if no vendors found --}}
+                <div class="flex flex-col bg-Eerie-Black w-80">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-[#6B592E]/40 bg-no-repeat bg-center bg-contain z-0"></div>
+                        <img src="{{ asset('assets/images/home/bgtest.png') }}" alt=""
+                            class="w-full h-56 object-cover">
                     </div>
-
-                    @php $rating = 5; @endphp
-
-                    <div class="flex space-x-1">
-                        @for ($i = 0; $i < 5; $i++)
-                            @php
-                                $fillAmount = max(0, min(1, $rating - $i));
-                            @endphp
-
-                            @if ($fillAmount === 1)
+                    <div class="flex flex-col p-4">
+                        <p class="font-Poppins font-extralight text-sm text-Ecru">BARBERSHOP</p>
+                        <h1 class="font-Kuunari font-bold text-2xl text-Seasalt">CAPTAIN BARBERSHOP</h1>
+                        <div class="flex flex-row gap-1 text-center items-center pt-2">
+                            <svg viewBox="0 0 37 52" fill="none" class="w-3 h-3" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M0.73587 17.258C0.73587 7.7 7.76387 0 18.3169 0C28.8699 0 35.8979 7.7 35.8979 17.258C35.8979 31.146 18.3169 51.65 18.3169 51.65C18.3169 51.65 0.73587 31.147 0.73587 17.258Z"
+                                    fill="#E9BF80" />
+                                <circle cx="18.3169" cy="17.258" r="7.29167" fill="#1A1A1A" />
+                            </svg>
+                            <p class="font-Poppins font-extralight text-sm text-Ecru">Bogor, Jawa Barat</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-row justify-between items-center border-t-[1px] border-Seasalt py-3 px-4">
+                        <div class="flex flex-row gap-1">
+                            <svg viewBox="0 0 15 15" fill="none" class="w-4 h-4"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M12.5 1.25H2.5C1.8125 1.25 1.25 1.8125 1.25 2.5V13.75L3.75 11.25H12.5C13.1875 11.25 13.75 10.6875 13.75 10V2.5C13.75 1.8125 13.1875 1.25 12.5 1.25ZM3.75 8.75V7.20625L8.05 2.90625C8.175 2.78125 8.36875 2.78125 8.49375 2.90625L9.6 4.0125C9.725 4.1375 9.725 4.33125 9.6 4.45625L5.29375 8.75H3.75ZM10.625 8.75H6.5625L7.8125 7.5H10.625C10.9688 7.5 11.25 7.78125 11.25 8.125C11.25 8.46875 10.9688 8.75 10.625 8.75Z"
+                                    fill="#FAFAFA" />
+                            </svg>
+                            <p class="font-Poppins font-light text-[10px] text-Ecru">169 Orang</p>
+                        </div>
+                        <div class="flex space-x-1">
+                            @for ($i = 0; $i < 5; $i++)
                                 <x-star-icon fill="#E9BF80" />
-                            @elseif ($fillAmount === 0)
-                                <x-star-icon fill="#E5E7EB" />
-                            @else
-                                <div class="relative w-6 h-6">
-                                    <x-star-icon fill="#E5E7EB" class="absolute top-0 left-0" />
-
-                                    <div class="absolute top-0 left-0 h-full overflow-hidden"
-                                        style="width: {{ $fillAmount * 100 }}%">
-                                        <x-star-icon fill="#E9BF80" />
-                                    </div>
-                                </div>
-                            @endif
-                        @endfor
-                    </div>
-
-                </div>
-
-            </div>
-            <div class="flex flex-col bg-Eerie-Black">
-                <div class="relative">
-                    <div class="absolute inset-0 bg-[#6B592E]/40 bg-no-repeat bg-center bg-contain z-0"></div>
-                    <img src="{{ asset('assets/images/home/bgtest.png') }}" alt=""
-                        class="w-[343px] h-[282px]">
-                </div>
-
-                <div class="flex flex-col p-4">
-                    <p class="font-Poppins font-extralight text-sm text-Ecru">BARBERSHOP</p>
-                    <h1 class="font-Kuunari font-bold text-2xl text-Seasalt">CAPTAIN BARBERSHOP</h1>
-                    <div class="flex flex-row gap-1 text-center items-center pt-2">
-                        <svg viewBox="0 0 37 52" fill="none" class="w-3 h-3" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M0.73587 17.258C0.73587 7.7 7.76387 0 18.3169 0C28.8699 0 35.8979 7.7 35.8979 17.258C35.8979 31.146 18.3169 51.65 18.3169 51.65C18.3169 51.65 0.73587 31.147 0.73587 17.258Z"
-                                fill="#E9BF80" />
-                            <circle cx="18.3169" cy="17.258" r="7.29167" fill="#1A1A1A" />
-                        </svg>
-
-                        <p class="font-Poppins font-extralight text-sm text-Ecru">Bogor, Jawa Barat</p>
+                            @endfor
+                        </div>
                     </div>
                 </div>
-                <div class="divider divider-horizontal"></div>
-                <div class="flex flex-row justify-between items-center border-t-[1px] border-Seasalt py-3 px-4">
-                    <div class="flex flex-row gap-1">
-                        <svg viewBox="0 0 15 15" fill="none" class="w-4 h-4" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M12.5 1.25H2.5C1.8125 1.25 1.25 1.8125 1.25 2.5V13.75L3.75 11.25H12.5C13.1875 11.25 13.75 10.6875 13.75 10V2.5C13.75 1.8125 13.1875 1.25 12.5 1.25ZM3.75 8.75V7.20625L8.05 2.90625C8.175 2.78125 8.36875 2.78125 8.49375 2.90625L9.6 4.0125C9.725 4.1375 9.725 4.33125 9.6 4.45625L5.29375 8.75H3.75ZM10.625 8.75H6.5625L7.8125 7.5H10.625C10.9688 7.5 11.25 7.78125 11.25 8.125C11.25 8.46875 10.9688 8.75 10.625 8.75Z"
-                                fill="#FAFAFA" />
-                        </svg>
-
-                        <p class="font-Poppins font-light text-[10px] text-Ecru">169 Orang</p>
-                    </div>
-
-                    @php $rating = 5; @endphp
-
-                    <div class="flex space-x-1">
-                        @for ($i = 0; $i < 5; $i++)
-                            @php
-                                $fillAmount = max(0, min(1, $rating - $i));
-                            @endphp
-
-                            @if ($fillAmount === 1)
-                                <x-star-icon fill="#E9BF80" />
-                            @elseif ($fillAmount === 0)
-                                <x-star-icon fill="#E5E7EB" />
-                            @else
-                                <div class="relative w-6 h-6">
-                                    <x-star-icon fill="#E5E7EB" class="absolute top-0 left-0" />
-
-                                    <div class="absolute top-0 left-0 h-full overflow-hidden"
-                                        style="width: {{ $fillAmount * 100 }}%">
-                                        <x-star-icon fill="#E9BF80" />
-                                    </div>
-                                </div>
-                            @endif
-                        @endfor
-                    </div>
-
-                </div>
-
-            </div>
-            {{--  --}}
-
+            @endforelse
         </div>
 
         <div class="relative z-10 flex flex-row justify-center items-center gap-6 px-48">

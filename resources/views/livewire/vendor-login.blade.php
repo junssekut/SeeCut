@@ -15,38 +15,70 @@ use function Livewire\Volt\layout;
 use function Livewire\Volt\state;
 use function Livewire\Volt\rules;
 use function Livewire\Volt\action;
+use function Livewire\Volt\mount;
 
 layout('layouts.app');
 
 state([
-    'username' => '',
+    'login_field' => '',
     'password' => '',
 ]);
 
+mount(function () {
+    // Check if regular user (non-vendor) is already logged in
+    if (Auth::check() && Auth::user()->profile?->role !== 'vendor') {
+        // Regular user trying to access vendor login - show access denied
+        return response()->view(
+            'errors.vendor-access-denied',
+            [
+                'previousUrl' => url()->previous(),
+            ],
+            403,
+        );
+    }
+
+    // If vendor is already logged in, redirect to dashboard
+    if (Auth::check() && Auth::user()->profile?->role === 'vendor') {
+        return redirect()->route('vendor.reservation');
+    }
+});
+
 $execLogin = function () {
-    // dd('test'); // This will now be hit if the function is called
-    $data = [
-        'username' => $this->username,
-        'password' => $this->password,
-    ];
+    // Validate login field and password
+    $this->validate(
+        [
+            'login_field' => 'required|string',
+            'password' => 'required|string',
+        ],
+        [
+            'login_field.required' => 'Email atau Username wajib diisi.',
+            'password.required' => 'Password wajib diisi.',
+        ],
+    );
 
-    $rules = [
-        'username' => ['required', 'string'],
-        'password' => ['required', 'string'],
-    ];
+    // Find user by email or username
+    $user = User::where('email', $this->login_field)->orWhere('username', $this->login_field)->first();
 
-    Validator::make($data, $rules)->validate();
-
-    $user = User::where('username', $this->username)->first();
-
-    if (!$user || !Hash::check($this->password, $user->password)) {
+    if (!$user) {
         throw ValidationException::withMessages([
-            'username' => __('auth.failed'),
+            'login_field' => 'Email atau Username tidak ditemukan.',
+        ]);
+    }
+
+    if (!Hash::check($this->password, $user->password)) {
+        throw ValidationException::withMessages([
+            'password' => 'Password salah.',
+        ]);
+    }
+
+    // Check if user is a customer trying to login as vendor
+    if (!$user->profile || $user->profile->role !== 'vendor') {
+        throw ValidationException::withMessages([
+            'role_error' => 'Anda terdaftar sebagai customer. Silakan masuk melalui halaman login customer.',
         ]);
     }
 
     Auth::login($user, remember: true);
-
     Session::regenerate();
 
     $this->redirect(route('vendor.reservation'));
@@ -65,7 +97,7 @@ $execLogin = function () {
                     class="form-control signin-form absolute w-[100%] flex justify-center flex-col h-[600px] transition duration-300 ease-in opacity-1 z-1 left-[200%]">
                     {{-- Corrected x-data binding: removed 'form.' prefix --}}
                     {{-- Added console.log to check Alpine.js initialization --}}
-                    <form wire:submit.prevent="execLogin" class="flex flex-col mx-[50px]" x-data="{ username: @entangle('username').defer, password: @entangle('password').defer, init() { console.log('Alpine.js x-data initialized for login form'); } }">
+                    <form wire:submit.prevent="execLogin" class="flex flex-col mx-[50px]" x-data="{ login_field: @entangle('login_field').defer, password: @entangle('password').defer, init() { console.log('Alpine.js x-data initialized for login form'); } }">
                         {{-- INTRODUCTION --}}
                         <div class="text-Dark-Olive text-5xl font-Kuunari font-bold text-center sm:text-start">
                             <h1>MASUK</h1>
@@ -75,35 +107,36 @@ $execLogin = function () {
                             <p>Yuk, mulai terima bookingan online sekarang!</p>
                         </div>
 
-                        {{-- USERNAME INPUT FIELD --}}
+                        {{-- USERNAME/EMAIL INPUT FIELD --}}
                         <div x-data="{ isFocused: false }" x-init="$nextTick(() => {
-                            if ($el.querySelector('#username') === document.activeElement) {
+                            if ($el.querySelector('#login-field') === document.activeElement) {
                                 isFocused = true;
                             }
                         })"
                             :class="{
-                                'bg-Dark-Olive': isFocused || username,
-                                'bg-Dark-Olive/60': !isFocused && !username
+                                'bg-Dark-Olive': isFocused || login_field,
+                                'bg-Dark-Olive/60': !isFocused && !login_field
                             }"
                             class="mb-4 text-Dark-Olive flex flex-row py-4 border-none rounded-md items-center cursor-text
                shadow-sm has-[:focus]:shadow-md transition-all duration-200">
                             {{-- Label: Clicking this will focus the input, but cursor remains text --}}
-                            <label for="username"
+                            <label for="login-field"
                                 class="flex flex-1 flex-wrap border-none items-center w-full h-full cursor-text">
                                 <div class="w-4 h-4 mx-4 text-center">
                                     {{-- User Icon Component --}}
                                     <x-svg.user-icon class="text-Seasalt" />
                                 </div>
 
-                                {{-- wire:model and x-model are already correct, binding directly to 'username' --}}
-                                <input wire:model="username" id="username"
+                                <input wire:model="login_field" id="login-field"
                                     class="peer flex-1 p-0 border-none bg-transparent placeholder-Seasalt text-Seasalt font-Poppins text-sm focus:outline-none focus:ring-0"
-                                    type="username" name="username" required autofocus autocomplete="username"
-                                    placeholder="Username" x-model="username" @focus="isFocused = true"
+                                    type="text" name="login_field" required autofocus autocomplete="username"
+                                    placeholder="Email atau Username" x-model="login_field" @focus="isFocused = true"
                                     @blur="isFocused = false" />
-                                <x-input-error :messages="$errors->get('username')" class="mt-2 text-Seasalt" />
                             </label>
                         </div>
+
+                        {{-- LOGIN FIELD ERROR --}}
+                        <x-input-error :messages="$errors->get('login_field')" class="mb-4 text-Seasalt" />
 
                         {{-- PASSWORD INPUT FIELD --}}
                         <div x-data="{ isFocused: false }"
@@ -120,23 +153,56 @@ $execLogin = function () {
                                     <x-svg.lock-icon class="text-Seasalt" />
                                 </div>
 
-                                {{-- wire:model and x-model are already correct, binding directly to 'password' --}}
                                 <input wire:model="password" id="passwordlogin"
                                     class="peer flex-1 p-0 border-none bg-transparent placeholder-Seasalt text-Seasalt font-Poppins text-sm focus:outline-none focus:ring-0"
                                     type="password" name="password" required autocomplete="current-password"
                                     placeholder="Password" x-model="password" @focus="isFocused = true"
                                     @blur="isFocused = false" />
-
-                                <x-input-error :messages="$errors->get('password')" class="mt-2" />
                             </label>
                             <div id="passwordToggle" class="w-4 h-4 mx-4 cursor-pointer">
                                 <x-svg.eye-icon />
                             </div>
                         </div>
 
+                        {{-- PASSWORD ERROR --}}
+                        <x-input-error :messages="$errors->get('password')" class="mb-4 text-Seasalt" />
+
+                        {{-- ROLE ERROR MESSAGE --}}
+                        @error('role_error')
+                            <div
+                                class="mt-4 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 border border-amber-200 rounded-xl p-5 shadow-xl backdrop-blur-sm">
+                                <div class="flex items-start space-x-4">
+                                    <div class="flex-shrink-0 bg-amber-100 rounded-full p-2">
+                                        <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="text-lg font-bold text-amber-900 font-Kuunari mb-2">Oops! Akun Salah</h3>
+                                        <p class="text-sm text-amber-800 font-Poppins leading-relaxed mb-4">
+                                            {{ $message }}</p>
+                                        <div class="flex flex-col sm:flex-row gap-3">
+                                            <a href="{{ route('login') }}"
+                                                class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white text-sm font-bold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-Poppins">
+                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                                </svg>
+                                                Masuk Sebagai Customer
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @enderror
+
                         {{-- LOGIN BUTTON --}}
                         <div class="flex justify-center">
-                            <button type="submit" :disabled="!username || !password" {{-- Button is disabled if either username OR password is empty --}}
+                            <button type="submit" :disabled="!login_field || !password" {{-- Button is disabled if login_field OR password is empty --}}
                                 class="mt-5 bg-Dark-Olive text-Seasalt w-full text-sm py-4 rounded-md font-bold
                    transition duration-300 ease-in-out shadow-lg font-Poppins
                    hover:text-white hover:bg-Dark-Olive/60 focus:outline-2
