@@ -106,7 +106,7 @@ $register = function () {
 
         <!-- Back Button -->
         <button onclick="history.back()"
-            class="absolute top-6 left-6 z-50 flex items-center justify-center w-12 h-12 bg-[#6B592E]/80 hover:bg-[#6B592E] text-white rounded-full transition-all duration-200 shadow-lg hover:shadow-xl backdrop-blur-sm">
+            class="absolute top-6 left-24 z-50 flex items-center justify-center w-12 h-12 bg-[#6B592E]/80 hover:bg-[#6B592E] text-white rounded-full transition-all duration-200 shadow-lg hover:shadow-xl backdrop-blur-sm">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>

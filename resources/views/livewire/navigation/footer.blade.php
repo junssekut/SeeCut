@@ -21,10 +21,15 @@
 
         <!-- Navigasi -->
         <div
-            class="w-full md:w-1/2 flex flex-col sm:flex-row justify-center md:justify-end items-center gap-2 sm:gap-6 text-lg font-semibold text-[#D6AC69]">
-            <a href="#booking" class="hover:underline font-Kuunari">BOOKING</a>
-            <a href="#live-chat" class="hover:underline font-Kuunari">LIVE CHAT AI</a>
-            <a href="#find-barbershop" class="hover:underline font-Kuunari">FIND BARBERSHOP</a>
+            class="w-full md:w-1/2 flex flex-col justify-center md:justify-end items-center md:items-end gap-4 text-lg font-semibold text-[#D6AC69]">
+            <a href="{{ route('subscription') }}"
+                class="hover:underline font-Kuunari transition-colors duration-200 hover:text-[#E6B875]">SUBSCRIBE</a>
+            <a href="{{ route('barbershop.index') }}"
+                class="hover:underline font-Kuunari transition-colors duration-200 hover:text-[#E6B875]">FIND
+                BARBERSHOP</a>
+            <a href="{{ route('style.recommendation') }}"
+                class="hover:underline font-Kuunari transition-colors duration-200 hover:text-[#E6B875]">AI
+                RECOMMENDATION</a>
         </div>
     </div>
 

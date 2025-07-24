@@ -16,7 +16,6 @@ use App\Livewire\UserProfile;
 // use App\Livewire\Information;
 use App\Livewire\BookingPage;
 
-
 Route::get('/subscribe', SubscriptionPage::class)->name('subscription');
 Route::get('/berlangganan', Berlangganan::class)->name('berlangganan');
 
@@ -65,7 +64,7 @@ Route::get('/product-detail', function () {
 
 Route::get('/dashboard', AdminHome::class)->name('dashboard');
 
-Route::get('/book', BookingPage::class)->name('book')->middleware('customer');
+// Route::get('/book', BookingPage::class)->name('book')->middleware('customer');
 Route::get('/barbershop/{vendor}/book', BookingPage::class)->name('barbershop.book')->middleware('customer');
 
 // Barbershop routes
