@@ -390,10 +390,11 @@
                 notyf.success(
                     'Selamat! Akun Anda telah diupgrade menjadi vendor. Mengarahkan ke halaman profil...'
                 );
-                
+
                 // Create overlay
                 const overlay = document.createElement('div');
-                overlay.className = 'fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] success-overlay';
+                overlay.className =
+                    'fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] success-overlay';
                 overlay.innerHTML = `
                     <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-md mx-4 text-center">
                         <div class="w-16 h-16 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
@@ -412,14 +413,14 @@
                         </div>
                     </div>
                 `;
-                
+
                 document.body.appendChild(overlay);
-                
+
                 // Animate in
                 setTimeout(() => {
                     overlay.classList.add('show');
                 }, 100);
-                
+
                 // Redirect after showing the overlay
                 setTimeout(() => {
                     window.location.href = '{{ route('vendor.profile') }}';
