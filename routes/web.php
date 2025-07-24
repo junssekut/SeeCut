@@ -21,9 +21,25 @@ Route::get('/berlangganan', Berlangganan::class)->name('berlangganan');
 
 Route::get('/', Home::class)->name('home');
 
-Route::get('/dashboard', AdminHome::class)
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+// Admin routes
+Route::prefix('admin')
+    ->as('admin.')
+    ->middleware('admin')
+    ->group(function() {
+        Route::get('/dashboard', AdminHome::class)->name('dashboard');
+        
+        Route::get('/logout', function () {
+            auth()->logout();
+            return redirect()->route('admin.login');
+        })->name('logout');
+        
+        Route::post('/logout', function () {
+            auth()->logout();
+            request()->session()->invalidate();
+            request()->session()->regenerateToken();
+            return redirect()->route('admin.login');
+        })->name('logout.post');
+    });
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])
@@ -61,8 +77,6 @@ Route::get('/subscription', SubscriptionPage::class);
 Route::get('/product-detail', function () {
     return view('product-detail-sisil');
 })->name('product.detail');
-
-Route::get('/dashboard', AdminHome::class)->name('dashboard');
 
 // Route::get('/book', BookingPage::class)->name('book')->middleware('customer');
 Route::get('/barbershop/{vendor}/book', BookingPage::class)->name('barbershop.book')->middleware('customer');

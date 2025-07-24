@@ -34,7 +34,7 @@
         <nav class="flex-1 p-4">
             <ul class="space-y-2">
                 <li>
-                    <a href="{{ route('dashboard') }}"
+                    <a href="{{ route('admin.dashboard') }}"
                         class="flex items-center font-Kuunari text-lg p-3 bg-white text-slate-800 rounded-lg font-semibold transition-all duration-300 group">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -340,7 +340,7 @@
                                             $firstRevenue = reset($revenues);
                                             $lastRevenue = end($revenues);
                                             if ($firstRevenue > 0) {
-                                                $growth = (($lastRevenue / $firstRevenue) * 100) - 100;
+                                                $growth = ($lastRevenue / $firstRevenue) * 100 - 100;
                                             }
                                         }
                                     @endphp
@@ -897,10 +897,10 @@
                                 ctx.textAlign = 'center';
                                 ctx.textBaseline = 'middle';
                                 const total = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-                                
+
                                 ctx.font = '12px Arial';
                                 ctx.fillStyle = '#6b7280';
-                            
+
                                 ctx.restore();
                             }
                         }

@@ -9,7 +9,7 @@
         <nav class="flex-1 p-4">
             <ul class="space-y-2">
                 <li>
-                    <a href="{{ route('dashboard') }}"
+                    <a href="{{ route('admin.dashboard') }}"
                         class="flex items-center font-Kuunari text-lg p-3 {{ request()->routeIs('dashboard') ? 'bg-white text-slate-800' : 'hover:bg-white hover:text-slate-800' }} rounded-lg font-semibold transition-all duration-300 group">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -212,7 +212,8 @@
                                         </span>
                                     </td>
                                     <td class="p-4 text-center align-middle">
-                                        <button onclick="event.stopPropagation(); showDeleteConfirmation('{{ $sub['id'] }}', '{{ $sub['name'] }}')"
+                                        <button
+                                            onclick="event.stopPropagation(); showDeleteConfirmation('{{ $sub['id'] }}', '{{ $sub['name'] }}')"
                                             class="group/btn relative inline-flex items-center justify-center p-2.5 text-red-500 hover:text-white bg-red-50 hover:bg-red-500 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-110">
                                             <svg class="h-5 w-5 transition-transform duration-300 group-hover/btn:scale-110"
                                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -370,21 +371,28 @@
     @endif
 
     <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-60 opacity-0 invisible transition-all duration-300">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform scale-95 transition-transform duration-300" id="deleteModalContent">
+    <div id="deleteModal"
+        class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-60 opacity-0 invisible transition-all duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform scale-95 transition-transform duration-300"
+            id="deleteModalContent">
             <div class="p-6 text-center">
                 <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
                     <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                        </path>
                     </svg>
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 mb-2">Konfirmasi Hapus</h3>
-                <p class="text-gray-600 mb-6" id="deleteConfirmText">Apakah Anda yakin ingin menghapus langganan ini?</p>
+                <p class="text-gray-600 mb-6" id="deleteConfirmText">Apakah Anda yakin ingin menghapus langganan ini?
+                </p>
                 <div class="flex space-x-3 justify-center">
-                    <button onclick="cancelDelete()" class="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg font-semibold transition-colors duration-200">
+                    <button onclick="cancelDelete()"
+                        class="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg font-semibold transition-colors duration-200">
                         Batal
                     </button>
-                    <button onclick="confirmDelete()" class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors duration-200">
+                    <button onclick="confirmDelete()"
+                        class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors duration-200">
                         Hapus
                     </button>
                 </div>
@@ -402,43 +410,43 @@
     function showDeleteConfirmation(id, name) {
         pendingDeleteId = id;
         pendingDeleteName = name;
-        
+
         const modal = document.getElementById('deleteModal');
         const modalContent = document.getElementById('deleteModalContent');
         const confirmText = document.getElementById('deleteConfirmText');
-        
+
         confirmText.textContent = `Apakah Anda yakin ingin menghapus langganan ${name}?`;
-        
+
         modal.classList.remove('opacity-0', 'invisible');
         modal.classList.add('opacity-100', 'visible');
-        
+
         setTimeout(() => {
             modalContent.classList.remove('scale-95');
             modalContent.classList.add('scale-100');
         }, 10);
     }
-    
+
     function cancelDelete() {
         const modal = document.getElementById('deleteModal');
         const modalContent = document.getElementById('deleteModalContent');
-        
+
         modalContent.classList.remove('scale-100');
         modalContent.classList.add('scale-95');
-        
+
         setTimeout(() => {
             modal.classList.remove('opacity-100', 'visible');
             modal.classList.add('opacity-0', 'invisible');
         }, 200);
-        
+
         pendingDeleteId = null;
         pendingDeleteName = null;
     }
-    
+
     function confirmDelete() {
         if (pendingDeleteId) {
             // Call Livewire method to delete
             @this.call('deleteSubscription', pendingDeleteId);
-            
+
             // Close modal
             cancelDelete();
         }

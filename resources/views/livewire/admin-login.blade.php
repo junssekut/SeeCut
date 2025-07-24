@@ -39,7 +39,7 @@ mount(function () {
 
     // If admin is already logged in, redirect to dashboard
     if (Auth::check() && Auth::user()->profile?->role === 'admin') {
-        return redirect()->route('dashboard');
+        return redirect()->route('admin.dashboard');
     }
 });
 
@@ -81,7 +81,7 @@ $execLogin = function () {
     Auth::login($user, remember: true);
     Session::regenerate();
 
-    $this->redirect(route('dashboard'));
+    $this->redirect(route('admin.dashboard'));
 };
 ?>
 
