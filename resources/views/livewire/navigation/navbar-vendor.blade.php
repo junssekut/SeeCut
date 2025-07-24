@@ -36,7 +36,7 @@
             @endif
 
             <!-- Vendor Name -->
-            <span class="hidden sm:block">
+            <span class="hidden sm:block max-w-24 truncate">
                 {{ auth()->user()?->vendor?->name ?? 'Guest' }}
             </span>
 

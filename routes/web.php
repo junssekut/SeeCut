@@ -14,6 +14,7 @@ use App\Livewire\Home;
 use App\Livewire\Pages\Style\StylingDetail;
 use App\Livewire\UserProfile;
 // use App\Livewire\Information;
+use App\Livewire\BookingPage;
 
 Route::get('/berlangganan', Berlangganan::class)->name('berlangganan');
 
@@ -62,6 +63,7 @@ Route::get('/product-detail', function () {
 
 Route::get('/dashboard', AdminHome::class)->name('dashboard');
 
+Route::get('/book', BookingPage::class)->name('book');
 
 // Barbershop routes
 Route::get('/barbershop', BarbershopListing::class)->name('barbershop.index');

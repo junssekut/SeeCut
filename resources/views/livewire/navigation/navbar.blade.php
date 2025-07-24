@@ -39,7 +39,7 @@
                     @endif
 
                     <!-- User Name -->
-                    <span class="hidden sm:block">
+                    <span class="hidden sm:block max-w-24 truncate">
                         {{ auth()->user()?->username ?? 'Guest' }}
                     </span>
 
