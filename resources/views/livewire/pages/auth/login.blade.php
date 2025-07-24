@@ -103,6 +103,15 @@ $register = function () {
     <div class="flex justify-center items-center h-screen bg-black">
         <img src="{{ asset('assets/images/Wave-Register.png') }}"
             class="absolute inset-0 w-full h-full object-cover z-0 opacity-20" alt="Background" />
+
+        <!-- Back Button -->
+        <button onclick="history.back()"
+            class="absolute top-6 left-6 z-50 flex items-center justify-center w-12 h-12 bg-[#6B592E]/80 hover:bg-[#6B592E] text-white rounded-full transition-all duration-200 shadow-lg hover:shadow-xl backdrop-blur-sm">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+        </button>
+
         <div
             class="container bg-Seasalt w-[1000px] max-w-[100vw] h-[600px] relative overflow-x-hidden rounded-none sm:rounded-xl">
             <div class="forms-container relative w-[50%] text-center">
@@ -819,11 +828,15 @@ c-531 412 -450 371 -684 341 -112 -15 -182 -17 -350 -13 -230 6 -367 24 -573
     </div>
 
     <style>
+        /* Initial state base z-index hierarchy:
+           Forms: 1-2 (bottom layer)
+           Intros: 10-20 (top layer) */
+
         .change .forms-container .form-control.signup-form {
             opacity: 1;
-            z-index: 2;
+            z-index: 25;
             transform: translateX(0%);
-            left: 0%;
+            left: 100%;
         }
 
         .change .forms-container .form-control.signin-form {
@@ -834,55 +847,38 @@ c-531 412 -450 371 -684 341 -112 -15 -182 -17 -350 -13 -230 6 -367 24 -573
         }
 
         .change .intros-container .intro-control {
-            transform: translateX(100%);
+            transform: translateX(-100%);
         }
 
         .change .intros-container .intro-control.signin-intro {
             opacity: 0;
-            z-index: 10;
+            z-index: 5;
         }
 
         .change .intros-container .intro-control.signup-intro {
             opacity: 1;
-            z-index: 20;
+            z-index: 10;
         }
     </style>
 
     <script>
-        // Initialize login form functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize form switching
-            const signupBtn = document.getElementById('signup-btn');
-            const signinBtn = document.getElementById('signin-btn');
-            const mainContainer = document.querySelector('.container');
-            const signinIntro = document.querySelector('.signin-intro');
-            const signupIntro = document.querySelector('.signup-intro');
+        // Password toggle functionality for registration form
+        function togglePassword(inputId, openIconId, closedIconId) {
+            const input = document.getElementById(inputId);
+            const openIcon = document.getElementById(openIconId);
+            const closedIcon = document.getElementById(closedIconId);
 
-            if (signupBtn && mainContainer) {
-                signupBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    mainContainer.classList.add('change');
-
-                    // Ensure proper z-index for signup
-                    if (signinIntro && signupIntro) {
-                        signinIntro.style.zIndex = '10';
-                        signupIntro.style.zIndex = '20';
-                    }
-                });
+            if (input && openIcon && closedIcon) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    openIcon.classList.add('hidden');
+                    closedIcon.classList.remove('hidden');
+                } else {
+                    input.type = 'password';
+                    openIcon.classList.remove('hidden');
+                    closedIcon.classList.add('hidden');
+                }
             }
-
-            if (signinBtn && mainContainer) {
-                signinBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    mainContainer.classList.remove('change');
-
-                    // Ensure proper z-index for signin
-                    if (signinIntro && signupIntro) {
-                        signinIntro.style.zIndex = '20';
-                        signupIntro.style.zIndex = '10';
-                    }
-                });
-            }
-        });
+        }
     </script>
 </div>
