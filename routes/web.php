@@ -30,6 +30,8 @@ Route::prefix('admin')
         
         Route::get('/logout', function () {
             auth()->logout();
+            request()->session()->invalidate();
+            request()->session()->regenerateToken();
             return redirect()->route('admin.login');
         })->name('logout');
         
