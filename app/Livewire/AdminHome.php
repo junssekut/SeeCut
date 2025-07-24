@@ -5,6 +5,8 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\User;
 use App\Models\Vendor;
+use App\Models\VendorSubscription;
+use App\Models\Subscription;
 
 class AdminHome extends Component
 {
@@ -33,47 +35,91 @@ class AdminHome extends Component
 
     private function prepareData()
     {
-        // Prepare all data for the dashboard
-        $this->getSummaryData();
-        $this->getChartData();
-        $this->getVendorActivities();
-        $this->getSubscriptionPlans();
-        $this->getRecentSubscriptions();
+        try {
+            // Prepare all data for the dashboard
+            $this->getSummaryData();
+            $this->getChartData();
+            $this->getVendorActivities();
+            $this->getSubscriptionPlans();
+            $this->getRecentSubscriptions();
+        } catch (\Exception $e) {
+            // Fallback to safe default values
+            $this->totalSubscriptions = 0;
+            $this->totalRevenue = 0;
+            $this->totalUsers = 0;
+            $this->chartData = [
+                'months' => [],
+                'revenues' => []
+            ];
+            $this->subscriptionPlans = [];
+            $this->recentSubscriptions = [];
+            $this->vendorActivities = [];
+        }
     }
 
     private function getSummaryData()
     {
-        // Calculate total subscriptions (vendors)
-        $this->totalSubscriptions = Vendor::count();
-        
-        // Calculate total revenue (assuming each subscription has a monthly fee)
-        $subscriptionFee = 150000; // IDR per month per subscription
-        $this->totalRevenue = $this->totalSubscriptions * $subscriptionFee;
-        
-        // Calculate total users
-        $this->totalUsers = User::count();
+        try {
+            // Calculate total subscriptions from VendorSubscription table
+            $this->totalSubscriptions = VendorSubscription::count();
+            
+            // Calculate total revenue from actual subscription prices
+            $this->totalRevenue = VendorSubscription::with('subscription')
+                ->get()
+                ->sum(function($vendorSubscription) {
+                    return $vendorSubscription->subscription->price ?? 0;
+                });
+            
+            // Calculate total users (customers only, exclude vendors and admins)
+            $this->totalUsers = User::whereHas('profile', function($query) {
+                $query->where('role', 'customer');
+            })->count();
+        } catch (\Exception $e) {
+            // Fallback values if database error
+            $this->totalSubscriptions = 0;
+            $this->totalRevenue = 0;
+            $this->totalUsers = 0;
+        }
     }
 
     private function getChartData()
     {
-        // Since vendors table doesn't have timestamps, create mock monthly data
-        $months = [];
-        $revenues = [];
-        
-        for ($i = 5; $i >= 0; $i--) {
-            $month = now()->subMonths($i);
-            // Simulate growth pattern - more subscriptions over time
-            $baseSubscriptions = max(1, $this->totalSubscriptions - ($i * 2));
-            $subscriptionsInMonth = min($baseSubscriptions, $this->totalSubscriptions);
+        try {
+            // Get actual monthly revenue from VendorSubscription
+            $months = [];
+            $revenues = [];
             
-            $months[] = $month->format('M Y');
-            $revenues[] = round(($subscriptionsInMonth * 150000) / 1000000, 1); // Convert to millions
+            for ($i = 5; $i >= 0; $i--) {
+                $month = now()->subMonths($i);
+                $startOfMonth = $month->startOfMonth()->toDateString();
+                $endOfMonth = $month->endOfMonth()->toDateString();
+                
+                // Calculate revenue for subscriptions active in this month
+                $monthlyRevenue = VendorSubscription::with('subscription')
+                    ->where(function($query) use ($startOfMonth, $endOfMonth) {
+                        $query->where('start_date', '<=', $endOfMonth)
+                              ->where('end_date', '>=', $startOfMonth);
+                    })
+                    ->get()
+                    ->sum(function($vendorSubscription) {
+                        return $vendorSubscription->subscription->price ?? 0;
+                    });
+                
+                $months[] = $month->format('M Y');
+                $revenues[] = max(0, round($monthlyRevenue / 1000000, 1)); // Convert to millions, ensure non-negative
+            }
+            
+            $this->chartData = [
+                'months' => $months,
+                'revenues' => $revenues
+            ];
+        } catch (\Exception $e) {
+            // Fallback to safe default values
+            $this->chartData = [
+                'months' => ['Jan 2025', 'Feb 2025', 'Mar 2025', 'Apr 2025', 'May 2025', 'Jun 2025'],
+                'revenues' => [0, 0, 0, 0, 0, 0]
+            ];
         }
-        
-        $this->chartData = [
-            'months' => $months,
-            'revenues' => $revenues
-        ];
     }
 
     private function getVendorActivities()
@@ -131,99 +177,70 @@ class AdminHome extends Component
 
     private function getRecentSubscriptions()
     {
-        // Generate mock recent subscriptions based on actual vendors
-        $vendors = Vendor::take(6)->get();
-        
-        // If no vendors exist, create some sample data
-        if ($vendors->isEmpty()) {
-            $vendors = collect([
-                (object)['id' => 1, 'name' => 'Uppertouch Barbershop Sentul'],
-                (object)['id' => 2, 'name' => 'Barbershop Garut 1'],
-                (object)['id' => 3, 'name' => '180 Barbershop'],
-                (object)['id' => 4, 'name' => 'Cukurbe Barbershop Sentul'],
-                (object)['id' => 5, 'name' => 'Jack&john\'s Barbershop 3 Sentul City'],
-                (object)['id' => 6, 'name' => 'Modern Cuts Barbershop']
-            ]);
-        }
-        
-        $plans = ['Basic', 'Standard', 'Pro'];
-        $timeOptions = [
-            '5 menit yang lalu',
-            '30 menit yang lalu',
-            '1 jam yang lalu',
-            '2 jam yang lalu',
-            '5 jam yang lalu',
-            '1 hari yang lalu'
-        ];
-        
+        // Get actual recent subscriptions from VendorSubscription
+        $recentSubscriptions = VendorSubscription::with(['vendor', 'subscription'])
+            ->orderBy('start_date', 'desc')
+            ->take(6)
+            ->get();
+
         $this->recentSubscriptions = [];
         
-        foreach ($vendors as $index => $vendor) {
+        foreach ($recentSubscriptions as $subscription) {
+            // Calculate how long ago the subscription started
+            $startDate = \Carbon\Carbon::parse($subscription->start_date);
+            $timeAgo = $startDate->diffForHumans();
+            
             $this->recentSubscriptions[] = [
-                'id' => $vendor->id,
-                'name' => $vendor->name,
-                'plan' => $plans[array_rand($plans)],
-                'time' => $timeOptions[array_rand($timeOptions)],
-                'avatar' => 'https://ui-avatars.cc/api/?name=' . urlencode($vendor->name) . '&background=10b981&color=ffffff&size=40&rounded=true'
+                'id' => $subscription->vendor->id,
+                'name' => $subscription->vendor->name ?? 'Unknown Vendor',
+                'plan' => $subscription->subscription->name ?? 'Unknown Plan',
+                'time' => $timeAgo,
+                'avatar' => 'https://ui-avatars.cc/api/?name=' . urlencode($subscription->vendor->name ?? 'UV') . '&background=10b981&color=ffffff&size=40&rounded=true'
             ];
         }
         
-        // Sort by most recent first
-        usort($this->recentSubscriptions, function($a, $b) {
-            $timeValues = [
-                '5 menit yang lalu' => 5,
-                '30 menit yang lalu' => 30,
-                '1 jam yang lalu' => 60,
-                '2 jam yang lalu' => 120,
-                '5 jam yang lalu' => 300,
-                '1 hari yang lalu' => 1440
-            ];
-            return ($timeValues[$a['time']] ?? 0) - ($timeValues[$b['time']] ?? 0);
-        });
+        // If no recent subscriptions, show empty state
+        if (empty($this->recentSubscriptions)) {
+            $this->recentSubscriptions = [];
+        }
     }
 
     private function getSubscriptionPlans()
     {
-        // Simulate subscription plan distribution based on vendor count
-        $totalVendors = $this->totalSubscriptions;
+        // Get actual subscription plan distribution from database
+        $planCounts = VendorSubscription::with('subscription')
+            ->get()
+            ->groupBy('subscription.name')
+            ->map(function ($group) {
+                return [
+                    'count' => $group->count(),
+                    'price' => $group->first()->subscription->price ?? 0
+                ];
+            });
+
+        $totalSubscriptions = $this->totalSubscriptions;
         
-        if ($totalVendors == 0) {
-            $this->subscriptionPlans = [
-                ['name' => 'Basic', 'count' => 0, 'percentage' => 0, 'price' => 99000, 'color' => '#4a90e2'],
-                ['name' => 'Standard', 'count' => 0, 'percentage' => 0, 'price' => 199000, 'color' => '#50e3c2'],
-                ['name' => 'Pro', 'count' => 0, 'percentage' => 0, 'price' => 299000, 'color' => '#bd10e0']
-            ];
+        if ($totalSubscriptions == 0) {
+            $this->subscriptionPlans = [];
             return;
         }
-        
-        // Calculate distribution (Basic: 52%, Standard: 28%, Pro: 20%)
-        $basicCount = (int)($totalVendors * 0.52);
-        $standardCount = (int)($totalVendors * 0.28);
-        $proCount = $totalVendors - $basicCount - $standardCount;
-        
-        $this->subscriptionPlans = [
-            [
-                'name' => 'Basic',
-                'count' => $basicCount,
-                'percentage' => round(($basicCount / $totalVendors) * 100, 1),
-                'price' => 99000,
-                'color' => '#4a90e2'
-            ],
-            [
-                'name' => 'Standard',
-                'count' => $standardCount,
-                'percentage' => round(($standardCount / $totalVendors) * 100, 1),
-                'price' => 199000,
-                'color' => '#50e3c2'
-            ],
-            [
-                'name' => 'Pro',
-                'count' => $proCount,
-                'percentage' => round(($proCount / $totalVendors) * 100, 1),
-                'price' => 299000,
-                'color' => '#bd10e0'
-            ]
-        ];
+
+        $this->subscriptionPlans = [];
+        $colors = ['#4a90e2', '#50e3c2', '#bd10e0', '#f5a623', '#d0021b'];
+        $colorIndex = 0;
+
+        foreach ($planCounts as $planName => $data) {
+            $percentage = $totalSubscriptions > 0 ? round(($data['count'] / $totalSubscriptions) * 100, 1) : 0;
+            
+            $this->subscriptionPlans[] = [
+                'name' => $planName,
+                'count' => $data['count'],
+                'percentage' => $percentage,
+                'price' => $data['price'],
+                'color' => $colors[$colorIndex % count($colors)]
+            ];
+            $colorIndex++;
+        }
     }
 
     public function render()
