@@ -218,8 +218,10 @@
                 <p class="font-Poppins text-Seasalt text-xl">Gaya rambut bukan cuma soal tren, tapi soal cocok atau
                     nggaknya sama kamu. Scroll inspirasi dari barber terbaik kami, dan kalau masih bingung, langsung
                     tanya ke fitur live chat AI kami. Siap kasih rekomendasi yang pas buat bentuk wajah kamu!</p>
-                <button class="bg-Ecru rounded-sm font-Kuunari text-lg px-6 py-4 text-Eerie-Black">REKOMENDASI GAYA
-                    SEKARANG</button>
+
+                <a href="{{ route('style.index') }}"
+                    class="bg-Ecru rounded-sm font-Kuunari text-lg px-6 py-4 text-Eerie-Black">REKOMENDASI GAYA
+                    SEKARANG</a>
             </div>
         </div>
 
@@ -246,7 +248,7 @@
                     dari sistem booking
                     otomatis, halaman profil digital, sampai laporan harian—semua langsung dari satu tempat. Kelola
                     bisnismu tanpa ribet!</p>
-                <a href="/"
+                <a href="{{ route('subscription') }}"
                     class="bg-Ecru z-10 py-4 px-8 rounded-sm font-Kuunari text-xl text-Eerie-Black hover:bg-Satin-Sheen-Yellow transition-colors duration-300 hover:text-Seasalt">COBA
                     FITURNYA
                     SEKARANG</a>

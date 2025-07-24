@@ -92,7 +92,7 @@
                 </p>
             </div>
 
-            <a href="#REKOMENDASI PAGE"
+            <a href="{{ route('style.recommendation') }}"
                 class="flex items-center justify-center h-[50px] sm:h-[60px] w-[200px] sm:w-[240px] 
           bg-Ecru hover:bg-Field-Drab 
           text-Taupe hover:text-white 

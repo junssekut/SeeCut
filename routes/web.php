@@ -3,7 +3,7 @@
 use App\Livewire\Berlangganan;
 use App\Livewire\AdminHome;
 use App\Livewire\Pages\Style\AiRecommendation;
-use App\Livewire\Pages\Subscription\SubscriptionPage;
+use App\Livewire\SubscriptionPage;
 use App\Livewire\Extend;
 use App\Livewire\ProductDetail;
 use App\Livewire\BarbershopListing;
@@ -16,6 +16,8 @@ use App\Livewire\UserProfile;
 // use App\Livewire\Information;
 use App\Livewire\BookingPage;
 
+
+Route::get('/subscribe', SubscriptionPage::class)->name('subscription');
 Route::get('/berlangganan', Berlangganan::class)->name('berlangganan');
 
 Route::get('/', Home::class)->name('home');
@@ -30,7 +32,7 @@ Route::view('profile', 'profile')
 
 Route::prefix('style')
     ->group(function () {
-        Route::get('/', StylingDetail::class)->name('style');
+        Route::get('/', StylingDetail::class)->name('style.index');
         Route::get('/recommendation', AiRecommendation::class)->name('style.recommendation');
     });
 
@@ -63,7 +65,8 @@ Route::get('/product-detail', function () {
 
 Route::get('/dashboard', AdminHome::class)->name('dashboard');
 
-Route::get('/book', BookingPage::class)->name('book');
+Route::get('/book', BookingPage::class)->name('book')->middleware('customer');
+Route::get('/barbershop/{vendor}/book', BookingPage::class)->name('barbershop.book')->middleware('customer');
 
 // Barbershop routes
 Route::get('/barbershop', BarbershopListing::class)->name('barbershop.index');

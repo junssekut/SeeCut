@@ -1,10 +1,10 @@
 <div
     class="flex flex-col lg:flex-row justify-between items-center gap-4 px-8 md:px-16 lg:px-48 py-4 bg-Eerie-Black relative z-50">
-    <div>
+    <div class="lg:flex-1">
         <a href="{{ route('home') }}"><img class="w-24" src="{{ asset(path: 'assets/images/logo-text.png') }}"
                 alt="SeeCut"></a>
     </div>
-    <div class="flex flex-col sm:flex-row gap-7 justify-center items-center">
+    <div class="flex flex-col sm:flex-row gap-7 justify-center items-center lg:flex-1">
         <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out focus:outline-none {{ request()->routeIs('home') ? 'text-Ecru' : '' }}"
             href="{{ route('home') }}">BERANDA</a>
         <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out focus:outline-none {{ request()->routeIs('barbershop.*') ? 'text-Ecru' : '' }}"
@@ -12,7 +12,7 @@
         <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out focus:outline-none {{ request()->routeIs('style.*') ? 'text-Ecru' : '' }}"
             href="{{ route('style.recommendation') }}">REKOMENDASI GAYA</a>
     </div>
-    <div class="flex items-center">
+    <div class="flex items-center justify-end lg:flex-1">
         @auth
             {{-- User is logged in --}}
             <div class="relative" x-data="{ open: false }" @click.outside="open = false">
