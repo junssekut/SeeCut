@@ -39,9 +39,9 @@
             @php
                 $user = Auth::user();
                 $profile = $user->profile ?? null;
-                $fullName = $profile?->full_name ?? $user->name ?? 'Admin';
+                $fullName = $profile?->full_name ?? ($user->name ?? 'Admin');
                 $role = ucfirst($profile?->role ?? 'Administrator');
-                
+
                 // Generate initials from full name
                 $nameParts = explode(' ', trim($fullName));
                 if (count($nameParts) >= 2) {
@@ -50,9 +50,10 @@
                     $initials = strtoupper(substr($fullName, 0, 2));
                 }
             @endphp
-            
+
             <div class="flex items-center mb-4">
-                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
+                <div
+                    class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
                     <span class="text-white font-bold text-sm">{{ $initials }}</span>
                 </div>
                 <div>
@@ -62,7 +63,8 @@
             </div>
         @else
             <div class="flex items-center mb-4">
-                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
+                <div
+                    class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
                     <span class="text-white font-bold text-sm">AD</span>
                 </div>
                 <div>
@@ -71,7 +73,7 @@
                 </div>
             </div>
         @endauth
-        
+
         <form method="POST" action="{{ route('admin.logout.post') }}" class="w-full">
             @csrf
             <button type="submit"
