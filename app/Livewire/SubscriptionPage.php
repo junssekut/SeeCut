@@ -69,6 +69,11 @@ class SubscriptionPage extends Component
 
     public function selectPlan($planId)
     {
+        if (!auth()->check()) {
+            $this->dispatch('redirect-to-login');
+            return;
+        }
+
         $this->selectedPlan = collect($this->plans)->firstWhere('id', $planId);
         $this->showPaymentModal = true;
     }
@@ -82,6 +87,11 @@ class SubscriptionPage extends Component
 
     public function confirmSubscription()
     {
+        if (!auth()->check()) {
+            $this->dispatch('redirect-to-login');
+            return;
+        }
+
         if (!$this->selectedPlan) {
             $this->dispatch('show-notification', [
                 'type' => 'error',
@@ -93,15 +103,36 @@ class SubscriptionPage extends Component
         $this->isProcessing = true;
 
         try {
+            // First check if user is already a vendor
             $vendor = Vendor::where('user_id', auth()->id())->first();
             
             if (!$vendor) {
-                $this->dispatch('show-notification', [
-                    'type' => 'error',
-                    'message' => 'Vendor tidak ditemukan.'
+                // Create new vendor for the user
+                $user = auth()->user();
+                $profile = $user->profile;
+                $vendorName = trim(($profile->first_name ?? '') . ' ' . ($profile->last_name ?? ''));
+                
+                // Fallback to username if no name in profile
+                if (empty($vendorName)) {
+                    $vendorName = $user->username ?? 'Vendor Baru';
+                }
+                
+                $vendor = Vendor::create([
+                    'user_id' => auth()->id(),
+                    'name' => $vendorName,
+                    'address' => '',
+                    'description' => '',
+                    'phone' => '',
+                    'rating' => 0.0,
+                    'reviews_count' => 0,
+                    'thumbnail_url' => '',
+                    'latitude' => -6.2088, // Default Jakarta coordinates
+                    'longitude' => 106.8456,
+                    'place_id' => 'generated_' . time()
                 ]);
-                $this->isProcessing = false;
-                return;
+
+                // Update user profile role to vendor
+                $profile->update(['role' => 'vendor']);
             }
 
             $subscription = Subscription::find($this->selectedPlan['id']);
@@ -141,11 +172,14 @@ class SubscriptionPage extends Component
 
             $this->dispatch('show-notification', [
                 'type' => 'success',
-                'message' => 'Langganan berhasil! Terima kasih telah berlangganan.'
+                'message' => 'Selamat! Langganan berhasil aktif. Akun Anda telah diupgrade menjadi vendor.'
             ]);
 
             $this->loadCurrentSubscription();
             $this->closeModal();
+
+            // Small delay then redirect to vendor profile to complete setup
+            $this->dispatch('redirect-to-vendor-dashboard');
 
         } catch (\Exception $e) {
             $this->dispatch('show-notification', [

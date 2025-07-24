@@ -155,70 +155,50 @@
                 </div>
             </div>
         </div>
-
-        <!-- Footer -->
-        <div class="absolute bottom-0 left-0 right-0 bg-black border-t border-gray-800">
-            <div class="container mx-auto px-8 md:px-16 lg:px-48 py-8">
-                <div class="flex flex-col md:flex-row justify-between items-start">
-                    <!-- Logo and Description -->
-                    <div class="mb-8 md:mb-0 md:w-1/2">
-                        <div class="mb-4">
-                            <img class="w-24" src="{{ asset('assets/images/logo-text.png') }}" alt="SeeCut">
-                        </div>
-                        <p class="text-gray-400 text-sm leading-relaxed max-w-md">
-                            Bangun barbershop profesional lebih mudah bersama Seecut. Platform lengkap yang kamu
-                            perlukan
-                            untuk mengembangkan layanan digital dan tingkatkan pelanggan dari satu tempat.
-                        </p>
-                        <p class="text-gray-500 text-xs mt-4">© 2025 Seecut. All rights reserved.</p>
-                    </div>
-
-                    <!-- Links -->
-                    <div class="md:w-1/2 md:text-right">
-                        <div class="space-y-2">
-                            <p class="text-Ecru font-semibold text-sm uppercase tracking-wide">SUBSCRIBE</p>
-                            <p class="text-Ecru font-semibold text-sm uppercase tracking-wide">FIND BARBERSHOP</p>
-                            <p class="text-Ecru font-semibold text-sm uppercase tracking-wide">AI RECOMMENDATION</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     @endif
 
     <!-- Payment Modal -->
     @if ($showPaymentModal && $selectedPlan)
         <div class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
-            <div class="bg-white rounded-2xl shadow-2xl w-[95%] max-w-lg transform transition-all duration-300">
+            <div class="bg-white rounded-3xl shadow-2xl w-[95%] max-w-lg transform transition-all duration-300">
                 <!-- Header -->
-                <div class="bg-gradient-to-r from-Eerie-Black to-gray-800 rounded-t-2xl px-6 py-4 text-center">
-                    <h2 class="text-2xl font-bold text-white font-Kuunari">KONFIRMASI LANGGANAN</h2>
-                    <p class="text-gray-300 font-poppins mt-1">{{ $selectedPlan['name'] }}</p>
+                <div class="bg-gradient-to-r from-Eerie-Black to-gray-800 rounded-t-3xl px-6 py-4 text-center">
+                    <h2 class="text-3xl font-bold text-white font-Kuunari">PEMBELIAN PAKET</h2>
+                    <p class="text-gray-300 font-poppins mt-1">Segera Lakukan Pembayaran</p>
                 </div>
 
                 <div class="p-6">
-                    <!-- Plan Details -->
-                    <div class="text-center mb-6">
-                        <div class="text-5xl font-Kuunari text-Satin-Sheen-Yellow mb-2">
-                            {{ $selectedPlan['formatted_price'] }}
+                    <!-- Plan & Duration Buttons -->
+                    <div class="flex justify-center gap-3 mb-6">
+                        <div class="bg-[#6B4F2E] text-[#E9BF80] px-6 py-3 rounded-xl font-bold text-center">
+                            <div class="font-Kuunari text-lg">{{ strtoupper($selectedPlan['name']) }}</div>
                         </div>
-                        <p class="text-gray-600">{{ $selectedPlan['duration_text'] }}</p>
+                        <div class="bg-[#6B4F2E] text-[#E9BF80] px-6 py-3 rounded-xl font-bold text-center">
+                            <div class="font-Kuunari text-lg">{{ round($selectedPlan['duration_days'] / 30) }} BULAN
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Features -->
+                    <!-- VA Info -->
+                    <div class="text-center mb-6 p-4 bg-gray-50 rounded-xl">
+                        <div class="text-gray-600 font-poppins text-sm mb-2">No. BCA Virtual Account:</div>
+                        <div class="font-bold text-xl text-gray-800 font-mono tracking-wider mb-1">1902085887306306
+                        </div>
+                        <div class="text-gray-600 text-sm">a.n SeeCut</div>
+                    </div>
+
+                    <!-- Detail Pemesanan -->
                     <div class="mb-6">
-                        <h3 class="font-semibold text-lg mb-3 text-gray-800">Fitur yang didapat:</h3>
+                        <h3 class="font-semibold text-lg mb-3 text-gray-800">Detail Pemesanan</h3>
                         <div class="space-y-2">
-                            @foreach ($selectedPlan['features'] as $feature)
-                                <div class="flex items-center">
-                                    <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                    <span class="text-gray-700">{{ $feature }}</span>
-                                </div>
-                            @endforeach
+                            <div class="flex justify-between text-gray-700">
+                                <span>Harga Paket</span>
+                                <span>{{ number_format($selectedPlan['price'], 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between text-gray-700">
+                                <span>Diskon</span>
+                                <span>-</span>
+                            </div>
                         </div>
                     </div>
 
@@ -226,21 +206,29 @@
                     <div
                         class="border-t border-b border-gray-200 py-3 mb-6 flex justify-between text-lg font-bold text-gray-800">
                         <span>TOTAL</span>
-                        <span>Rp {{ number_format($selectedPlan['price'], 0, ',', '.') }}</span>
+                        <span>{{ number_format($selectedPlan['price'], 0, ',', '.') }}</span>
+                    </div>
+
+                    <!-- Deadline Transfer -->
+                    <div class="text-center mb-6 p-4 bg-red-50 rounded-xl border border-red-200">
+                        <div class="text-red-600 font-semibold mb-1">Transfer Sebelum</div>
+                        <div class="text-red-800 font-bold">Pukul {{ now()->addHour()->format('H.i') }} WIB</div>
+                        <div class="text-red-700">{{ now()->format('l, d M Y') }}</div>
                     </div>
 
                     <!-- Action Buttons -->
                     <div class="flex gap-3">
                         <button wire:click="closeModal"
-                            class="flex-1 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors duration-300">
+                            class="flex-1 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors duration-300"
+                            {{ $isProcessing ? 'disabled' : '' }}>
                             Batal
                         </button>
                         <button wire:click="confirmSubscription"
-                            class="flex-1 py-3 bg-Satin-Sheen-Yellow text-Taupe rounded-xl font-semibold hover:bg-yellow-400 transition-colors duration-300 {{ $isProcessing ? 'opacity-50 cursor-not-allowed' : '' }}"
+                            class="flex-1 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg {{ $isProcessing ? 'opacity-50 cursor-not-allowed' : '' }}"
                             {{ $isProcessing ? 'disabled' : '' }}>
                             @if ($isProcessing)
                                 <span class="flex items-center justify-center">
-                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-Taupe"
+                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10"
                                             stroke="currentColor" stroke-width="4"></circle>
@@ -251,7 +239,14 @@
                                     Memproses...
                                 </span>
                             @else
-                                Konfirmasi Langganan
+                                <span class="flex items-center justify-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    Konfirmasi
+                                </span>
                             @endif
                         </button>
                     </div>
@@ -262,6 +257,7 @@
 </div>
 
 @push('styles')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <style>
         .text-shadow-up {
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -284,11 +280,83 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #4b5563;
         }
+
+        /* Enhanced Notyf styles */
+        .notyf__toast {
+            max-width: 400px !important;
+            min-width: 300px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        .notyf__wrapper {
+            padding: 16px 20px !important;
+        }
+
+        .notyf__message {
+            font-family: 'Poppins', sans-serif !important;
+            font-weight: 500 !important;
+            line-height: 1.5 !important;
+        }
+
+        .notyf__ripple {
+            background: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 640px) {
+            .notyf__toast {
+                max-width: calc(100vw - 32px) !important;
+                margin: 0 16px !important;
+            }
+        }
+
+        /* Success overlay animation */
+        .success-overlay {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .success-overlay.show {
+            opacity: 1;
+            transform: scale(1);
+        }
     </style>
 @endpush
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <script>
+        // Initialize Notyf with bottom-right positioning and ripple effect
+        const notyf = new Notyf({
+            duration: 4000,
+            position: {
+                x: 'right',
+                y: 'bottom',
+            },
+            types: [{
+                    type: 'success',
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    icon: {
+                        className: 'notyf__icon--success',
+                        tagName: 'i',
+                    },
+                    dismissible: true
+                },
+                {
+                    type: 'error',
+                    background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                    icon: {
+                        className: 'notyf__icon--error',
+                        tagName: 'i',
+                    },
+                    dismissible: true
+                }
+            ],
+            ripple: true,
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             // Close modal on escape key
             document.addEventListener('keydown', function(e) {
@@ -298,17 +366,64 @@
             });
         });
 
-        // Listen for notifications
+        // Listen for notifications from Livewire
         document.addEventListener('livewire:init', () => {
             Livewire.on('show-notification', (event) => {
                 const data = event[0] || event;
-                if (typeof notyf !== 'undefined') {
-                    if (data.type === 'success') {
-                        notyf.success(data.message);
-                    } else if (data.type === 'error') {
-                        notyf.error(data.message);
-                    }
+                if (data.type === 'success') {
+                    notyf.success(data.message);
+                } else if (data.type === 'error') {
+                    notyf.error(data.message);
                 }
+            });
+
+            // Listen for authentication redirect
+            Livewire.on('redirect-to-login', () => {
+                notyf.error('Silakan login terlebih dahulu untuk melanjutkan.');
+                setTimeout(() => {
+                    window.location.href = '{{ route('login') }}';
+                }, 1500);
+            });
+
+            // Listen for vendor dashboard redirect
+            Livewire.on('redirect-to-vendor-dashboard', () => {
+                notyf.success(
+                    'Selamat! Akun Anda telah diupgrade menjadi vendor. Mengarahkan ke halaman profil...'
+                );
+                
+                // Create overlay
+                const overlay = document.createElement('div');
+                overlay.className = 'fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] success-overlay';
+                overlay.innerHTML = `
+                    <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-md mx-4 text-center">
+                        <div class="w-16 h-16 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4 font-Kuunari">SELAMAT!</h3>
+                        <p class="text-gray-600 mb-6 font-poppins">Akun Anda telah berhasil diupgrade menjadi vendor. Kami akan mengarahkan Anda ke halaman profil untuk melengkapi informasi bisnis Anda.</p>
+                        <div class="flex items-center justify-center">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="text-green-600 font-semibold">Mengarahkan...</span>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(overlay);
+                
+                // Animate in
+                setTimeout(() => {
+                    overlay.classList.add('show');
+                }, 100);
+                
+                // Redirect after showing the overlay
+                setTimeout(() => {
+                    window.location.href = '{{ route('vendor.profile') }}';
+                }, 3000);
             });
         });
     </script>

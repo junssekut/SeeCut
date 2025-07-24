@@ -16,7 +16,7 @@ use App\Livewire\UserProfile;
 // use App\Livewire\Information;
 use App\Livewire\BookingPage;
 
-Route::get('/subscribe', SubscriptionPage::class)->name('subscription');
+Route::get('/subscribe', SubscriptionPage::class)->name('subscription')->middleware('auth');
 Route::get('/berlangganan', Berlangganan::class)->name('berlangganan');
 
 Route::get('/', Home::class)->name('home');
