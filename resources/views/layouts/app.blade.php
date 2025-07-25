@@ -8,6 +8,9 @@
 
     <title>@yield('title', 'SeeCut')</title>
 
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('assets/images/logo-app.png') }}" type="image/png">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @switch(Route::currentRouteName())
@@ -32,7 +35,16 @@
 </head>
 
 <body class="font-Poppins min-h-screen min-w-screen bg-cover bg-bottom bg-no-repeat bg-[#0A0A0A]">
-    @if (!str_contains(Route::currentRouteName(), 'login'))
+    @php
+        $currentRoute = Route::currentRouteName();
+        $is404 =
+            request()->is('*') &&
+            view()->exists('errors.404') &&
+            (app('router')->current() === null || str_contains(request()->url(), '404'));
+        $isErrorPage = str_contains($currentRoute ?? '', 'error') || $is404 || request()->route() === null;
+    @endphp
+
+    @if (!str_contains($currentRoute ?? '', 'login') && !$isErrorPage)
         @persist('navbar')
         <livewire:navigation.navbar />
         @endpersist()
@@ -45,7 +57,7 @@
         @yield('content')
     </div>
 
-    @if (!str_contains(Route::currentRouteName(), 'login') && !str_contains(Route::currentRouteName(), 'dashboard'))
+    @if (!str_contains($currentRoute ?? '', 'login') && !str_contains($currentRoute ?? '', 'dashboard') && !$isErrorPage)
         @persist('footer')
         <livewire:navigation.footer />
         @endpersist()

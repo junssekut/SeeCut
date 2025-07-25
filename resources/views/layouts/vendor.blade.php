@@ -8,6 +8,9 @@
 
     <title>@yield('title', 'SeeCut')</title>
 
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('assets/images/logo-vendor.png') }}" type="image/png">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @switch(Route::currentRouteName())

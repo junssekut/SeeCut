@@ -17,7 +17,7 @@ use function Livewire\Volt\rules;
 use function Livewire\Volt\action;
 use function Livewire\Volt\mount;
 
-layout('layouts.app');
+layout('layouts.admin');
 
 state([
     'login_field' => '',
