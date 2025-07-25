@@ -18,6 +18,7 @@ Route::middleware('guest')->group(function () {
         ->name('password.reset');
 
     Volt::route('/vendor/login', 'vendor-login')->name('vendor.login');
+    Volt::route('/admin/login', 'admin-login')->name('admin.login');
 });
 
 

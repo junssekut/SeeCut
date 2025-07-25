@@ -1,60 +1,6 @@
 <div class="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-    <aside class="w-64 bg-slate-800 text-white flex flex-col shadow-xl">
-        <div class="p-6 border-b border-gray-600">
-            <div class="flex items-center">
-                <img src="{{ asset('assets/ld/logo-text.png') }}" alt="SeeCut Logo" class="h-12">
-            </div>
-        </div>
-
-        <nav class="flex-1 p-4">
-            <ul class="space-y-2">
-                <li>
-                    <a href="{{ route('dashboard') }}"
-                        class="flex items-center font-Kuunari text-lg p-3 {{ request()->routeIs('dashboard') ? 'bg-white text-slate-800' : 'hover:bg-white hover:text-slate-800' }} rounded-lg font-semibold transition-all duration-300 group">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                        </svg>
-                        DASBOR
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('berlangganan') }}"
-                        class="flex items-center font-Kuunari text-lg p-3 bg-white text-slate-800 rounded-lg font-semibold transition-all duration-300 group">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        BERLANGGANAN
-                    </a>
-                </li>
-            </ul>
-        </nav>
-
-        <div class="p-4 border-t border-gray-600">
-            <div class="flex items-center mb-4">
-                <div
-                    class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
-                    <span class="text-white font-bold text-sm">MR</span>
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-white">Matthew Raditya</p>
-                    <p class="text-xs text-gray-400">Administrator</p>
-                </div>
-            </div>
-            <a href="#"
-                class="flex items-center p-3 hover:bg-red-600 hover:text-white rounded-lg font-semibold transition-all duration-300 text-red-400">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                KELUAR
-            </a>
-        </div>
-    </aside>
+    <!-- Use the admin sidebar component -->
+    <x-admin-sidebar />
 
     <main class="flex-1 overflow-y-auto bg-gradient-to-br from-gray-50 to-gray-100">
         <div class="p-8">
@@ -212,7 +158,8 @@
                                         </span>
                                     </td>
                                     <td class="p-4 text-center align-middle">
-                                        <button onclick="event.stopPropagation(); showDeleteConfirmation('{{ $sub['id'] }}', '{{ $sub['name'] }}')"
+                                        <button
+                                            onclick="event.stopPropagation(); showDeleteConfirmation('{{ $sub['id'] }}', '{{ $sub['name'] }}')"
                                             class="group/btn relative inline-flex items-center justify-center p-2.5 text-red-500 hover:text-white bg-red-50 hover:bg-red-500 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-110">
                                             <svg class="h-5 w-5 transition-transform duration-300 group-hover/btn:scale-110"
                                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -370,21 +317,28 @@
     @endif
 
     <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-60 opacity-0 invisible transition-all duration-300">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform scale-95 transition-transform duration-300" id="deleteModalContent">
+    <div id="deleteModal"
+        class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-60 opacity-0 invisible transition-all duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform scale-95 transition-transform duration-300"
+            id="deleteModalContent">
             <div class="p-6 text-center">
                 <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
                     <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                        </path>
                     </svg>
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 mb-2">Konfirmasi Hapus</h3>
-                <p class="text-gray-600 mb-6" id="deleteConfirmText">Apakah Anda yakin ingin menghapus langganan ini?</p>
+                <p class="text-gray-600 mb-6" id="deleteConfirmText">Apakah Anda yakin ingin menghapus langganan ini?
+                </p>
                 <div class="flex space-x-3 justify-center">
-                    <button onclick="cancelDelete()" class="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg font-semibold transition-colors duration-200">
+                    <button onclick="cancelDelete()"
+                        class="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg font-semibold transition-colors duration-200">
                         Batal
                     </button>
-                    <button onclick="confirmDelete()" class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors duration-200">
+                    <button onclick="confirmDelete()"
+                        class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors duration-200">
                         Hapus
                     </button>
                 </div>
@@ -402,43 +356,43 @@
     function showDeleteConfirmation(id, name) {
         pendingDeleteId = id;
         pendingDeleteName = name;
-        
+
         const modal = document.getElementById('deleteModal');
         const modalContent = document.getElementById('deleteModalContent');
         const confirmText = document.getElementById('deleteConfirmText');
-        
+
         confirmText.textContent = `Apakah Anda yakin ingin menghapus langganan ${name}?`;
-        
+
         modal.classList.remove('opacity-0', 'invisible');
         modal.classList.add('opacity-100', 'visible');
-        
+
         setTimeout(() => {
             modalContent.classList.remove('scale-95');
             modalContent.classList.add('scale-100');
         }, 10);
     }
-    
+
     function cancelDelete() {
         const modal = document.getElementById('deleteModal');
         const modalContent = document.getElementById('deleteModalContent');
-        
+
         modalContent.classList.remove('scale-100');
         modalContent.classList.add('scale-95');
-        
+
         setTimeout(() => {
             modal.classList.remove('opacity-100', 'visible');
             modal.classList.add('opacity-0', 'invisible');
         }, 200);
-        
+
         pendingDeleteId = null;
         pendingDeleteName = null;
     }
-    
+
     function confirmDelete() {
         if (pendingDeleteId) {
             // Call Livewire method to delete
             @this.call('deleteSubscription', pendingDeleteId);
-            
+
             // Close modal
             cancelDelete();
         }

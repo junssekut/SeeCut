@@ -9,7 +9,7 @@
     <title>{{ $title ?? 'Dasbor Admin' }} - SeeCut</title>
 
     <!-- Favicon -->
-    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('assets/images/logo-admin.png') }}" type="image/png">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

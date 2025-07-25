@@ -32,7 +32,7 @@
         <nav class="flex-1">
             <ul>
                 <li class="mb-2">
-                    <a href="{{ route('dashboard') }}"
+                    <a href="{{ route('admin.dashboard') }}"
                         class="flex items-center font-Kuunari text-2xl p-3 bg-Ecru text-Charcoal rounded-lg font-semibold">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -152,9 +152,11 @@
                                 </div>
                             </div>
                             <div class="space-y-2">
-                                <p class="text-3xl font-bold text-gray-900 leading-none">{{ number_format($totalUsers) }}</p>
+                                <p class="text-3xl font-bold text-gray-900 leading-none">
+                                    {{ number_format($totalUsers) }}</p>
                                 <div class="flex items-center">
-                                    <span class="text-green-600 text-sm font-semibold bg-green-100 px-3 py-1 rounded-full">
+                                    <span
+                                        class="text-green-600 text-sm font-semibold bg-green-100 px-3 py-1 rounded-full">
                                         Terdaftar
                                     </span>
                                 </div>
@@ -175,10 +177,12 @@
                             </div>
                             <div class="space-y-2">
                                 <p class="text-2xl font-bold text-gray-900 leading-none">
-                                    Rp {{ number_format($totalSubscriptions > 0 ? $totalRevenue / $totalSubscriptions : 0, 0, ',', '.') }}
+                                    Rp
+                                    {{ number_format($totalSubscriptions > 0 ? $totalRevenue / $totalSubscriptions : 0, 0, ',', '.') }}
                                 </p>
                                 <div class="flex items-center">
-                                    <span class="text-orange-600 text-sm font-semibold bg-orange-100 px-3 py-1 rounded-full">
+                                    <span
+                                        class="text-orange-600 text-sm font-semibold bg-orange-100 px-3 py-1 rounded-full">
                                         Per vendor
                                     </span>
                                 </div>
@@ -200,7 +204,8 @@
                             <div class="space-y-2">
                                 <p class="text-2xl font-bold text-gray-900 leading-none">+15.3%</p>
                                 <div class="flex items-center">
-                                    <span class="text-green-600 text-sm font-semibold bg-green-100 px-3 py-1 rounded-full">
+                                    <span
+                                        class="text-green-600 text-sm font-semibold bg-green-100 px-3 py-1 rounded-full">
                                         Bulan ini
                                     </span>
                                 </div>
@@ -226,13 +231,13 @@
                             @php
                                 $colors = [
                                     'from-blue-500 to-purple-600',
-                                    'from-green-500 to-teal-600', 
+                                    'from-green-500 to-teal-600',
                                     'from-purple-500 to-pink-600',
                                     'from-orange-500 to-red-600',
                                     'from-indigo-500 to-blue-600',
                                     'from-teal-500 to-cyan-600',
                                     'from-pink-500 to-rose-600',
-                                    'from-yellow-500 to-orange-600'
+                                    'from-yellow-500 to-orange-600',
                                 ];
                                 $colorIndex = abs(crc32($activity['name'])) % count($colors);
                                 $avatarColor = $colors[$colorIndex];
@@ -376,11 +381,11 @@
                             @php
                                 $subColors = [
                                     'from-green-500 to-emerald-600',
-                                    'from-blue-500 to-cyan-600', 
+                                    'from-blue-500 to-cyan-600',
                                     'from-purple-500 to-indigo-600',
                                     'from-orange-500 to-yellow-600',
                                     'from-pink-500 to-rose-600',
-                                    'from-teal-500 to-green-600'
+                                    'from-teal-500 to-green-600',
                                 ];
                                 $subColorIndex = abs(crc32($sub['name'] ?? 'default')) % count($subColors);
                                 $subAvatarColor = $subColors[$subColorIndex];
@@ -425,8 +430,10 @@
     </main>
 
     <!-- Package Details Modal -->
-    <div id="packageModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300 p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[85vh] overflow-y-auto transform scale-95 transition-transform duration-300" id="modalContent">
+    <div id="packageModal"
+        class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[85vh] overflow-y-auto transform scale-95 transition-transform duration-300"
+            id="modalContent">
             <!-- Modal Header -->
             <div class="flex justify-between items-center p-6 border-b border-gray-200">
                 <div>
@@ -435,7 +442,8 @@
                 </div>
                 <button onclick="closePackageModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
             </div>
@@ -448,11 +456,13 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-blue-600 text-sm font-medium">Total Subscribers</p>
-                                <p class="text-2xl font-bold text-blue-800" id="totalSubscribers">{{ array_sum(array_column($subscriptionPlans, 'count')) }}</p>
+                                <p class="text-2xl font-bold text-blue-800" id="totalSubscribers">
+                                    {{ array_sum(array_column($subscriptionPlans, 'count')) }}</p>
                             </div>
                             <div class="w-10 h-10 bg-blue-200 rounded-lg flex items-center justify-center">
                                 <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                                    <path
+                                        d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                                 </svg>
                             </div>
                         </div>
@@ -461,75 +471,92 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-green-600 text-sm font-medium">Monthly Revenue</p>
-                                <p class="text-2xl font-bold text-green-800">Rp {{ number_format(array_sum(array_map(function ($plan) {return $plan['count'] * $plan['price'];}, $subscriptionPlans)) / 1000000,1) }}M</p>
+                                <p class="text-2xl font-bold text-green-800">Rp
+                                    {{ number_format(array_sum(array_map(function ($plan) {return $plan['count'] * $plan['price'];}, $subscriptionPlans)) / 1000000,1) }}M
+                                </p>
                             </div>
                             <div class="w-10 h-10 bg-green-200 rounded-lg flex items-center justify-center">
                                 <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                                    <path fill-rule="evenodd"
+                                        d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
+                                        clip-rule="evenodd" />
                                 </svg>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl border border-purple-200">
+                    <div
+                        class="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl border border-purple-200">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-purple-600 text-sm font-medium">Avg. Price</p>
-                                <p class="text-2xl font-bold text-purple-800">Rp {{ number_format(array_sum(array_map(function ($plan) {return $plan['count'] * $plan['price'];}, $subscriptionPlans)) / max(1, array_sum(array_column($subscriptionPlans, 'count'))), 0, ',', '.') }}</p>
+                                <p class="text-2xl font-bold text-purple-800">Rp
+                                    {{ number_format(array_sum(array_map(function ($plan) {return $plan['count'] * $plan['price'];}, $subscriptionPlans)) / max(1, array_sum(array_column($subscriptionPlans, 'count'))),0,',','.') }}
+                                </p>
                             </div>
                             <div class="w-10 h-10 bg-purple-200 rounded-lg flex items-center justify-center">
                                 <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                                    <path fill-rule="evenodd"
+                                        d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z"
+                                        clip-rule="evenodd" />
                                 </svg>
                             </div>
                         </div>
                     </div>
                 </div>
 
-            <!-- Package Details Table -->
-            <div class="bg-gray-50 rounded-xl p-4">
-                <h3 class="text-lg font-bold text-gray-900 mb-4">Rincian Paket Berlangganan</h3>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    @foreach($subscriptionPlans as $plan)
-                        <div class="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-4 h-4 rounded-full flex-shrink-0" style="background-color: {{ $plan['color'] }}"></div>
-                                <div>
-                                    <h4 class="font-bold text-gray-900">{{ $plan['name'] }}</h4>
-                                    <p class="text-sm text-gray-600">Rp {{ number_format($plan['price'], 0, ',', '.') }}/bulan</p>
+                <!-- Package Details Table -->
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Rincian Paket Berlangganan</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        @foreach ($subscriptionPlans as $plan)
+                            <div
+                                class="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-4 h-4 rounded-full flex-shrink-0"
+                                        style="background-color: {{ $plan['color'] }}"></div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">{{ $plan['name'] }}</h4>
+                                        <p class="text-sm text-gray-600">Rp
+                                            {{ number_format($plan['price'], 0, ',', '.') }}/bulan</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-gray-900">{{ $plan['count'] }} users</p>
+                                    <p class="text-sm text-gray-600">{{ $plan['percentage'] }}% dari total</p>
+                                    <p class="text-sm font-bold text-green-600 mt-1">Rp
+                                        {{ number_format($plan['count'] * $plan['price'], 0, ',', '.') }}</p>
                                 </div>
                             </div>
-                            <div class="text-right">
-                                <p class="text-lg font-bold text-gray-900">{{ $plan['count'] }} users</p>
-                                <p class="text-sm text-gray-600">{{ $plan['percentage'] }}% dari total</p>
-                                <p class="text-sm font-bold text-green-600 mt-1">Rp {{ number_format($plan['count'] * $plan['price'], 0, ',', '.') }}</p>
-                            </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    </div>
                 </div>
-            </div>
 
-            <!-- Growth Projection -->
-            <div class="mt-6 bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-xl border border-indigo-200">
-                <h3 class="text-lg font-bold text-indigo-900 mb-3">Proyeksi Pertumbuhan</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="text-center md:text-left">
-                        <p class="text-sm text-indigo-600">Target Bulan Depan</p>
-                        <p class="text-xl font-bold text-indigo-800">+{{ rand(5, 15) }}% subscribers</p>
-                    </div>
-                    <div class="text-center md:text-left">
-                        <p class="text-sm text-indigo-600">Estimasi Revenue</p>
-                        <p class="text-xl font-bold text-indigo-800">Rp {{ number_format((array_sum(array_map(function ($plan) {return $plan['count'] * $plan['price'];}, $subscriptionPlans)) * 1.1) / 1000000, 1) }}M</p>
+                <!-- Growth Projection -->
+                <div class="mt-6 bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-xl border border-indigo-200">
+                    <h3 class="text-lg font-bold text-indigo-900 mb-3">Proyeksi Pertumbuhan</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="text-center md:text-left">
+                            <p class="text-sm text-indigo-600">Target Bulan Depan</p>
+                            <p class="text-xl font-bold text-indigo-800">+{{ rand(5, 15) }}% subscribers</p>
+                        </div>
+                        <div class="text-center md:text-left">
+                            <p class="text-sm text-indigo-600">Estimasi Revenue</p>
+                            <p class="text-xl font-bold text-indigo-800">Rp
+                                {{ number_format((array_sum(array_map(function ($plan) {return $plan['count'] * $plan['price'];}, $subscriptionPlans)) *1.1) /1000000,1) }}M
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
             </div>
 
             <!-- Modal Footer -->
             <div class="flex justify-end space-x-3 p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
-                <button onclick="closePackageModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 font-semibold transition-colors">
+                <button onclick="closePackageModal()"
+                    class="px-4 py-2 text-gray-600 hover:text-gray-800 font-semibold transition-colors">
                     Tutup
                 </button>
-                <button onclick="exportPackageData()" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
+                <button onclick="exportPackageData()"
+                    class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
                     Export Data
                 </button>
             </div>
@@ -542,15 +569,15 @@
     function openPackageModal() {
         const modal = document.getElementById('packageModal');
         const modalContent = document.getElementById('modalContent');
-        
+
         modal.classList.remove('opacity-0', 'invisible');
         modal.classList.add('opacity-100', 'visible');
-        
+
         setTimeout(() => {
             modalContent.classList.remove('scale-95');
             modalContent.classList.add('scale-100');
         }, 10);
-        
+
         // Prevent body scroll
         document.body.style.overflow = 'hidden';
     }
@@ -558,15 +585,15 @@
     function closePackageModal() {
         const modal = document.getElementById('packageModal');
         const modalContent = document.getElementById('modalContent');
-        
+
         modalContent.classList.remove('scale-100');
         modalContent.classList.add('scale-95');
-        
+
         setTimeout(() => {
             modal.classList.remove('opacity-100', 'visible');
             modal.classList.add('opacity-0', 'invisible');
         }, 200);
-        
+
         // Restore body scroll
         document.body.style.overflow = 'auto';
     }
@@ -597,9 +624,9 @@
             plans: @json($subscriptionPlans)
         };
 
-        const csvContent = "data:text/csv;charset=utf-8,"
-            + "Package Name,Price,Users,Percentage,Revenue\n"
-            + data.plans.map(plan => 
+        const csvContent = "data:text/csv;charset=utf-8," +
+            "Package Name,Price,Users,Percentage,Revenue\n" +
+            data.plans.map(plan =>
                 `"${plan.name}","Rp ${plan.price.toLocaleString('id-ID')}","${plan.count}","${plan.percentage}%","Rp ${(plan.count * plan.price).toLocaleString('id-ID')}"`
             ).join("\n");
 
@@ -610,7 +637,7 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+
         // Show success message
         alert('Data berhasil diexport!');
     }

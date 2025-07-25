@@ -30,6 +30,10 @@ function initializeViewToggle() {
 	const signupBtn = document.getElementById("signup-btn");
 	const signinBtn = document.getElementById("signin-btn");
 	const mainContainer = document.querySelector(".container");
+	const signinIntro = document.querySelector(".signin-intro");
+	const signupIntro = document.querySelector(".signup-intro");
+	const signupForm = document.querySelector(".signup-form");
+	const signinForm = document.querySelector(".signin-form");
 
 	// "DAFTAR SEKARANG" button - switches to registration view
 	if (signupBtn && mainContainer) {
@@ -37,6 +41,13 @@ function initializeViewToggle() {
 			e.preventDefault();
 			e.stopPropagation();
 			mainContainer.classList.add("change");
+
+			// Ensure proper z-index for signup - form stays on right but becomes visible
+			if (signinIntro && signupIntro && signupForm) {
+				signinIntro.style.zIndex = "5";
+				signupIntro.style.zIndex = "10";
+				signupForm.style.zIndex = "25";
+			}
 		});
 	}
 
@@ -46,6 +57,13 @@ function initializeViewToggle() {
 			e.preventDefault();
 			e.stopPropagation();
 			mainContainer.classList.remove("change");
+
+			// Ensure proper z-index for signin - form moves to left, intro visible on right
+			if (signinIntro && signupIntro && signupForm) {
+				signinIntro.style.zIndex = "20";
+				signupIntro.style.zIndex = "10";
+				signupForm.style.zIndex = "1";
+			}
 		});
 	}
 

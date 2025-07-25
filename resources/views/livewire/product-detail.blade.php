@@ -262,10 +262,10 @@ while (count($galleryImages) < 4) {
                                         menit
                                     </li>
                                 </ul>
-                                <button
-                                    class="premium-badge text-black font-semibold py-2 px-4 rounded text-sm hover:scale-105 transition-transform duration-200">
+                                <a href="{{ route('barbershop.book', ['vendor' => $vendor->id, 'service' => $service->id]) }}"
+                                    class="premium-badge text-black font-semibold py-2 px-4 rounded text-sm hover:scale-105 transition-transform duration-200 inline-block text-center">
                                     RESERVASI SEKARANG
-                                </button>
+                                </a>
                             </div>
                         @endforeach
                     @else

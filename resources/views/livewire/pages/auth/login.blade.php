@@ -103,6 +103,15 @@ $register = function () {
     <div class="flex justify-center items-center h-screen bg-black">
         <img src="{{ asset('assets/images/Wave-Register.png') }}"
             class="absolute inset-0 w-full h-full object-cover z-0 opacity-20" alt="Background" />
+
+        <!-- Back Button -->
+        <button onclick="history.back()"
+            class="absolute top-6 left-24 z-50 flex items-center justify-center w-12 h-12 bg-[#6B592E]/80 hover:bg-[#6B592E] text-white rounded-full transition-all duration-200 shadow-lg hover:shadow-xl backdrop-blur-sm">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+        </button>
+
         <div
             class="container bg-Seasalt w-[1000px] max-w-[100vw] h-[600px] relative overflow-x-hidden rounded-none sm:rounded-xl">
             <div class="forms-container relative w-[50%] text-center">
@@ -767,16 +776,16 @@ c-531 412 -450 371 -684 341 -112 -15 -182 -17 -350 -13 -230 6 -367 24 -573
             </div>
             <div class="intros-container relative left-[50%] w-[50%] text-center">
                 <div
-                    class="intro-control signin-intro absolute w-[100%] flex justify-center flex-col h-[600px] transition duration-300 ease-in opacity-[1] z-[2]">
+                    class="intro-control signin-intro absolute w-[100%] flex justify-center flex-col h-[600px] transition duration-300 ease-in opacity-[1] z-20">
                     <div
                         class="absolute inset-1/2 -translate-x-1/2 -translate-y-1/2 w-[98%] h-[98%] bg-[#6B592E]/60 bg-no-repeat bg-center bg-contain z-0 rounded-xl shadow-xl">
                     </div>
                     <img src="{{ asset('assets/images/login/login.png') }}"
                         class="absolute inset-1/2 -translate-x-1/2 -translate-y-1/2 w-[98%] h-[98%] object-cover -z-10 rounded-xl shadow-xl"
                         alt="Background" />
-                    <div class="intro-control__inner mx-[30px] z-0">
+                    <div class="intro-control__inner mx-[30px] z-30 relative">
                         <div class="flex flex-col items-center justify-center">
-                            <div class="text-white text-5xl font-Kuunari font-bold text center px-4">
+                            <div class="text-white text-5xl font-Kuunari font-bold text-center px-4">
                                 <h1>BELUM PUNYA AKUN?</h1>
                             </div>
                             <div class="text-white text-sm font-Poppins text-center justify-center px-2">
@@ -792,16 +801,16 @@ c-531 412 -450 371 -684 341 -112 -15 -182 -17 -350 -13 -230 6 -367 24 -573
                     </div>
                 </div>
                 <div
-                    class="intro-control signup-intro absolute w-[100%] flex justify-center flex-col h-[600px] transition duration-300 ease-in opacity-[0] z-[1]">
+                    class="intro-control signup-intro absolute w-[100%] flex justify-center flex-col h-[600px] transition duration-300 ease-in opacity-[0] z-10">
                     <div
                         class="absolute inset-1/2 -translate-x-1/2 -translate-y-1/2 w-[98%] h-[98%] bg-[#6B592E]/40 bg-no-repeat bg-center bg-contain z-0 rounded-xl shadow-xl">
                     </div>
                     <img src="{{ asset('assets/images/login/register.png') }}"
                         class="absolute inset-1/2 -translate-x-1/2 -translate-y-1/2 w-[98%] h-[98%] object-cover -z-10 rounded-xl shadow-xl"
                         alt="Background" />
-                    <div class="intro-control__inner mx-[30px] z-0">
+                    <div class="intro-control__inner mx-[30px] z-30 relative">
                         <div class="flex flex-col items-center justify-center">
-                            <div class="text-white text-4xl font-Kuunari font-bold text center px-4">
+                            <div class="text-white text-4xl font-Kuunari font-bold text-center px-4">
                                 <h1>SUDAH PUNYA AKUN?</h1>
                             </div>
                             <div class="text-white text-sm font-Poppins text-center justify-center px-2">
@@ -817,108 +826,59 @@ c-531 412 -450 371 -684 341 -112 -15 -182 -17 -350 -13 -230 6 -367 24 -573
             </div>
         </div>
     </div>
+
+    <style>
+        /* Initial state base z-index hierarchy:
+           Forms: 1-2 (bottom layer)
+           Intros: 10-20 (top layer) */
+
+        .change .forms-container .form-control.signup-form {
+            opacity: 1;
+            z-index: 25;
+            transform: translateX(0%);
+            left: 100%;
+        }
+
+        .change .forms-container .form-control.signin-form {
+            opacity: 0;
+            z-index: 1;
+            transform: translateX(-100%);
+            left: -100%;
+        }
+
+        .change .intros-container .intro-control {
+            transform: translateX(-100%);
+        }
+
+        .change .intros-container .intro-control.signin-intro {
+            opacity: 0;
+            z-index: 5;
+        }
+
+        .change .intros-container .intro-control.signup-intro {
+            opacity: 1;
+            z-index: 10;
+        }
+    </style>
+
+    <script>
+        // Password toggle functionality for registration form
+        function togglePassword(inputId, openIconId, closedIconId) {
+            const input = document.getElementById(inputId);
+            const openIcon = document.getElementById(openIconId);
+            const closedIcon = document.getElementById(closedIconId);
+
+            if (input && openIcon && closedIcon) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    openIcon.classList.add('hidden');
+                    closedIcon.classList.remove('hidden');
+                } else {
+                    input.type = 'password';
+                    openIcon.classList.remove('hidden');
+                    closedIcon.classList.add('hidden');
+                }
+            }
+        }
+    </script>
 </div>
-
-<style>
-    .change .forms-container .form-control.signup-form {
-        opacity: 1;
-        z-index: 2;
-        transform: translateX(-100%);
-        left: 0%;
-    }
-
-    .change .forms-container .form-control.signin-form {
-        opacity: 0;
-        z-index: 1;
-        transform: translateX(-100%);
-        left: -100%;
-    }
-
-    .change .intros-container .intro-control {
-        transform: translateX(-100%);
-    }
-
-    .change .intros-container .intro-control.signin-intro {
-        opacity: 0;
-        z-index: 1;
-    }
-
-    .change .intros-container .intro-control.signup-intro {
-        opacity: 1;
-        z-index: 2;
-    }
-</style>
-
-<script>
-    // Initialize login form functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize form switching
-        const signupBtn = document.getElementById('signup-btn');
-        const signinBtn = document.getElementById('signin-btn');
-        const mainContainer = document.querySelector('.container');
-
-        if (signupBtn && mainContainer) {
-            signupBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                mainContainer.classList.add('change');
-            });
-        }
-
-        if (signinBtn && mainContainer) {
-            signinBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                mainContainer.classList.remove('change');
-            });
-        }
-    });
-</script>
-
-@if (1 == 0)
-    <div class="hidden">
-        <!-- Session Status -->
-        <x-auth-session-status class="mb-4" :status="session('status')" />
-
-        <form wire:submit="login">
-            <!-- Email Address -->
-            <div>
-                <x-input-label for="email" :value="__('Email')" />
-                <x-text-input wire:model="form.email" id="email" class="block mt-1 w-full" type="email"
-                    name="email" required autofocus autocomplete="username" />
-                <x-input-error :messages="$errors->get('form.email')" class="mt-2" />
-            </div>
-
-            <!-- Password -->
-            <div class="mt-4">
-                <x-input-label for="password" :value="__('Password')" />
-
-                <x-text-input wire:model="form.password" id="password" class="block mt-1 w-full" type="password"
-                    name="password" required autocomplete="current-password" />
-
-                <x-input-error :messages="$errors->get('form.password')" class="mt-2" />
-            </div>
-
-            <!-- Remember Me -->
-            <div class="block mt-4">
-                <label for="remember" class="inline-flex items-center">
-                    <input wire:model="form.remember" id="remember" type="checkbox"
-                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
-                        name="remember">
-                    <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-                </label>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        href="{{ route('password.request') }}" wire:navigate>
-                        {{ __('Forgot your password?') }}
-                    </a>
-                @endif
-
-                <x-primary-button class="ms-3">
-                    {{ __('Log in') }}
-                </x-primary-button>
-            </div>
-        </form>
-    </div>
-@endif

@@ -3,7 +3,7 @@
 use App\Livewire\Berlangganan;
 use App\Livewire\AdminHome;
 use App\Livewire\Pages\Style\AiRecommendation;
-use App\Livewire\Pages\Subscription\SubscriptionPage;
+use App\Livewire\SubscriptionPage;
 use App\Livewire\Extend;
 use App\Livewire\ProductDetail;
 use App\Livewire\BarbershopListing;
@@ -14,14 +14,34 @@ use App\Livewire\Home;
 use App\Livewire\Pages\Style\StylingDetail;
 use App\Livewire\UserProfile;
 // use App\Livewire\Information;
+use App\Livewire\BookingPage;
 
-Route::get('/berlangganan', Berlangganan::class)->name('berlangganan');
+Route::get('/subscribe', SubscriptionPage::class)->name('subscription')->middleware('auth');
+Route::get('/berlangganan', Berlangganan::class)->name('berlangganan')->middleware('admin');
 
 Route::get('/', Home::class)->name('home');
 
-Route::get('/dashboard', AdminHome::class)
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+// Admin routes
+Route::prefix('admin')
+    ->as('admin.')
+    ->middleware('admin')
+    ->group(function() {
+        Route::get('/dashboard', AdminHome::class)->name('dashboard');
+        
+        Route::get('/logout', function () {
+            auth()->logout();
+            request()->session()->invalidate();
+            request()->session()->regenerateToken();
+            return redirect()->route('admin.login');
+        })->name('logout');
+        
+        Route::post('/logout', function () {
+            auth()->logout();
+            request()->session()->invalidate();
+            request()->session()->regenerateToken();
+            return redirect()->route('admin.login');
+        })->name('logout.post');
+    });
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])
@@ -29,7 +49,7 @@ Route::view('profile', 'profile')
 
 Route::prefix('style')
     ->group(function () {
-        Route::get('/', StylingDetail::class)->name('style');
+        Route::get('/', StylingDetail::class)->name('style.index');
         Route::get('/recommendation', AiRecommendation::class)->name('style.recommendation');
     });
 
@@ -60,8 +80,8 @@ Route::get('/product-detail', function () {
     return view('product-detail-sisil');
 })->name('product.detail');
 
-Route::get('/dashboard', AdminHome::class)->name('dashboard');
-
+// Route::get('/book', BookingPage::class)->name('book')->middleware('customer');
+Route::get('/barbershop/{vendor}/book', BookingPage::class)->name('barbershop.book')->middleware('customer');
 
 // Barbershop routes
 Route::get('/barbershop', BarbershopListing::class)->name('barbershop.index');

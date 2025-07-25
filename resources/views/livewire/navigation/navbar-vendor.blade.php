@@ -1,10 +1,10 @@
 <div
     class="flex flex-col lg:flex-row justify-between items-center gap-4 px-8 md:px-16 lg:px-48 py-4 bg-Dark-Teal relative z-50">
-    <div>
+    <div class="lg:flex-1">
         <a href="{{ route('vendor.reservation') }}"><img class="w-24"
                 src="{{ asset(path: 'assets/images/logo-text.png') }}" alt="SeeCut"></a>
     </div>
-    <div class="flex flex-col sm:flex-row gap-7 justify-center items-center">
+    <div class="flex flex-col sm:flex-row gap-7 justify-center items-center lg:flex-1">
         <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out"
             href="{{ route('vendor.reservation') }}">RESERVASI</a>
         <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out"
@@ -12,7 +12,7 @@
         <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out"
             href="{{ route('vendor.extend') }}">PREMIUM</a>
     </div>
-    <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+    <div class="relative lg:flex-1 flex justify-end" x-data="{ open: false }" @click.outside="open = false">
         <!-- Profile Dropdown Trigger -->
         <button @click="open = !open"
             class="flex items-center gap-3 font-Kuunari ring-1 ring-Seasalt text-Seasalt px-4 py-2 text-md hover:ring-Satin-Sheen-Yellow hover:bg-Satin-Sheen-Yellow/10 transition-all duration-300 ease-in-out rounded-lg focus:outline-none focus:ring-2 focus:ring-Satin-Sheen-Yellow focus:ring-opacity-50">
@@ -36,7 +36,7 @@
             @endif
 
             <!-- Vendor Name -->
-            <span class="hidden sm:block">
+            <span class="hidden sm:block max-w-24 truncate">
                 {{ auth()->user()?->vendor?->name ?? 'Guest' }}
             </span>
 
