@@ -2,5 +2,6 @@
   "key": "cmd+alt+g",
   "command": "workbench.action.tasks.runTask",
   "args": "Serve Laravel + Vite",
-  "svg.preview.background": "transparent"
+  "svg.preview.background": "transparent",
+  "discord.enabled": false
 }

@@ -27,6 +27,8 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
             $table->foreign('reservation_id')->references('id')->on('reservation_slots')->onDelete('cascade');
+            
+            $table->timestamps();
         });
     }
 
