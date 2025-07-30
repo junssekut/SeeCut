@@ -9,7 +9,7 @@ class Reservation extends Model
     //
     protected $table = 'reservations';
     protected $primaryKey = 'id';
-    public $timestamps = false;
+    public $timestamps = true;
     protected $guarded = [];
 
     public function user() {

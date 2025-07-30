@@ -1,258 +1,381 @@
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-    <div class="container mx-auto px-4 py-8">
-        <!-- Header Section -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">Manajemen Reservasi</h1>
-            <p class="text-gray-600">Kelola semua reservasi pelanggan Anda</p>
+<div class="container mx-auto px-4 py-8">
+    <!-- Header Section -->
+    <div class="mb-8">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Manajemen Reservasi</h1>
+                <p class="text-gray-600">Kelola semua reservasi pelanggan Anda</p>
+            </div>
+
+            <!-- Queue Management -->
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button wire:click="startDay"
+                    class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                        </path>
+                    </svg>
+                    Mulai Hari Kerja
+                </button>
+
+                <button wire:click="callNextCustomer"
+                    class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                    </svg>
+                    Panggil Berikutnya
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Queue Statistics -->
+    @php
+        $queueStats = $this->getQueueStats();
+    @endphp
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow-lg p-4 border border-gray-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Total Hari Ini</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ $queueStats['total'] }}</p>
+                </div>
+                <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-1a4 4 0 11-8 0 4 4 0 018 0z">
+                        </path>
+                    </svg>
+                </div>
+            </div>
         </div>
 
-        <!-- Flash Messages -->
-        @if (session()->has('message'))
-            <div class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 flex items-center animate-fade-in">
-                <svg class="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="bg-white rounded-xl shadow-lg p-4 border border-blue-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-blue-600">Menunggu</p>
+                    <p class="text-2xl font-bold text-blue-900">{{ $queueStats['confirmed'] }}</p>
+                </div>
+                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-4 border border-yellow-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-yellow-600">Sedang Proses</p>
+                    <p class="text-2xl font-bold text-yellow-900">{{ $queueStats['processing'] }}</p>
+                </div>
+                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-4 border border-green-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-green-600">Selesai</p>
+                    <p class="text-2xl font-bold text-green-900">{{ $queueStats['finished'] }}</p>
+                </div>
+                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                        </path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-4 border border-red-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-red-600">Dibatalkan</p>
+                    <p class="text-2xl font-bold text-red-900">{{ $queueStats['cancelled'] }}</p>
+                </div>
+                <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Queue Info -->
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 mb-6">
+        <div class="flex items-start gap-3">
+            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
-                <span class="text-green-800 font-medium">{{ session('message') }}</span>
             </div>
-        @endif
-
-        <!-- Filter and Search Section -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-6 border border-gray-200">
-            <div class="flex flex-col lg:flex-row justify-between items-center gap-4">
-                <!-- Filter Buttons -->
-                <div class="flex flex-wrap gap-2">
-                    <button wire:click="setStatus('all')"
-                        class="px-6 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500
-                        {{ $status == 'all' ? 'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
-                        <span class="flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                </path>
-                            </svg>
-                            Semua
-                        </span>
-                    </button>
-                    <button wire:click="setStatus('masuk')"
-                        class="px-6 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
-                        {{ $status == 'masuk' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
-                        <span class="flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            Masuk
-                        </span>
-                    </button>
-                    <button wire:click="setStatus('proses')"
-                        class="px-6 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500
-                        {{ $status == 'proses' ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
-                        <span class="flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            Proses
-                        </span>
-                    </button>
-                    <button wire:click="setStatus('selesai')"
-                        class="px-6 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500
-                        {{ $status == 'selesai' ? 'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
-                        <span class="flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            Selesai
-                        </span>
-                    </button>
-                    <button wire:click="setStatus('batal')"
-                        class="px-6 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500
-                        {{ $status == 'batal' ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
-                        <span class="flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                            Batal
-                        </span>
-                    </button>
-                </div>
-
-                <!-- Search Input -->
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </div>
-                    <input wire:model.live.debounce.500ms="search" type="text"
-                        placeholder="Cari berdasarkan nama, email, atau telepon..."
-                        class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-80 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200">
-                </div>
+            <div>
+                <h4 class="font-semibold text-blue-900 mb-1">Sistem Antrian Otomatis</h4>
+                <p class="text-sm text-blue-700 leading-relaxed">
+                    • Klik <strong>"Mulai Hari Kerja"</strong> untuk memproses pelanggan pertama<br>
+                    • Sistem otomatis memproses pelanggan berikutnya saat status diubah ke "Selesai"<br>
+                    • Email notifikasi dikirim otomatis ke setiap pelanggan saat status berubah<br>
+                    • <strong>"Panggil Berikutnya"</strong> menyelesaikan pelanggan yang sedang diproses dan
+                    memanggil pelanggan berikutnya
+                </p>
             </div>
         </div>
-        <!-- Table Section -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 table-container relative"
-            wire:loading.class="opacity-75">
-            <!-- Loading Overlay -->
-            <div wire:loading wire:target="setStatus,search"
-                class="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-10 rounded-xl">
-                <div class="flex items-center space-x-2">
-                    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
-                    <span class="text-gray-600 font-medium">Memuat data...</span>
-                </div>
+    </div>
+
+    <!-- Flash Messages -->
+    @if (session()->has('message'))
+        <div class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 flex items-center animate-fade-in">
+            <svg class="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-green-800 font-medium">{{ session('message') }}</span>
+        </div>
+    @endif
+
+    <!-- Filter and Search Section -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-6 border border-gray-200">
+        <div class="flex flex-col lg:flex-row justify-between items-center gap-4">
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap gap-2">
+                <button wire:click="setStatus('all')"
+                    class="px-6 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500
+                        {{ $status == 'all' ? 'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        Semua
+                    </span>
+                </button>
+                <button wire:click="setStatus('masuk')"
+                    class="px-6 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+                        {{ $status == 'masuk' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Masuk
+                    </span>
+                </button>
+                <button wire:click="setStatus('proses')"
+                    class="px-6 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500
+                        {{ $status == 'proses' ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Proses
+                    </span>
+                </button>
+                <button wire:click="setStatus('selesai')"
+                    class="px-6 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500
+                        {{ $status == 'selesai' ? 'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                        Selesai
+                    </span>
+                </button>
+                <button wire:click="setStatus('batal')"
+                    class="px-6 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500
+                        {{ $status == 'batal' ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Batal
+                    </span>
+                </button>
             </div>
 
-            <div class="overflow-x-auto">
-                <table class="min-w-full"">
-                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
-                        <tr>
-                            <th
-                                class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                <div class="flex items-center space-x-2">
-                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                        </path>
-                                    </svg>
-                                    <span>Tanggal</span>
-                                </div>
-                            </th>
-                            <th
-                                class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                <div class="flex items-center space-x-2">
-                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    <span>Jam</span>
-                                </div>
-                            </th>
-                            <th
-                                class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                <div class="flex items-center space-x-2">
-                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
-                                        </path>
-                                    </svg>
-                                    <span>Nama</span>
-                                </div>
-                            </th>
-                            <th
-                                class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                <div class="flex items-center space-x-2">
-                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
-                                        </path>
-                                    </svg>
-                                    <span>Email</span>
-                                </div>
-                            </th>
-                            <th
-                                class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                <div class="flex items-center space-x-2">
-                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
-                                        </path>
-                                    </svg>
-                                    <span>No. Telepon</span>
-                                </div>
-                            </th>
-                            <th
-                                class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                <div class="flex items-center space-x-2">
-                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    <span>Status</span>
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse($reservations as $reservation)
-                            <tr class="hover:bg-gray-50 transition-all duration-200 group"
-                                wire:key="reservation-{{ $reservation->id }}">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div
-                                            class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                                </path>
-                                            </svg>
+            <!-- Search Input -->
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                <input wire:model.live.debounce.500ms="search" type="text"
+                    placeholder="Cari berdasarkan nama, email, atau telepon..."
+                    class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-80 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200">
+            </div>
+        </div>
+    </div>
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 table-container relative"
+        wire:loading.class="opacity-75">
+        <!-- Loading Overlay -->
+        <div wire:loading wire:target="setStatus,search"
+            class="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-10 rounded-xl">
+            <div class="flex items-center space-x-2">
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
+                <span class="text-gray-600 font-medium">Memuat data...</span>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full"">
+                <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                                <span>Tanggal</span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>Jam</span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                    </path>
+                                </svg>
+                                <span>Nama</span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                                <span>Email</span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
+                                    </path>
+                                </svg>
+                                <span>No. Telepon</span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>Status</span>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @forelse($reservations as $reservation)
+                        <tr class="hover:bg-gray-50 transition-all duration-200 group"
+                            wire:key="reservation-{{ $reservation->id }}">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div
+                                        class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">
+                                            {{ \Carbon\Carbon::parse($reservation->slot?->date)->format('d M Y') }}
                                         </div>
-                                        <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900">
-                                                {{ \Carbon\Carbon::parse($reservation->slot?->date)->format('d M Y') }}
-                                            </div>
-                                            <div class="text-sm text-gray-500">
-                                                {{ \Carbon\Carbon::parse($reservation->slot?->date)->format('l') }}
-                                            </div>
+                                        <div class="text-sm text-gray-500">
+                                            {{ \Carbon\Carbon::parse($reservation->slot?->date)->format('l') }}
                                         </div>
                                     </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div
-                                            class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
-                                        </div>
-                                        <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900">
-                                                {{ \Carbon\Carbon::parse($reservation->slot?->start_time)->format('H:i') }}
-                                            </div>
-                                            <div class="text-sm text-gray-500">WIB</div>
-                                        </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div
+                                        class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
                                     </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div
-                                            class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                                            <span class="text-purple-600 font-medium text-sm">
-                                                {{ substr($reservation->name, 0, 1) }}
-                                            </span>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">
+                                            {{ \Carbon\Carbon::parse($reservation->slot?->start_time)->format('H:i') }}
                                         </div>
-                                        <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900">{{ $reservation->name }}
-                                            </div>
-                                            <div class="text-sm text-gray-500">Pelanggan</div>
+                                        <div class="text-sm text-gray-500">WIB</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div
+                                        class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                        <span class="text-purple-600 font-medium text-sm">
+                                            {{ substr($reservation->name, 0, 1) }}
+                                        </span>
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">{{ $reservation->name }}
                                         </div>
+                                        <div class="text-sm text-gray-500">Pelanggan</div>
                                     </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $reservation->email }}</div>
-                                    <div class="text-sm text-gray-500">
-                                        {{ strlen($reservation->email) > 25 ? substr($reservation->email, 0, 25) . '...' : $reservation->email }}
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $reservation->phone }}</div>
-                                    <div class="text-sm text-gray-500">Telepon</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <select wire:change="updateStatus({{ $reservation->id }}, $event.target.value)"
-                                        class="rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none cursor-pointer border-2 hover:shadow-md
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ $reservation->email }}</div>
+                                <div class="text-sm text-gray-500">
+                                    {{ strlen($reservation->email) > 25 ? substr($reservation->email, 0, 25) . '...' : $reservation->email }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ $reservation->phone }}</div>
+                                <div class="text-sm text-gray-500">Telepon</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <select wire:change="updateStatus({{ $reservation->id }}, $event.target.value)"
+                                    class="rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none cursor-pointer border-2 hover:shadow-md
                                         @if ($reservation->status == 'confirmed') bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 focus:ring-blue-500
                                         @elseif($reservation->status == 'pending') 
                                             bg-yellow-50 border-yellow-200 text-yellow-700 hover:bg-yellow-100 focus:ring-yellow-500
@@ -262,95 +385,94 @@
                                             bg-red-50 border-red-200 text-red-700 hover:bg-red-100 focus:ring-red-500
                                         @else 
                                             bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 focus:ring-gray-500 @endif">
-                                        <option value="confirmed"
-                                            {{ $reservation->status === 'confirmed' ? 'selected' : '' }}>
-                                            ✓ Masuk
-                                        </option>
-                                        <option value="pending"
-                                            {{ $reservation->status === 'pending' ? 'selected' : '' }}>
-                                            ⏳ Proses
-                                        </option>
-                                        <option value="finished"
-                                            {{ $reservation->status === 'finished' ? 'selected' : '' }}>
-                                            ✅ Selesai
-                                        </option>
-                                        <option value="cancelled"
-                                            {{ $reservation->status === 'cancelled' ? 'selected' : '' }}>
-                                            ❌ Batal
-                                        </option>
-                                    </select>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="px-6 py-12 text-center">
-                                    <div class="flex flex-col items-center">
-                                        <svg class="w-12 h-12 text-gray-400 mb-4" fill="none"
-                                            stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                            </path>
-                                        </svg>
-                                        <p class="text-gray-500 text-lg font-medium">Tidak ada reservasi ditemukan</p>
-                                        <p class="text-gray-400 text-sm mt-1">Coba ubah filter atau kata kunci
-                                            pencarian</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                                    <option value="confirmed"
+                                        {{ $reservation->status === 'confirmed' ? 'selected' : '' }}>
+                                        ✓ Masuk
+                                    </option>
+                                    <option value="pending"
+                                        {{ $reservation->status === 'pending' ? 'selected' : '' }}>
+                                        ⏳ Proses
+                                    </option>
+                                    <option value="finished"
+                                        {{ $reservation->status === 'finished' ? 'selected' : '' }}>
+                                        ✅ Selesai
+                                    </option>
+                                    <option value="cancelled"
+                                        {{ $reservation->status === 'cancelled' ? 'selected' : '' }}>
+                                        ❌ Batal
+                                    </option>
+                                </select>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center">
+                                    <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                        </path>
+                                    </svg>
+                                    <p class="text-gray-500 text-lg font-medium">Tidak ada reservasi ditemukan</p>
+                                    <p class="text-gray-400 text-sm mt-1">Coba ubah filter atau kata kunci
+                                        pencarian</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    @if ($reservations->hasPages())
+        <div class="mt-6 flex items-center justify-between">
+            <div class="flex-1 flex justify-between sm:hidden">
+                @if ($reservations->onFirstPage())
+                    <span
+                        class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-md">
+                        Previous
+                    </span>
+                @else
+                    <a href="{{ $reservations->previousPageUrl() }}"
+                        class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                        Previous
+                    </a>
+                @endif
+
+                @if ($reservations->hasMorePages())
+                    <a href="{{ $reservations->nextPageUrl() }}"
+                        class="ml-3 relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                        Next
+                    </a>
+                @else
+                    <span
+                        class="ml-3 relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-md">
+                        Next
+                    </span>
+                @endif
+            </div>
+
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm text-gray-700">
+                        Showing
+                        <span class="font-medium">{{ $reservations->firstItem() }}</span>
+                        to
+                        <span class="font-medium">{{ $reservations->lastItem() }}</span>
+                        of
+                        <span class="font-medium">{{ $reservations->total() }}</span>
+                        results
+                    </p>
+                </div>
+                <div>
+                    {{ $reservations->links() }}
+                </div>
             </div>
         </div>
-
-        <!-- Pagination -->
-        @if ($reservations->hasPages())
-            <div class="mt-6 flex items-center justify-between">
-                <div class="flex-1 flex justify-between sm:hidden">
-                    @if ($reservations->onFirstPage())
-                        <span
-                            class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-md">
-                            Previous
-                        </span>
-                    @else
-                        <a href="{{ $reservations->previousPageUrl() }}"
-                            class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                            Previous
-                        </a>
-                    @endif
-
-                    @if ($reservations->hasMorePages())
-                        <a href="{{ $reservations->nextPageUrl() }}"
-                            class="ml-3 relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                            Next
-                        </a>
-                    @else
-                        <span
-                            class="ml-3 relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-md">
-                            Next
-                        </span>
-                    @endif
-                </div>
-
-                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                    <div>
-                        <p class="text-sm text-gray-700">
-                            Showing
-                            <span class="font-medium">{{ $reservations->firstItem() }}</span>
-                            to
-                            <span class="font-medium">{{ $reservations->lastItem() }}</span>
-                            of
-                            <span class="font-medium">{{ $reservations->total() }}</span>
-                            results
-                        </p>
-                    </div>
-                    <div>
-                        {{ $reservations->links() }}
-                    </div>
-                </div>
-            </div>
-        @endif
-    </div>
+    @endif
 </div>
 
 @push('styles')
@@ -440,6 +562,15 @@
         document.addEventListener('change', function(event) {
             if (event.target.matches('select[wire\\:change^="updateStatus"]')) {
                 const select = event.target;
+                const reservationId = select.getAttribute('wire:change').match(/\d+/)[0];
+                const newStatus = event.target.value;
+
+                console.log('Status change detected:', {
+                    reservationId: reservationId,
+                    newStatus: newStatus,
+                    willTriggerQueue: newStatus === 'finished'
+                });
+
                 const originalBg = select.style.backgroundColor;
                 select.style.backgroundColor = '#f3f4f6';
                 select.style.pointerEvents = 'none';
@@ -488,6 +619,12 @@
                     }, 100);
                 });
             }
+
+            // Auto-refresh queue statistics every 30 seconds
+            setInterval(function() {
+                // Trigger a component refresh to update queue stats
+                Livewire.emit('refreshComponent');
+            }, 30000);
         });
     </script>
 @endpush

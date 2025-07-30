@@ -169,3 +169,5 @@ Homestead.json
 auth.json
 
 /.github/copilot-instructions.md
+
+/ignore
