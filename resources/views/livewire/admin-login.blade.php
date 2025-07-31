@@ -81,7 +81,7 @@ $execLogin = function () {
     Auth::login($user, remember: true);
     Session::regenerate();
 
-    $this->redirect(route('admin.dashboard'));
+    return $this->redirect(route('admin.dashboard'));
 };
 ?>
 
@@ -114,8 +114,8 @@ $execLogin = function () {
                             }
                         })"
                             :class="{
-                                'bg-[#2C3E50]': isFocused || (login_field && login_field.length > 0),
-                                'bg-[#2C3E50]/60': !isFocused && (!login_field || login_field.length === 0)
+                                'bg-[#2C3E50]': isFocused || login_field,
+                                'bg-[#2C3E50]/60': !isFocused && !login_field
                             }"
                             class="mb-4 text-Dark-Olive flex flex-row py-4 border-none rounded-md items-center cursor-text
                shadow-sm has-[:focus]:shadow-md transition-all duration-200">
@@ -141,8 +141,8 @@ $execLogin = function () {
                         {{-- PASSWORD INPUT FIELD --}}
                         <div x-data="{ isFocused: false }"
                             :class="{
-                                'bg-[#2C3E50]': isFocused || (password && password.length > 0),
-                                'bg-[#2C3E50]/60': !isFocused && (!password || password.length === 0)
+                                'bg-[#2C3E50]': isFocused || password,
+                                'bg-[#2C3E50]/60': !isFocused && !password
                             }"
                             class="mb-4 text-Seasalt flex justify-between flex-wrap py-4 border-none rounded-md items-center cursor-text
                shadow-sm has-[:focus]:shadow-md transition-all duration-200">

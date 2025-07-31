@@ -81,7 +81,7 @@ $execLogin = function () {
     Auth::login($user, remember: true);
     Session::regenerate();
 
-    $this->redirect(route('vendor.reservation'));
+    return $this->redirect(route('vendor.reservation'));
 };
 ?>
 

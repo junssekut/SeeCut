@@ -23,7 +23,6 @@ class AdminMiddleware
 
         // Check if user has admin role
         if (!Auth::user()->profile || Auth::user()->profile->role !== 'admin') {
-            Auth::logout();
             return redirect()->route('admin.login')->with('error', 'Anda tidak memiliki akses admin.');
         }
 

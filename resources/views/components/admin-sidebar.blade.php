@@ -39,7 +39,17 @@
             @php
                 $user = Auth::user();
                 $profile = $user->profile ?? null;
-                $fullName = $profile?->full_name ?? ($user->name ?? 'Admin');
+
+                // Get full name from first_name and last_name
+                $firstName = $profile?->first_name ?? '';
+                $lastName = $profile?->last_name ?? '';
+                $fullName = trim($firstName . ' ' . $lastName);
+
+                // Fallback to user name or default
+                if (empty($fullName)) {
+                    $fullName = $user->name ?? 'Admin';
+                }
+
                 $role = ucfirst($profile?->role ?? 'Administrator');
 
                 // Generate initials from full name
