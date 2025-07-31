@@ -6,10 +6,12 @@ use Livewire\Component;
 use App\Models\Subscription;
 use App\Models\VendorSubscription;
 use App\Models\Vendor;
+use App\Traits\LogsVendorActivity;
 use Carbon\Carbon;
 
 class SubscriptionPage extends Component
 {
+    use LogsVendorActivity;
     public $plans = [];
     public $selectedPlan = null;
     public $showPaymentModal = false;
@@ -156,18 +158,53 @@ class SubscriptionPage extends Component
 
             if ($existingSubscription) {
                 // Extend existing subscription
+                $oldEndDate = $existingSubscription->end_date;
                 $existingSubscription->update([
                     'subscription_id' => $subscription->id,
                     'end_date' => $endDate->format('Y-m-d')
                 ]);
+                
+                // Log subscription extension activity
+                $this->logVendorActivity(
+                    self::ACTIVITY_UPDATE,
+                    "Memperpanjang langganan paket '{$subscription->name}' hingga {$endDate->format('d M Y')}",
+                    'subscription',
+                    $existingSubscription->id,
+                    [
+                        'subscription_name' => $subscription->name,
+                        'old_end_date' => $oldEndDate,
+                        'new_end_date' => $endDate->format('Y-m-d'),
+                        'duration_days' => $subscription->duration_days,
+                        'price' => $subscription->price,
+                        'action' => 'extend'
+                    ],
+                    $vendor->user_id
+                );
             } else {
                 // Create new subscription
-                VendorSubscription::create([
+                $newSubscription = VendorSubscription::create([
                     'vendor_id' => $vendor->id,
                     'subscription_id' => $subscription->id,
                     'start_date' => $startDate->format('Y-m-d'),
                     'end_date' => $endDate->format('Y-m-d')
                 ]);
+                
+                // Log new subscription activity
+                $this->logVendorActivity(
+                    self::ACTIVITY_CREATE,
+                    "Berlangganan paket '{$subscription->name}' mulai {$startDate->format('d M Y')} hingga {$endDate->format('d M Y')}",
+                    'subscription',
+                    $newSubscription->id,
+                    [
+                        'subscription_name' => $subscription->name,
+                        'start_date' => $startDate->format('Y-m-d'),
+                        'end_date' => $endDate->format('Y-m-d'),
+                        'duration_days' => $subscription->duration_days,
+                        'price' => $subscription->price,
+                        'action' => 'subscribe'
+                    ],
+                    $vendor->user_id
+                );
             }
 
             $this->dispatch('show-notification', [

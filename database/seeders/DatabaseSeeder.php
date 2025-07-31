@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             SubscriptionSeeder::class,
             VendorSubscriptionSeeder::class,
             VendorServiceSeeder::class,
+            VendorActivitySeeder::class,
         ]);
     }
 }

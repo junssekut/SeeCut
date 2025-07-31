@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Vendor;
 use App\Models\VendorSubscription;
 use App\Models\Subscription;
+use App\Models\VendorActivity;
 
 class AdminHome extends Component
 {
@@ -124,54 +125,91 @@ class AdminHome extends Component
 
     private function getVendorActivities()
     {
-        // Generate mock vendor activities based on actual vendors
-        $vendors = Vendor::take(10)->get();
-        
-        // If no vendors exist, create some sample data
-        if ($vendors->isEmpty()) {
-            $vendors = collect([
-                (object)['id' => 1, 'name' => 'Barbershop Garut 1'],
-                (object)['id' => 2, 'name' => 'Jack&john\'s Barbershop 3 Sentul City'],
-                (object)['id' => 3, 'name' => 'Cukurbe Barbershop Sentul'],
-                (object)['id' => 4, 'name' => 'Uppertouch Barbershop Sentul'],
-                (object)['id' => 5, 'name' => '180 Barbershop']
-            ]);
-        }
-        
-        $activities = [
-            'Memperbarui profil barbershop',
-            'Menambahkan foto baru',
-            'Mengatur jam operasional',
-            'Memperbarui layanan',
-            'Melakukan reservasi',
-            'Membalas review pelanggan',
-            'Upload foto hasil potong',
-            'Update harga layanan',
-            'Menambah slot waktu baru',
-            'Konfirmasi reservasi'
-        ];
-        
-        $this->vendorActivities = [];
-        
-        foreach ($vendors as $index => $vendor) {
-            $randomActivity = $activities[array_rand($activities)];
-            $timeOptions = [
-                '2 menit yang lalu',
-                '15 menit yang lalu',
-                '1 jam yang lalu',
-                '3 jam yang lalu',
-                '1 hari yang lalu',
-                '2 hari yang lalu'
-            ];
+        try {
+            // Get recent vendor activities with vendor information
+            $recentActivities = VendorActivity::with(['vendor.profile', 'vendor.vendor'])
+                ->orderBy('created_at', 'desc')
+                ->take(15)
+                ->get();
             
-            $this->vendorActivities[] = [
-                'id' => $vendor->id,
-                'name' => $vendor->name,
-                'activity' => $randomActivity,
-                'time' => $timeOptions[array_rand($timeOptions)],
-                'avatar' => 'https://ui-avatars.cc/api/?name=' . urlencode($vendor->name) . '&background=4f46e5&color=ffffff&size=56&rounded=true',
-                'type' => ['update', 'create', 'confirm', 'upload'][array_rand(['update', 'create', 'confirm', 'upload'])]
+            $this->vendorActivities = [];
+            
+            foreach ($recentActivities as $activity) {
+                $vendor = $activity->vendor;
+                
+                // Get vendor name from vendor table or profile
+                $vendorName = 'Unknown Vendor';
+                if ($vendor) {
+                    if ($vendor->vendor && $vendor->vendor->name) {
+                        $vendorName = $vendor->vendor->name;
+                    } elseif ($vendor->profile) {
+                        $firstName = $vendor->profile->first_name ?? '';
+                        $lastName = $vendor->profile->last_name ?? '';
+                        $vendorName = trim($firstName . ' ' . $lastName) ?: $vendor->name ?: $vendor->username;
+                    } else {
+                        $vendorName = $vendor->name ?: $vendor->username;
+                    }
+                }
+                
+                // Format time difference
+                $timeAgo = $this->formatTimeAgo($activity->created_at);
+                
+                $this->vendorActivities[] = [
+                    'id' => $activity->id,
+                    'name' => $vendorName,
+                    'activity' => $activity->activity_description,
+                    'time' => $timeAgo,
+                    'type' => $activity->activity_type,
+                    'entity_type' => $activity->entity_type
+                ];
+            }
+            
+            // If no activities exist, show sample data
+            if (empty($this->vendorActivities)) {
+                $this->vendorActivities = [
+                    [
+                        'id' => 1,
+                        'name' => 'Belum ada aktivitas vendor',
+                        'activity' => 'Sistem siap mencatat aktivitas vendor',
+                        'time' => 'Baru saja',
+                        'type' => 'info',
+                        'entity_type' => 'system'
+                    ]
+                ];
+            }
+            
+        } catch (\Exception $e) {
+            // Fallback data in case of error
+            $this->vendorActivities = [
+                [
+                    'id' => 1,
+                    'name' => 'Error Loading',
+                    'activity' => 'Gagal memuat aktivitas vendor',
+                    'time' => 'Error',
+                    'type' => 'error',
+                    'entity_type' => 'system'
+                ]
             ];
+        }
+    }
+    
+    private function formatTimeAgo($datetime)
+    {
+        $now = now();
+        $diff = $now->diffInMinutes($datetime);
+        
+        if ($diff < 1) {
+            return 'Baru saja';
+        } elseif ($diff < 60) {
+            return $diff . ' menit yang lalu';
+        } elseif ($diff < 1440) { // Less than 24 hours
+            $hours = floor($diff / 60);
+            return $hours . ' jam yang lalu';
+        } elseif ($diff < 10080) { // Less than 7 days
+            $days = floor($diff / 1440);
+            return $days . ' hari yang lalu';
+        } else {
+            return $datetime->format('d M Y');
         }
     }
 

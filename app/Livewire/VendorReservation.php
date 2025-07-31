@@ -8,11 +8,12 @@ use App\Models\Reservation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ReservationStatusUpdated;
+use App\Traits\LogsVendorActivity;
 use Carbon\Carbon;
 
 class VendorReservation extends Component
 {
-    use WithPagination;
+    use WithPagination, LogsVendorActivity;
 
     public $status = 'all';
     public $search = '';
@@ -26,6 +27,32 @@ class VendorReservation extends Component
             $oldStatus = $reservation->status;
             $reservation->status = $status;
             $reservation->save();
+            
+            // Log reservation status change activity
+            $statusTranslations = [
+                'pending' => 'menunggu',
+                'confirmed' => 'dikonfirmasi',
+                'in_progress' => 'sedang berlangsung',
+                'finished' => 'selesai',
+                'cancelled' => 'dibatalkan'
+            ];
+            
+            $oldStatusText = $statusTranslations[$oldStatus] ?? $oldStatus;
+            $newStatusText = $statusTranslations[$status] ?? $status;
+            
+            $this->logVendorActivity(
+                self::ACTIVITY_CONFIRM,
+                "Mengubah status reservasi dari '{$oldStatusText}' menjadi '{$newStatusText}'",
+                self::ENTITY_RESERVATION,
+                $reservation->id,
+                [
+                    'old_status' => $oldStatus,
+                    'new_status' => $status,
+                    'customer_email' => $reservation->email,
+                    'reservation_date' => $reservation->date,
+                    'reservation_time' => $reservation->time
+                ]
+            );
             
             // Send email notification to the actual customer
             try {
@@ -47,6 +74,18 @@ class VendorReservation extends Component
             if ($status === 'finished') {
                 \Log::info('Processing next in queue for reservation: ' . $id);
                 $this->processNextInQueue();
+                
+                // Log completion activity
+                $this->logVendorActivity(
+                    self::ACTIVITY_CONFIRM,
+                    'Menyelesaikan layanan untuk pelanggan',
+                    self::ENTITY_SERVICE,
+                    $reservation->id,
+                    [
+                        'customer_email' => $reservation->email,
+                        'service_completed' => true
+                    ]
+                );
             }
             
             // Use notyf for notifications

@@ -5,9 +5,12 @@ namespace App\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use App\Models\VendorService;
+use App\Traits\LogsVendorActivity;
+use function Flasher\Notyf\Prime\notyf;
 
 class VendorServices extends Component
 {
+    use LogsVendorActivity;
     public $services = [];
     public $new_service_name = '';
     public $new_service_price = '';
@@ -40,7 +43,20 @@ class VendorServices extends Component
 
         $this->services[] = $service->toArray();
         
-        notyf()->duration(3000)->ripple(true)->addSuccess('Layanan baru' . $this->new_service_name . ' telah ditambahkan!');
+        // Log service creation activity
+        $this->logVendorActivity(
+            self::ACTIVITY_CREATE,
+            "Menambahkan layanan baru '{$this->new_service_name}' dengan harga Rp " . number_format($this->new_service_price, 0, ',', '.'),
+            self::ENTITY_SERVICE,
+            $service->id,
+            [
+                'service_name' => $this->new_service_name,
+                'price' => $this->new_service_price,
+                'action' => 'create'
+            ]
+        );
+        
+        notyf()->duration(3000)->ripple(true)->addSuccess('Layanan baru ' . $this->new_service_name . ' telah ditambahkan!');
 
         $this->new_service_name = '';
         $this->new_service_price = '';
@@ -49,13 +65,31 @@ class VendorServices extends Component
     public function removeService($serviceId)
     {
         $service = VendorService::find($serviceId);
-
-        notyf()->duration(3000)->ripple(true)->addInfo('Layanan ' . $service->service_name . ' berhasil dihapus.');
-
-        $service->delete();
-        $this->services = array_filter($this->services, function($service) use ($serviceId) {
-            return $service['id'] !== $serviceId;
-        });
+        
+        if ($service) {
+            $serviceName = $service->service_name;
+            $servicePrice = $service->price;
+            
+            // Log service deletion activity
+            $this->logVendorActivity(
+                self::ACTIVITY_DELETE,
+                "Menghapus layanan '{$serviceName}'",
+                self::ENTITY_SERVICE,
+                $serviceId,
+                [
+                    'service_name' => $serviceName,
+                    'price' => $servicePrice,
+                    'action' => 'delete'
+                ]
+            );
+            
+            notyf()->duration(3000)->ripple(true)->addInfo('Layanan ' . $serviceName . ' berhasil dihapus.');
+            
+            $service->delete();
+            $this->services = array_filter($this->services, function($service) use ($serviceId) {
+                return $service['id'] !== $serviceId;
+            });
+        }
     }
 
     public function render()

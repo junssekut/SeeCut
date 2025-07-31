@@ -334,7 +334,7 @@
                             <div class="text-center">
                                 <p class="text-xl font-bold text-green-600">
                                     Rp
-                                    {{ number_format(array_sum(array_map(function ($plan) {return $plan['count'] * $plan['price'];}, $subscriptionPlans)) / 1000000,1) }}M
+                                    {{ number_format(array_sum(array_map(function ($plan) {return $plan['count'] * $plan['price'];}, $subscriptionPlans)) / 1000000,1) }}JT
                                 </p>
                                 <p class="text-xs text-gray-600">Pendapatan Bulanan</p>
                             </div>
@@ -451,7 +451,7 @@
                                     <div>
                                         <p class="text-green-600 text-sm font-medium">Pendapatan Bulanan</p>
                                         <p class="text-2xl font-bold text-green-800">Rp
-                                            {{ number_format(array_sum(array_map(function ($plan) {return $plan['count'] * $plan['price'];}, $subscriptionPlans)) / 1000000,1) }}M
+                                            {{ number_format(array_sum(array_map(function ($plan) {return $plan['count'] * $plan['price'];}, $subscriptionPlans)) / 1000000,1) }}JT
                                         </p>
                                     </div>
                                     <div class="w-10 h-10 bg-green-200 rounded-lg flex items-center justify-center">
@@ -523,7 +523,7 @@
                                 <div class="text-center md:text-left">
                                     <p class="text-sm text-indigo-600">Estimasi Pendapatan</p>
                                     <p class="text-xl font-bold text-indigo-800">Rp
-                                        {{ number_format((array_sum(array_map(function ($plan) {return $plan['count'] * $plan['price'];}, $subscriptionPlans)) *1.1) /1000000,1) }}M
+                                        {{ number_format((array_sum(array_map(function ($plan) {return $plan['count'] * $plan['price'];}, $subscriptionPlans)) *1.1) /1000000,1) }}JT
                                     </p>
                                 </div>
                             </div>
@@ -688,7 +688,7 @@
                                     callbacks: {
                                         label: function(context) {
                                             return 'Pendapatan: Rp ' + context.parsed.y.toLocaleString(
-                                                'id-ID') + 'M';
+                                                'id-ID') + 'JT';
                                         }
                                     }
                                 }
@@ -708,7 +708,7 @@
                                         },
                                         padding: 10,
                                         callback: function(value) {
-                                            return 'Rp ' + value + 'M';
+                                            return 'Rp ' + value + 'JT';
                                         }
                                     }
                                 },
