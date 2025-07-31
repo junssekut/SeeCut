@@ -36,7 +36,7 @@
         <livewire:navigation.navbar-vendor />
         @endpersist()
     @endif
-    <div class="flex flex-col max-w-full h-full">
+    <div class="flex flex-col max-w-full h-full bg-white">
         {{ $slot }}
     </div>
 
