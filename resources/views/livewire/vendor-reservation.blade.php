@@ -1,4 +1,4 @@
-<div class="container mx-auto px-4 py-8">
+<div class="container mx-auto px-4 py-8 bg-white">
     <!-- Header Section -->
     <div class="mb-8">
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
