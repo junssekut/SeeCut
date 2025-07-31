@@ -29,7 +29,7 @@ class VendorSeeder extends Seeder
                 // Create or get a user for this vendor
                 $user = User::factory()->create([
                     'username' => 'vendor_' . \Str::slug($vendorData['name']),
-                    'email' => \Str::slug($vendorData['name']) . '+' . uniqid() . '@example.com',
+                    'email' => \Str::slug($vendorData['name']) . '@example.com',
                     'password' => bcrypt('password'), // Default password
                 ]);
 

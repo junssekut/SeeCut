@@ -21,9 +21,12 @@ layout('layouts.app');
 
 state([
     'login_field' => '',
-    'password' => '',
-    'password_confirmation' => '',
-    'role_id' => 1,
+    'login_password' => '',
+    'register_username' => '',
+    'register_email' => '',
+    'register_password' => '',
+    'register_password_confirmation' => '',
+    'role' => 'customer',
 ]);
 
 $login = function () {
@@ -31,11 +34,11 @@ $login = function () {
     $this->validate(
         [
             'login_field' => 'required|string',
-            'password' => 'required|string',
+            'login_password' => 'required|string',
         ],
         [
             'login_field.required' => 'Email atau Username wajib diisi.',
-            'password.required' => 'Password wajib diisi.',
+            'login_password.required' => 'Password wajib diisi.',
         ],
     );
 
@@ -48,9 +51,9 @@ $login = function () {
         ]);
     }
 
-    if (!Hash::check($this->password, $user->password)) {
+    if (!Hash::check($this->login_password, $user->password)) {
         throw ValidationException::withMessages([
-            'password' => 'Password salah.',
+            'login_password' => 'Password salah.',
         ]);
     }
 
@@ -69,25 +72,39 @@ $login = function () {
 
 $register = function () {
     $data = [
-        'username' => $this->username,
-        'email' => $this->email,
-        'password' => $this->password,
-        'password_confirmation' => $this->password_confirmation,
-        'role_id' => $this->role_id,
+        'username' => $this->register_username,
+        'email' => $this->register_email,
+        'password' => $this->register_password,
+        'password_confirmation' => $this->register_password_confirmation,
+        'role' => $this->role,
     ];
 
     $rules = [
-        'username' => ['required', 'string', 'max:255'],
+        'username' => ['required', 'string', 'max:255', 'unique:' . User::class],
         'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
         'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
-        'role_id' => ['required', 'exists:user_roles,id'],
+        'role' => ['required', 'in:customer,vendor,admin'],
     ];
 
     $validated = Validator::make($data, $rules)->validate();
 
     $validated['password'] = Hash::make($validated['password']);
 
-    event(new Registered(($user = User::create($validated))));
+    // Create user with only user table fields
+    $userData = [
+        'username' => $validated['username'],
+        'email' => $validated['email'],
+        'password' => $validated['password'],
+    ];
+
+    $user = User::create($userData);
+
+    // Update the profile with the role (profile is auto-created via User model boot method)
+    $user->profile()->update([
+        'role' => $validated['role'],
+    ]);
+
+    event(new Registered($user));
 
     Auth::login($user);
 
@@ -117,7 +134,7 @@ $register = function () {
             <div class="forms-container relative w-[50%] text-center">
                 <div
                     class="form-control signin-form absolute w-[100%] flex justify-center flex-col h-[600px] transition duration-300 ease-in opacity-1 z-2 left-[0%]">
-                    <form wire:submit="login" class="flex flex-col mx-[50px]" x-data="{ login_field: @entangle('login_field').defer, password: @entangle('password').defer }">
+                    <form wire:submit="login" class="flex flex-col mx-[50px]" x-data="{ login_field: @entangle('login_field').defer, login_password: @entangle('login_password').defer }">
                         {{-- INTRODUCTION --}}
                         <div class="text-[#6B592E] text-5xl font-Kuunari font-bold text-center sm:text-start">
                             <h1>MASUK</h1>
@@ -161,8 +178,8 @@ $register = function () {
                         {{-- PASSWORD INPUT FIELD --}}
                         <div x-data="{ isFocused: false }"
                             :class="{
-                                'bg-[#E9BF80]': isFocused || password,
-                                'bg-[#E9BF80]/60': !isFocused && !password
+                                'bg-[#E9BF80]': isFocused || login_password,
+                                'bg-[#E9BF80]/60': !isFocused && !login_password
                             }"
                             class="mb-4 text-[#6B592E] flex justify-between flex-wrap py-4 border-none rounded-md items-center cursor-text
                shadow-sm has-[:focus]:shadow-md transition-all duration-200">
@@ -173,10 +190,10 @@ $register = function () {
                                     <x-svg.lock-icon />
                                 </div>
 
-                                <input wire:model="password" id="passwordlogin"
+                                <input wire:model="login_password" id="passwordlogin"
                                     class="peer flex-1 p-0 border-none bg-transparent placeholder-[#6B592E] font-Poppins text-sm focus:outline-none focus:ring-0"
-                                    type="password" name="password" required autocomplete="current-password"
-                                    placeholder="Password" x-model="password" @focus="isFocused = true"
+                                    type="password" name="login_password" required autocomplete="current-password"
+                                    placeholder="Password" x-model="login_password" @focus="isFocused = true"
                                     @blur="isFocused = false" />
                             </label>
                             <div id="passwordToggle" class="w-4 h-4 mx-4 cursor-pointer">
@@ -185,7 +202,7 @@ $register = function () {
                         </div>
 
                         {{-- PASSWORD ERROR --}}
-                        <x-input-error :messages="$errors->get('password')" class="mb-4" />
+                        <x-input-error :messages="$errors->get('login_password')" class="mb-4" />
 
                         {{-- ROLE ERROR MESSAGE --}}
                         @error('role_error')
@@ -222,7 +239,7 @@ $register = function () {
 
                         {{-- LOGIN BUTTON --}}
                         <div class="flex justify-center">
-                            <button type="submit" :disabled="!login_field || !password" {{-- Button is disabled if login_field OR password is empty --}}
+                            <button type="submit" :disabled="!login_field || !login_password" {{-- Button is disabled if login_field OR password is empty --}}
                                 class="mt-5 bg-[#6B592E] text-[#FFEDB7] w-full text-sm py-4 rounded-md font-bold
                    transition duration-300 ease-in-out shadow-lg font-Poppins
                    hover:text-white hover:bg-[#B5964D] focus:outline-2
@@ -246,7 +263,7 @@ $register = function () {
                         {{-- USERNAME --}}
                         <div
                             class="mb-4 text-[#6B592E] flex flex-row py-4 border-none bg-[#E9BF80] rounded-md items-center cursor-text">
-                            <label for="username" class=" flex flex-1 flex-wrap border-none items-center">
+                            <label for="register_username" class=" flex flex-1 flex-wrap border-none items-center">
                                 <div class="w-4 h-4 mx-4 text-center ">
                                     <!-- SVG icon -->
                                     <svg version="1.0" xmlns="http://www.w3.org/2000/svg" class="w-full h-full"
@@ -269,21 +286,19 @@ c78 40 144 108 181 186 30 63 31 71 34 220 8 351 -53 823 -159 1230 -319 1226
                                     </svg>
                                 </div>
 
-                                <input wire:model="username" id="username"
+                                <input wire:model="register_username" id="register_username"
                                     class="flex-1 p-0 border-none bg-[#E9BF80] placeholder-[#6B592E] font-Poppins text-sm focus:outline-none focus:ring-0"
-                                    type="username" name="username" required autofocus autocomplete="username"
-                                    placeholder="Masukkan username anda" />
-                                <x-input-error :messages="$errors->get('username')" class="mt-2" />
-                                {{-- <input type="text" id="username" name="username"
-                                        placeholder="Masukkan username anda" required
-                                        class="flex-1 p-0 border-none bg-[#E9BF80] placeholder-[#6B592E] font-Poppins text-sm focus:outline-none focus:ring-0" /> --}}
+                                    type="text" name="register_username" required autofocus
+                                    autocomplete="username" placeholder="Masukkan username anda" />
                             </label>
                         </div>
+                        {{-- USERNAME ERROR --}}
+                        <x-input-error :messages="$errors->get('username')" class="mb-4" />
 
                         {{-- EMAIL --}}
                         <div
                             class="mb-4 text-[#6B592E] flex flex-row py-4 border-none bg-[#E9BF80] rounded-md items-center cursor-text">
-                            <label for="email" class=" flex flex-1 flex-wrap border-none items-center">
+                            <label for="register_email" class=" flex flex-1 flex-wrap border-none items-center">
                                 <div class="w-4 h-4 mx-4">
                                     <!-- SVG icon -->
                                     <svg version="1.0" xmlns="http://www.w3.org/2000/svg" class="w-full h-full"
@@ -314,22 +329,19 @@ c0 -2 -80 -60 -177 -128 -98 -68 -275 -193 -393 -276 -118 -84 -325 -229 -459
 
                                 </div>
 
-                                <input wire:model="email" id="email"
+                                <input wire:model="register_email" id="register_email"
                                     class="flex-1 p-0 border-none bg-[#E9BF80] placeholder-[#6B592E] font-Poppins text-sm focus:outline-none focus:ring-0"
-                                    type="email" name="email" required autocomplete="username"
+                                    type="email" name="register_email" required autocomplete="username"
                                     placeholder="Masukkan email anda" />
-                                <x-input-error :messages="$errors->get('email')" class="mt-2" />
-
-                                {{-- <input type="text" id="email" name="email"
-                                        placeholder="Masukkan email anda" required
-                                        class="flex-1 p-0 border-none bg-[#E9BF80] placeholder-[#6B592E] font-Poppins text-sm focus:outline-none focus:ring-0" /> --}}
                             </label>
                         </div>
+                        {{-- EMAIL ERROR --}}
+                        <x-input-error :messages="$errors->get('email')" class="mb-4" />
 
                         {{-- INPUT PASSWORD --}}
                         <div
                             class="mb-4 text-[#6B592E] flex justify-between flex-wrap py-4 border-none bg-[#E9BF80] rounded-md items-center cursor-text">
-                            <label for="password"
+                            <label for="register_password"
                                 class=" flex flex-1 flex-wrap border-none bg-[#E9BF80] rounded-md items-center cursor-text">
                                 <div class="w-4 h-4 mx-4 flex items-center justify-center overflow-hidden">
                                     <!-- SVG icon -->
@@ -357,18 +369,13 @@ c0 -2 -80 -60 -177 -128 -98 -68 -275 -193 -393 -276 -118 -84 -325 -229 -459
                                     </svg>
                                 </div>
 
-                                <input wire:model="password" id="password"
+                                <input wire:model="register_password" id="register_password"
                                     class="flex-1 p-0 border-none bg-[#E9BF80] placeholder-[#6B592E] font-Poppins text-sm focus:outline-none focus:ring-0"
-                                    type="password" name="password" required autocomplete="new-password"
+                                    type="password" name="register_password" required autocomplete="new-password"
                                     placeholder="Masukkan pasword anda" />
-
-                                <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                                {{-- <input type="password" id="password" name="password"
-                                        placeholder="Masukkan password anda" required
-                                        class="flex-1 p-0 border-none bg-[#E9BF80] placeholder-[#6B592E] font-Poppins text-sm focus:outline-none focus:ring-0" /> --}}
                             </label>
                             <div class="w-4 h-4 mx-4 cursor-pointer"
-                                onclick="togglePassword('password', 'openIcon2', 'closedIcon2')">
+                                onclick="togglePassword('register_password', 'openIcon2', 'closedIcon2')">
                                 <!-- SVG icon MATA -->
                                 <span id="openIcon2" class="toggle-icon">
                                     <svg id="eye-konfirmasi-closed" version="1.0" xmlns="http://www.w3.org/2000/svg"
@@ -546,11 +553,13 @@ c-531 412 -450 371 -684 341 -112 -15 -182 -17 -350 -13 -230 6 -367 24 -573
                                 </span>
                             </div>
                         </div>
+                        {{-- PASSWORD ERROR --}}
+                        <x-input-error :messages="$errors->get('password')" class="mb-4" />
 
                         {{-- CONFIRM PASSWORD --}}
                         <div
                             class="mb-4 text-[#6B592E] flex justify-between flex-wrap py-4 border-none bg-[#E9BF80] rounded-md items-center cursor-text">
-                            <label for="password_confirmation"
+                            <label for="register_password_confirmation"
                                 class=" flex flex-1 flex-wrap border-none bg-[#E9BF80] rounded-md items-center cursor-text">
                                 <div class="w-4 h-4 mx-4 flex items-center justify-center overflow-hidden">
                                     <!-- SVG icon KUNCI -->
@@ -578,18 +587,13 @@ c-531 412 -450 371 -684 341 -112 -15 -182 -17 -350 -13 -230 6 -367 24 -573
                                     </svg>
                                 </div>
 
-                                <input wire:model="password_confirmation" id="password_confirmation"
+                                <input wire:model="register_password_confirmation" id="register_password_confirmation"
                                     class="flex-1 p-0 border-none bg-[#E9BF80] placeholder-[#6B592E] font-Poppins text-sm focus:outline-none focus:ring-0"
-                                    type="password" name="password_confirmation" required autocomplete="new-password"
-                                    placeholder="Konfirmasi password anda" />
-
-                                <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-                                {{-- <input type="password" id="password_confirmation"
-                                        placeholder="Konfirmasi password anda"
-                                        class="flex-1 p-0 border-none bg-[#E9BF80] placeholder-[#6B592E] font-Poppins text-sm focus:outline-none focus:ring-0"> --}}
+                                    type="password" name="register_password_confirmation" required
+                                    autocomplete="new-password" placeholder="Konfirmasi password anda" />
                             </label>
                             <div class="w-4 h-4 mx-4 cursor-pointer"
-                                onclick="togglePassword('password_confirmation', 'openIcon1', 'closedIcon1')">
+                                onclick="togglePassword('register_password_confirmation', 'openIcon1', 'closedIcon1')">
                                 <!-- SVG icon MATA -->
                                 <span id="openIcon1" class="toggle-icon">
                                     <svg id="eye-konfirmasi-closed" version="1.0" xmlns="http://www.w3.org/2000/svg"
@@ -767,6 +771,9 @@ c-531 412 -450 371 -684 341 -112 -15 -182 -17 -350 -13 -230 6 -367 24 -573
                                 </span>
                             </div>
                         </div>
+                        {{-- PASSWORD CONFIRMATION ERROR --}}
+                        <x-input-error :messages="$errors->get('password_confirmation')" class="mb-4" />
+
                         <button
                             class="mt-3 bg-[#6B592E] w-full text-[#FFEDB7] hover:text-white text-sm font-bold py-4 px-10 rounded-md transition duration-300 ease-in-out hover:bg-[#B5964D] focus:outline-2">
                             DAFTAR SEKARANG!
