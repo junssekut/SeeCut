@@ -88,7 +88,7 @@ Route::get('/barbershop', BarbershopListing::class)->name('barbershop.index');
 Route::get('/barbershop/{id}', ProductDetail::class)->name('barbershop.view');
 
 //Route::get('/information', Information::class);
-Route::get('/profile', UserProfile::class)->name('profile');
+Route::get('/profile', UserProfile::class)->name('profile')->middleware('auth');
 
 // User logout route
 Route::post('/logout', function () {

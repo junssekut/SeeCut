@@ -76,8 +76,9 @@
         duration: 4000,
         position: {
             x: 'right',
-            y: 'top',
+            y: 'bottom',
         },
+        ripple: true,
         types: [{
                 type: 'success',
                 background: '#10B981',

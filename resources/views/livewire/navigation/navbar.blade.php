@@ -1,10 +1,27 @@
-<div
+<div x-data="{ mobileMenuOpen: false }"
     class="flex flex-col lg:flex-row justify-between items-center gap-4 px-8 md:px-16 lg:px-48 py-4 bg-Eerie-Black relative z-50">
-    <div class="lg:flex-1">
+
+    <!-- Top row with logo and mobile menu button -->
+    <div class="flex justify-between items-center w-full lg:w-auto lg:flex-1">
         <a href="{{ route('home') }}"><img class="w-24" src="{{ asset(path: 'assets/images/logo-text.png') }}"
                 alt="SeeCut"></a>
+
+        <!-- Mobile menu button -->
+        <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden text-Seasalt p-2">
+            <svg x-show="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
+                </path>
+            </svg>
+            <svg x-show="mobileMenuOpen" x-cloak class="w-6 h-6" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
     </div>
-    <div class="flex flex-col sm:flex-row gap-7 justify-center items-center lg:flex-1">
+
+    <!-- Navigation links - hidden on mobile unless menu is open -->
+    <div :class="{ 'hidden': !mobileMenuOpen, 'flex': mobileMenuOpen }"
+        class="hidden lg:flex flex-col lg:flex-row gap-4 lg:gap-7 justify-center items-center lg:flex-1 w-full lg:w-auto mt-4 lg:mt-0">
         <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out focus:outline-none {{ request()->routeIs('home') ? 'text-Ecru' : '' }}"
             href="{{ route('home') }}">BERANDA</a>
         <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out focus:outline-none {{ request()->routeIs('barbershop.*') ? 'text-Ecru' : '' }}"
@@ -12,13 +29,16 @@
         <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out focus:outline-none {{ request()->routeIs('style.*') ? 'text-Ecru' : '' }}"
             href="{{ route('style.recommendation') }}">REKOMENDASI GAYA</a>
     </div>
-    <div class="flex items-center justify-end lg:flex-1">
+
+    <!-- User section - hidden on mobile unless menu is open -->
+    <div :class="{ 'hidden': !mobileMenuOpen, 'flex': mobileMenuOpen }"
+        class="hidden lg:flex items-center justify-end lg:flex-1 w-full lg:w-auto mt-4 lg:mt-0">
         @auth
             {{-- User is logged in --}}
-            <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+            <div class="relative w-full lg:w-auto" x-data="{ open: false }" @click.outside="open = false">
                 <!-- Profile Dropdown Trigger -->
                 <button @click="open = !open"
-                    class="flex items-center gap-3 font-Kuunari ring-1 ring-Seasalt text-Seasalt px-4 py-2 text-md hover:ring-Satin-Sheen-Yellow hover:bg-Satin-Sheen-Yellow/10 transition-all duration-300 ease-in-out rounded-lg focus:outline-none focus:ring-2 focus:ring-Satin-Sheen-Yellow focus:ring-opacity-50">
+                    class="flex items-center gap-3 font-Kuunari ring-1 ring-Seasalt text-Seasalt px-4 py-2 text-md hover:ring-Satin-Sheen-Yellow hover:bg-Satin-Sheen-Yellow/10 transition-all duration-300 ease-in-out rounded-lg focus:outline-none focus:ring-2 focus:ring-Satin-Sheen-Yellow focus:ring-opacity-50 w-full lg:w-auto justify-center lg:justify-start">
                     <!-- Profile Image -->
                     @php
                         $profileImage = null;
@@ -30,16 +50,26 @@
                         <img src="{{ asset('storage/' . $profileImage->source) }}" alt="Profile"
                             class="w-8 h-8 rounded-full object-cover border-2 border-Seasalt">
                     @else
-                        <div class="w-8 h-8 rounded-full bg-Seasalt/20 flex items-center justify-center">
-                            <svg class="w-5 h-5 text-Seasalt" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
+                        @php
+                            $user = auth()->user();
+                            $initials = '';
+                            if ($user->profile && ($user->profile->first_name || $user->profile->last_name)) {
+                                $initials = strtoupper(
+                                    substr($user->profile->first_name ?? '', 0, 1) .
+                                        substr($user->profile->last_name ?? '', 0, 1),
+                                );
+                            } else {
+                                $initials = strtoupper(substr($user->email, 0, 2));
+                            }
+                        @endphp
+                        <div
+                            class="w-8 h-8 rounded-full bg-gradient-to-br from-Satin-Sheen-Yellow to-Dun flex items-center justify-center border-2 border-Seasalt">
+                            <span class="text-Eerie-Black font-bold text-xs font-Kuunari">{{ $initials }}</span>
                         </div>
                     @endif
 
                     <!-- User Name -->
-                    <span class="hidden sm:block max-w-24 truncate">
+                    <span class="max-w-24 truncate">
                         {{ auth()->user()?->username ?? 'Guest' }}
                     </span>
 
@@ -73,13 +103,22 @@
                                 <img src="{{ asset('storage/' . $profileImage->source) }}" alt="Profile"
                                     class="w-12 h-12 rounded-full object-cover border-2 border-gray-200/50 shadow-sm">
                             @else
+                                @php
+                                    $user = auth()->user();
+                                    $initials = '';
+                                    if ($user->profile && ($user->profile->first_name || $user->profile->last_name)) {
+                                        $initials = strtoupper(
+                                            substr($user->profile->first_name ?? '', 0, 1) .
+                                                substr($user->profile->last_name ?? '', 0, 1),
+                                        );
+                                    } else {
+                                        $initials = strtoupper(substr($user->email, 0, 2));
+                                    }
+                                @endphp
                                 <div
-                                    class="w-12 h-12 rounded-full bg-gradient-to-br from-Eerie-Black to-Satin-Sheen-Yellow flex items-center justify-center shadow-sm">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                    </svg>
+                                    class="w-12 h-12 rounded-full bg-gradient-to-br from-Satin-Sheen-Yellow to-Dun flex items-center justify-center shadow-sm border-2 border-gray-200/50">
+                                    <span
+                                        class="text-Eerie-Black font-bold text-sm font-Kuunari">{{ $initials }}</span>
                                 </div>
                             @endif
                             <div class="flex-1 min-w-0">
@@ -125,8 +164,8 @@
             </div>
         @else
             {{-- User is not logged in --}}
-            <div class="flex items-center">
-                <a class="font-Kuunari ring-1 ring-Seasalt text-Seasalt px-4 py-2 text-md hover:ring-Satin-Sheen-Yellow hover:bg-Satin-Sheen-Yellow hover:text-black transition-all duration-300 ease-in-out rounded focus:outline-none"
+            <div class="flex items-center w-full lg:w-auto">
+                <a class="font-Kuunari ring-1 ring-Seasalt text-Seasalt px-4 py-2 text-md hover:ring-Satin-Sheen-Yellow hover:bg-Satin-Sheen-Yellow hover:text-black transition-all duration-300 ease-in-out rounded focus:outline-none w-full lg:w-auto text-center"
                     href="{{ route('login') }}">MASUK SEKARANG</a>
             </div>
         @endauth

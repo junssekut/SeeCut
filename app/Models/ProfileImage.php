@@ -13,6 +13,6 @@ class ProfileImage extends Model
     protected $guarded = [];
 
     public function profile() {
-        return $this->belongsTo(Profile::class);
+        return $this->hasOne(Profile::class, 'image_id');
     }
 }
