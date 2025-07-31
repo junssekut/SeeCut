@@ -50,11 +50,21 @@
                         <img src="{{ asset('storage/' . $profileImage->source) }}" alt="Profile"
                             class="w-8 h-8 rounded-full object-cover border-2 border-Seasalt">
                     @else
-                        <div class="w-8 h-8 rounded-full bg-Seasalt/20 flex items-center justify-center">
-                            <svg class="w-5 h-5 text-Seasalt" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
+                        @php
+                            $user = auth()->user();
+                            $initials = '';
+                            if ($user->profile && ($user->profile->first_name || $user->profile->last_name)) {
+                                $initials = strtoupper(
+                                    substr($user->profile->first_name ?? '', 0, 1) .
+                                        substr($user->profile->last_name ?? '', 0, 1),
+                                );
+                            } else {
+                                $initials = strtoupper(substr($user->email, 0, 2));
+                            }
+                        @endphp
+                        <div
+                            class="w-8 h-8 rounded-full bg-gradient-to-br from-Satin-Sheen-Yellow to-Dun flex items-center justify-center border-2 border-Seasalt">
+                            <span class="text-Eerie-Black font-bold text-xs font-Kuunari">{{ $initials }}</span>
                         </div>
                     @endif
 
@@ -93,13 +103,22 @@
                                 <img src="{{ asset('storage/' . $profileImage->source) }}" alt="Profile"
                                     class="w-12 h-12 rounded-full object-cover border-2 border-gray-200/50 shadow-sm">
                             @else
+                                @php
+                                    $user = auth()->user();
+                                    $initials = '';
+                                    if ($user->profile && ($user->profile->first_name || $user->profile->last_name)) {
+                                        $initials = strtoupper(
+                                            substr($user->profile->first_name ?? '', 0, 1) .
+                                                substr($user->profile->last_name ?? '', 0, 1),
+                                        );
+                                    } else {
+                                        $initials = strtoupper(substr($user->email, 0, 2));
+                                    }
+                                @endphp
                                 <div
-                                    class="w-12 h-12 rounded-full bg-gradient-to-br from-Eerie-Black to-Satin-Sheen-Yellow flex items-center justify-center shadow-sm">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                    </svg>
+                                    class="w-12 h-12 rounded-full bg-gradient-to-br from-Satin-Sheen-Yellow to-Dun flex items-center justify-center shadow-sm border-2 border-gray-200/50">
+                                    <span
+                                        class="text-Eerie-Black font-bold text-sm font-Kuunari">{{ $initials }}</span>
                                 </div>
                             @endif
                             <div class="flex-1 min-w-0">

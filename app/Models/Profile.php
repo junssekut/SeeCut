@@ -20,6 +20,6 @@ class Profile extends Model
     }
 
     public function image() {
-        return $this->hasOne(ProfileImage::class);
+        return $this->belongsTo(ProfileImage::class, 'image_id');
     }
 }
