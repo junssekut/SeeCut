@@ -41,6 +41,13 @@ class UserSeeder extends Seeder
             'birth_date' => '1992-08-22',
         ]);
 
+        $vendor->vendor()->updateOrCreate([], [
+            "name" => 'JA Barbershop',
+            "latitude" => 1.4,
+            "longitude" => 2.1,
+            "place_id" => 192939124
+        ]);
+
         $admin = User::factory()->create([
             'username' => 'matthewraditya',
             'email' => 'matthewraditya03@gmail.com',
