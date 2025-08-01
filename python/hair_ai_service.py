@@ -103,7 +103,7 @@ class GeminiHairGeneration:
             self.api_keys = self._load_api_keys_from_env()
         
         self.current_key_index = 0
-        self.quota_exceeded_keys = set()  # Track which keys have exceeded quota
+        self.key_retry_delays = {}  # Track retry delays for each key
         
         # Initialize with first available key
         self._initialize_clients()
@@ -189,35 +189,53 @@ class GeminiHairGeneration:
             self.image_model_name = None
             return False
 
-    def _mark_current_key_as_quota_exceeded(self):
-        """Mark the current API key as quota exceeded"""
-        print(f"� Marking API key #{self.current_key_index + 1} as quota exceeded")
-        self.quota_exceeded_keys.add(self.current_key_index)
-        print(f"🔍 Quota exceeded keys: {self.quota_exceeded_keys}")
-        print(f"🔍 Total keys available: {len(self.api_keys)}")
-        
     def _switch_to_next_available_key(self):
-        """Switch to the next available API key that hasn't exceeded quota"""
+        """Switch to the next available API key in sequential order with smart retry delay handling"""
         original_key_index = self.current_key_index
+        current_time = time.time()
         
-        # Find next available key that hasn't exceeded quota
-        for i in range(len(self.api_keys)):
-            if i not in self.quota_exceeded_keys and i != original_key_index:
-                print(f"🔄 Attempting to switch to API key #{i + 1}")
-                old_index = self.current_key_index
-                self.current_key_index = i
-                
-                if self._initialize_clients():
-                    print(f"✅ Successfully switched from key #{old_index + 1} to key #{i + 1}")
-                    return True
-                else:
-                    print(f"⚠️ Failed to initialize API key #{i + 1} (not quota-related)")
-                    # Don't mark as quota exceeded, just continue to next key
+        # First, try to find a key without any retry delay
+        for attempt in range(len(self.api_keys) - 1):
+            next_key_index = (self.current_key_index + 1) % len(self.api_keys)
+            
+            # Check if this key has a retry delay
+            if next_key_index in self.key_retry_delays:
+                delay_info = self.key_retry_delays[next_key_index]
+                if current_time < delay_info['wait_until']:
+                    remaining_wait = int(delay_info['wait_until'] - current_time)
+                    print(f"⏭️ Skipping API key #{next_key_index + 1} (retry delay: {remaining_wait}s remaining)")
+                    self.current_key_index = next_key_index  # Move to next for next iteration
                     continue
+                else:
+                    # Delay has expired, remove it
+                    del self.key_retry_delays[next_key_index]
+                    print(f"✅ Retry delay expired for API key #{next_key_index + 1}")
+            
+            print(f"🔄 Attempting to switch to API key #{next_key_index + 1}")
+            old_index = self.current_key_index
+            self.current_key_index = next_key_index
+            
+            if self._initialize_clients():
+                print(f"✅ Successfully switched from key #{old_index + 1} to key #{next_key_index + 1}")
+                return True
+            else:
+                print(f"⚠️ Failed to initialize API key #{next_key_index + 1}")
+                # Continue to next key in sequence
+                continue
+        
+        # If no key without delay is available, check if we should wait for current key
+        if self.current_key_index in self.key_retry_delays:
+            delay_info = self.key_retry_delays[self.current_key_index]
+            remaining_wait = int(delay_info['wait_until'] - current_time)
+            if remaining_wait <= 60:  # Only wait if delay is reasonable (≤ 1 minute)
+                print(f"⏳ No other keys available, waiting {remaining_wait}s for current key #{self.current_key_index + 1}")
+                self._wait_for_key_retry_delay(self.current_key_index)
+                if self._initialize_clients():
+                    print(f"✅ Current key #{self.current_key_index + 1} is now available after waiting")
+                    return True
         
         # No more available keys
-        print("🚫 No more available API keys. All keys either exhausted or failed.")
-        print(f"📊 Final quota exceeded keys: {self.quota_exceeded_keys}")
+        print("🚫 No more available API keys.")
         self.model = None
         self.vision_model = None
         self.client = None
@@ -225,11 +243,11 @@ class GeminiHairGeneration:
         return False
 
     def _find_next_untried_key(self, attempted_keys):
-        """Find the next available key that hasn't been tried yet and isn't quota exceeded"""
+        """Find the next available key that hasn't been tried yet"""
         original_key_index = self.current_key_index
         
         for i in range(len(self.api_keys)):
-            if i not in self.quota_exceeded_keys and i not in attempted_keys:
+            if i not in attempted_keys:
                 print(f"🔍 Found untried key #{i + 1}")
                 self.current_key_index = i
                 
@@ -244,7 +262,7 @@ class GeminiHairGeneration:
         return False
 
     def _is_quota_error(self, error_msg):
-        """Check if error indicates quota exceeded"""
+        """Check if error indicates quota exceeded (for switching keys)"""
         quota_indicators = [
             "429",  # HTTP 429 Too Many Requests
             "quota exceeded",
@@ -254,31 +272,113 @@ class GeminiHairGeneration:
             "too many requests",
             "quota_metric",
             "resource_exhausted",  # gRPC error
-            "quotaexceeded",  # Google API error (case insensitive)
-            "ratelimitexceeded",  # Google API error (case insensitive)
-            "userratelimitexceeded"  # Google API error (case insensitive)
+            "quotaexceeded",
+            "ratelimitexceeded",
+            "userratelimitexceeded"
         ]
         error_lower = error_msg.lower()
         
         # Check for specific quota-related patterns
         for indicator in quota_indicators:
             if indicator in error_lower:
-                print(f"🔍 Detected quota error with indicator: '{indicator}' in error: {error_msg[:100]}...")
                 return True
         
         # Additional check for Google API specific quota errors
         if "invalid_grant" not in error_lower and ("limit" in error_lower and ("request" in error_lower or "usage" in error_lower)):
-            print(f"🔍 Detected potential quota error with 'limit' pattern: {error_msg[:100]}...")
             return True
             
         return False
 
-    def check_api_key_quota_status(self, api_key, key_index):
+    def _extract_retry_delay(self, error_msg):
+        """Extract retry delay from error message"""
+        import re
+        
+        # First, try to extract structured retry_delay field (Google API format)
+        retry_delay_match = re.search(r'retry_delay\s*{\s*seconds:\s*(\d+)', error_msg)
+        if retry_delay_match:
+            delay = int(retry_delay_match.group(1))
+            print(f"📊 Found structured retry delay: {delay} seconds")
+            # Cap the delay to reasonable limits (max 10 minutes for structured delays)
+            return min(delay, 600)
+        
+        # Common patterns for retry delays
+        patterns = [
+            r'retry after (\d+)',
+            r'wait (\d+) seconds',
+            r'try again in (\d+)',
+            r'retry in (\d+)',
+            r'rate limit reset in (\d+)',
+            r'quota resets in (\d+)',
+            r'wait for (\d+)',
+        ]
+        
+        error_lower = error_msg.lower()
+        for pattern in patterns:
+            match = re.search(pattern, error_lower)
+            if match:
+                delay = int(match.group(1))
+                print(f"📊 Found pattern-based retry delay: {delay} seconds")
+                # Cap the delay to reasonable limits (max 5 minutes)
+                return min(delay, 300)
+        
+        # Default delays based on error type
+        if "429" in error_msg or "too many requests" in error_lower:
+            print(f"📊 Using default retry delay for 429 error: 60 seconds")
+            return 60  # Default 1 minute for rate limits
+        elif "quota" in error_lower:
+            print(f"📊 Using default retry delay for quota error: 300 seconds")
+            return 300  # Default 5 minutes for quota issues
+        
+        print(f"📊 No retry delay found in error message")
+        return 0  # No delay needed
+
+    def _wait_for_key_retry_delay(self, key_index):
+        """Wait for retry delay if key has one"""
+        if key_index in self.key_retry_delays:
+            delay_info = self.key_retry_delays[key_index]
+            wait_until = delay_info['wait_until']
+            current_time = time.time()
+            
+            if current_time < wait_until:
+                remaining_wait = int(wait_until - current_time)
+                print(f"⏳ API key #{key_index + 1} has retry delay: waiting {remaining_wait} seconds...")
+                time.sleep(remaining_wait)
+                # Remove the delay after waiting
+                del self.key_retry_delays[key_index]
+                print(f"✅ Retry delay completed for API key #{key_index + 1}")
+            else:
+                # Delay has expired, remove it
+                del self.key_retry_delays[key_index]
+
+    def _set_key_retry_delay(self, key_index, delay_seconds):
+        """Set retry delay for a specific key"""
+        if delay_seconds > 0:
+            wait_until = time.time() + delay_seconds
+            self.key_retry_delays[key_index] = {
+                'delay_seconds': delay_seconds,
+                'wait_until': wait_until
+            }
+            print(f"⏰ Set retry delay for API key #{key_index + 1}: {delay_seconds} seconds")
+
+    def _has_available_key_without_delay(self):
+        """Check if there's any key available without retry delay"""
+        current_time = time.time()
+        for i in range(len(self.api_keys)):
+            if i == self.current_key_index:
+                continue
+            if i not in self.key_retry_delays:
+                return True
+            delay_info = self.key_retry_delays[i]
+            if current_time >= delay_info['wait_until']:
+                return True
+        return False
+
+    def check_api_key_status(self, api_key, key_index):
         """
         Test if an API key is still working by making a minimal API call
-        Returns: {'working': bool, 'error': str, 'quota_exceeded': bool}
+        Returns: {'working': bool, 'error': str}
         """
-        print(f"🔍 Testing API key #{key_index + 1} quota status...")
+        print(f"🔍 Testing API key #{key_index + 1} status...")
         
         try:
             # Configure with the specific key
@@ -296,46 +396,34 @@ class GeminiHairGeneration:
             )
             
             # If we get here, the key is working
-            print(f"✅ API key #{key_index + 1} is working (quota available)")
+            print(f"✅ API key #{key_index + 1} is working")
             return {
                 'working': True,
                 'error': None,
-                'quota_exceeded': False,
                 'response_sample': response.text[:50] if response.text else 'Empty response'
             }
             
         except Exception as e:
             error_msg = str(e)
-            is_quota_error = self._is_quota_error(error_msg)
-            
-            if is_quota_error:
-                print(f"❌ API key #{key_index + 1} quota exceeded: {error_msg[:100]}...")
-                return {
-                    'working': False,
-                    'error': error_msg,
-                    'quota_exceeded': True
-                }
-            else:
-                print(f"⚠️ API key #{key_index + 1} has error (not quota): {error_msg[:100]}...")
-                return {
-                    'working': False,
-                    'error': error_msg,
-                    'quota_exceeded': False
-                }
+            print(f"❌ API key #{key_index + 1} has error: {error_msg[:100]}...")
+            return {
+                'working': False,
+                'error': error_msg
+            }
 
-    def check_all_api_keys_quota(self):
+    def check_all_api_keys(self):
         """
-        Check quota status for all API keys
-        Returns: list of quota status for each key
+        Check status for all API keys
+        Returns: list of status for each key
         """
-        print(f"🔍 Checking quota status for all {len(self.api_keys)} API keys...")
+        print(f"🔍 Checking status for all {len(self.api_keys)} API keys...")
         results = []
         
         for i, api_key in enumerate(self.api_keys):
             print(f"\n--- Testing API Key #{i + 1} ---")
             
             # Test the key
-            status = self.check_api_key_quota_status(api_key, i)
+            status = self.check_api_key_status(api_key, i)
             status['key_index'] = i
             status['key_preview'] = f"{api_key[:8]}...{api_key[-4:]}" if len(api_key) > 12 else api_key
             
@@ -346,13 +434,11 @@ class GeminiHairGeneration:
         
         # Summary
         working_keys = [r for r in results if r['working']]
-        quota_exceeded_keys = [r for r in results if r['quota_exceeded']]
-        error_keys = [r for r in results if not r['working'] and not r['quota_exceeded']]
+        error_keys = [r for r in results if not r['working']]
         
-        print(f"\n📊 Quota Check Summary:")
+        print(f"\n📊 API Key Check Summary:")
         print(f"   ✅ Working keys: {len(working_keys)}")
-        print(f"   🚫 Quota exceeded: {len(quota_exceeded_keys)}")
-        print(f"   ⚠️ Other errors: {len(error_keys)}")
+        print(f"   ⚠️ Error keys: {len(error_keys)}")
         
         return results
 
@@ -439,17 +525,17 @@ class GeminiHairGeneration:
             print(f"❌ Unexpected error: {e}")
             return None
 
-    def run_comprehensive_quota_check(self, project_id=None):
+    def run_comprehensive_check(self, project_id=None):
         """
-        Run comprehensive quota checking including both API key tests and Google Cloud metrics
+        Run comprehensive checking including both API key tests and Google Cloud metrics
         """
-        print("🔍 Running comprehensive quota check...")
+        print("🔍 Running comprehensive check...")
         print("=" * 60)
         
         # Part 1: Test all API keys individually
         print("PART 1: Testing individual API keys")
         print("-" * 40)
-        api_key_results = self.check_all_api_keys_quota()
+        api_key_results = self.check_all_api_keys()
         
         # Part 2: Get Google Cloud quota metrics (if available)
         print("\nPART 2: Google Cloud quota metrics")
@@ -458,26 +544,25 @@ class GeminiHairGeneration:
         
         # Summary report
         print("\n" + "=" * 60)
-        print("COMPREHENSIVE QUOTA REPORT")
+        print("COMPREHENSIVE CHECK REPORT")
         print("=" * 60)
         
         working_keys = [r for r in api_key_results if r['working']]
-        quota_exceeded_keys = [r for r in api_key_results if r['quota_exceeded']]
+        error_keys = [r for r in api_key_results if not r['working']]
         
         print(f"📊 API Key Status:")
         print(f"   Total keys: {len(self.api_keys)}")
         print(f"   ✅ Working: {len(working_keys)}")
-        print(f"   🚫 Quota exceeded: {len(quota_exceeded_keys)}")
-        print(f"   ⚠️ Other issues: {len(api_key_results) - len(working_keys) - len(quota_exceeded_keys)}")
+        print(f"   ⚠️ Error keys: {len(error_keys)}")
         
         if working_keys:
             print(f"\n✅ Working keys:")
             for result in working_keys:
                 print(f"   - Key #{result['key_index'] + 1}: {result['key_preview']}")
         
-        if quota_exceeded_keys:
-            print(f"\n🚫 Quota exceeded keys:")
-            for result in quota_exceeded_keys:
+        if error_keys:
+            print(f"\n⚠️ Error keys:")
+            for result in error_keys:
                 print(f"   - Key #{result['key_index'] + 1}: {result['key_preview']}")
         
         if quota_metrics:
@@ -491,13 +576,13 @@ class GeminiHairGeneration:
             'api_key_results': api_key_results,
             'quota_metrics': quota_metrics,
             'working_keys_count': len(working_keys),
-            'quota_exceeded_count': len(quota_exceeded_keys),
+            'error_keys_count': len(error_keys),
             'total_keys': len(self.api_keys)
         }
 
     def _init_fallback_arrays(self):
         """
-        Initialize fallback arrays for when Gemini API quota is exceeded
+        Initialize fallback arrays for when Gemini API is unavailable
         Contains pre-defined haircut styles, descriptions, and placeholder images
         """
         self.fallback_recommendations = {
@@ -556,13 +641,16 @@ class GeminiHairGeneration:
 
     def _call_gemini_with_timeout(self, func, *args, timeout=15, **kwargs):
         """
-        Call Gemini API with timeout protection and automatic key rotation on quota exceeded
+        Call Gemini API with timeout protection and smart key rotation with retry delays
         """
-        max_retries = len(self.api_keys)  # Try all available keys
+        max_retries = len(self.api_keys)
         
         for attempt in range(max_retries):
             if not self.model:  # No more keys available
                 break
+            
+            # Wait for retry delay if current key has one
+            self._wait_for_key_retry_delay(self.current_key_index)
                 
             try:
                 with ThreadPoolExecutor(max_workers=1) as executor:
@@ -578,35 +666,53 @@ class GeminiHairGeneration:
                                 return None
                         
                         # Success! Return the result
+                        print(f"✅ API call successful with key #{self.current_key_index + 1}")
                         return result
                         
                     except TimeoutError:
                         print(f"Gemini API call timed out after {timeout} seconds (Key #{self.current_key_index + 1})")
-                        # Don't switch keys for timeout, just return None
+                        # For timeout, don't switch keys immediately - might be temporary
                         return None
                         
             except Exception as e:
                 error_msg = str(e)
                 print(f"Gemini API call error (Key #{self.current_key_index + 1}): {error_msg}")
                 
-                # Check for quota exceeded error
+                # Check for quota/rate limit errors
                 if self._is_quota_error(error_msg):
-                    print(f"🚫 API key #{self.current_key_index + 1} quota exceeded!")
+                    print(f"🚫 API key #{self.current_key_index + 1} quota/rate limit exceeded!")
                     
-                    # Mark current key as quota exceeded
-                    self._mark_current_key_as_quota_exceeded()
+                    # Extract retry delay from error message
+                    retry_delay = self._extract_retry_delay(error_msg)
+                    if retry_delay > 0:
+                        print(f"⏰ API requires {retry_delay}s retry delay for key #{self.current_key_index + 1}")
+                        
+                        # Wait for the retry delay as specified by the API
+                        if retry_delay <= 120:  # Only wait up to 2 minutes
+                            print(f"⏳ Waiting {retry_delay}s as requested by API before switching keys...")
+                            time.sleep(retry_delay)
+                            print(f"✅ Retry delay completed for API key #{self.current_key_index + 1}")
+                        else:
+                            print(f"⚠️ Retry delay too long ({retry_delay}s), will switch immediately")
+                        
+                        # Set delay for this key to prevent immediate reuse
+                        self._set_key_retry_delay(self.current_key_index, retry_delay)
                     
-                    # Try to switch to next available key
+                    # Now switch to next available key
                     if self._switch_to_next_available_key():
-                        print(f"� Retrying with API key #{self.current_key_index + 1}...")
+                        print(f"🔄 Switched to API key #{self.current_key_index + 1}, retrying...")
                         continue  # Retry with new key
                     else:
-                        print("❌ All API keys exhausted, using fallback")
+                        print("❌ No more available API keys")
                         return None
                 else:
-                    # Non-quota error, don't switch keys
+                    # Non-quota error, try next key without setting delay
                     print(f"❌ Non-quota error with key #{self.current_key_index + 1}: {error_msg[:100]}...")
-                    return None
+                    if self._switch_to_next_available_key():
+                        print(f"🔄 Trying next key #{self.current_key_index + 1}...")
+                        continue
+                    else:
+                        return None
         
         # All attempts failed
         print("❌ All API key attempts failed")
@@ -614,8 +720,7 @@ class GeminiHairGeneration:
 
     def generate_image_with_rotation(self, prompt, face_image_data=None):
         """
-        Generate image with automatic API key rotation on quota exceeded.
-        Follows the pattern: try -> fail with quota -> mark as exceeded -> switch -> retry
+        Generate image with smart API key rotation and retry delay handling
         """
         if not self.api_keys:
             print("❌ No API keys available for image generation")
@@ -627,19 +732,15 @@ class GeminiHairGeneration:
         for attempt in range(max_attempts):
             current_key_idx = self.current_key_index
             
-            # Skip if this key is already known to be quota-exceeded
-            if current_key_idx in self.quota_exceeded_keys:
-                print(f"⏭️ Skipping API key #{current_key_idx + 1} (already quota-exceeded)")
-                if not self._switch_to_next_available_key():
-                    break
-                continue
-                
             # Skip if we already attempted this key in this session
             if current_key_idx in attempted_keys:
                 print(f"⏭️ Skipping API key #{current_key_idx + 1} (already attempted)")
                 if not self._switch_to_next_available_key():
                     break
                 continue
+            
+            # Wait for retry delay if current key has one
+            self._wait_for_key_retry_delay(current_key_idx)
                 
             attempted_keys.add(current_key_idx)
             print(f"🎯 Attempting image generation with API key #{current_key_idx + 1}")
@@ -653,7 +754,7 @@ class GeminiHairGeneration:
                     return result
                 else:
                     print(f"⚠️ Image generation returned None with API key #{current_key_idx + 1}")
-                    # Continue to next key without marking as quota-exceeded
+                    # Continue to next key
                     if not self._switch_to_next_available_key():
                         break
                     continue
@@ -663,21 +764,34 @@ class GeminiHairGeneration:
                 print(f"❌ Image generation error with API key #{current_key_idx + 1}: {error_msg}")
                 
                 if self._is_quota_error(error_msg):
-                    print(f"🚫 API key #{current_key_idx + 1} quota exceeded! Marking and switching...")
+                    print(f"🚫 API key #{current_key_idx + 1} quota exceeded! Processing retry delay...")
                     
-                    # Mark current key as quota exceeded
-                    self._mark_current_key_as_quota_exceeded()
+                    # Extract retry delay from error message
+                    retry_delay = self._extract_retry_delay(error_msg)
+                    if retry_delay > 0:
+                        print(f"⏰ API requires {retry_delay}s retry delay for key #{current_key_idx + 1}")
+                        
+                        # Wait for the retry delay as specified by the API
+                        if retry_delay <= 120:  # Only wait up to 2 minutes
+                            print(f"⏳ Waiting {retry_delay}s as requested by API before switching keys...")
+                            time.sleep(retry_delay)
+                            print(f"✅ Retry delay completed for API key #{current_key_idx + 1}")
+                        else:
+                            print(f"⚠️ Retry delay too long ({retry_delay}s), will switch immediately")
+                        
+                        # Set delay for this key to prevent immediate reuse
+                        self._set_key_retry_delay(current_key_idx, retry_delay)
                     
-                    # Switch to next available key
-                    if not self._switch_to_next_available_key():
+                    # Now switch to next available key
+                    if self._switch_to_next_available_key():
+                        print(f"🔄 Switched to API key #{self.current_key_index + 1}, retrying...")
+                        continue
+                    else:
                         print("❌ No more API keys available after quota exceeded")
                         break
-                    
-                    print(f"🔄 Switched to API key #{self.current_key_index + 1}, retrying...")
-                    continue
                 else:
                     print(f"❌ Non-quota error with API key #{current_key_idx + 1}: {error_msg[:100]}...")
-                    # For non-quota errors, try next key without marking current as exceeded
+                    # For non-quota errors, try next key
                     if not self._switch_to_next_available_key():
                         break
                     continue
@@ -866,9 +980,9 @@ class GeminiHairGeneration:
         """
         Generate variations of a specific preferred haircut style using Gemini AI
         """
-        # Check if any model is available (any API key not exhausted)
+        # Check if any model is available
         if not self.model:
-            print("🔄 Using fallback variations - all API keys exhausted")
+            print("🔄 Using fallback variations - no API keys available")
             return self._get_fallback_style_variations(preferred_style)
             
         try:
@@ -985,9 +1099,9 @@ class GeminiHairGeneration:
     
     def generate_haircut_description(self, haircut_style):
         """
-        Generate brief description for a haircut using optimized Gemini with multi-key fallback
+        Generate brief description for a haircut using Gemini with fallback
         """
-        # Check if any model is available (any API key not exhausted)
+        # Check if any model is available
         if not self.model:
             return self._get_fallback_description(haircut_style)
             
@@ -1059,9 +1173,9 @@ class GeminiHairGeneration:
     
     def generate_haircut_image_with_gemini(self, original_image_bytes, haircut_style, face_analysis=None):
         """
-        Generate REAL haircut transformation image using Google Genai API with proper key rotation
+        Generate REAL haircut transformation image using Google Genai API with key rotation
         """
-        # Check if any client is available (any API key not exhausted)
+        # Check if any client is available
         if not self.client or not self.image_model_name:
             print("🔄 Using fallback image generation - no API keys available")
             return self._create_fallback_image(original_image_bytes, haircut_style)
@@ -1131,7 +1245,7 @@ class GeminiHairGeneration:
             
     def _create_fallback_image(self, original_image_bytes, haircut_style):
         """
-        Create a fallback image when quota is exceeded or API is unavailable
+        Create a fallback image when API is unavailable
         """
         try:
             # Try to create an enhanced preview first

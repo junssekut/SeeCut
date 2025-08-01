@@ -22,8 +22,8 @@ class EnsureUserIsCustomer
         }
         
         // If user is logged in and is a regular user (not vendor or admin), allow access
-        $userRole = Auth::user()->profile?->role ?? 'user';
-        if ($userRole === 'user') {
+        $userRole = Auth::user()->profile?->role ?? 'customer';
+        if ($userRole === 'customer') {
             return $next($request);
         }
         
