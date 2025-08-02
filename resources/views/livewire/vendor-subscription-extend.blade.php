@@ -5,29 +5,22 @@
 
     <!-- Floating Background Elements -->
     <div
-        class="absolute top-20 left-20 w-64 h-64 bg-gradient-to-br from-green-400/20 to-emerald-600/20 rounded-full mix-blend-multiply filter blur-xl animate-float">
+        class="absolute top-20 left-20 w-64 h-64 bg-gradient-to-br from-green-400/20 to-emerald-600/20 rounded-full mix-blend-multiply filter blur-xl">
     </div>
     <div
-        class="absolute top-40 right-32 w-80 h-80 bg-gradient-to-br from-teal-400/15 to-green-500/15 rounded-full mix-blend-multiply filter blur-xl animate-float-delayed">
+        class="absolute top-40 right-32 w-80 h-80 bg-gradient-to-br from-teal-400/15 to-green-500/15 rounded-full mix-blend-multiply filter blur-xl">
     </div>
     <div
-        class="absolute bottom-32 left-1/3 w-72 h-72 bg-gradient-to-br from-emerald-500/20 to-green-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse-glow">
+        class="absolute bottom-32 left-1/3 w-72 h-72 bg-gradient-to-br from-emerald-500/20 to-green-600/20 rounded-full mix-blend-multiply filter blur-xl">
     </div>
     <div
-        class="absolute bottom-20 right-20 w-56 h-56 bg-gradient-to-br from-green-300/25 to-teal-500/25 rounded-full mix-blend-multiply filter blur-xl animate-float">
+        class="absolute bottom-20 right-20 w-56 h-56 bg-gradient-to-br from-green-300/25 to-teal-500/25 rounded-full mix-blend-multiply filter blur-xl">
     </div>
-
-    <!-- Subtle geometric shapes -->
-    <div class="absolute top-1/4 left-1/4 w-4 h-4 bg-green-400/30 rotate-45 animate-rotate-slow"></div>
-    <div class="absolute top-3/4 right-1/4 w-6 h-6 bg-emerald-400/20 rotate-45 animate-rotate-slow"
-        style="animation-delay: 10s;"></div>
-    <div class="absolute top-1/2 left-3/4 w-3 h-3 bg-teal-400/40 rotate-45 animate-rotate-slow"
-        style="animation-delay: 15s;"></div>
 
     <div class="relative z-10 container mx-auto px-4 py-8">
         <!-- Flash Messages -->
         @if (session()->has('success'))
-            <div class="mb-6 bg-green-500/10 border border-green-500/20 rounded-xl p-4 backdrop-blur-lg">
+            <div class="mb-6 bg-green-800 border border-green-600 rounded-xl p-4">
                 <div class="flex items-center">
                     <svg class="w-5 h-5 text-green-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -38,7 +31,7 @@
         @endif
 
         @if (session()->has('error'))
-            <div class="mb-6 bg-red-500/10 border border-red-500/20 rounded-xl p-4 backdrop-blur-lg">
+            <div class="mb-6 bg-red-800 border border-red-600 rounded-xl p-4">
                 <div class="flex items-center">
                     <svg class="w-5 h-5 text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
@@ -60,7 +53,7 @@
         <!-- Current Subscription Status -->
         @if ($currentSubscription)
             <div class="mb-8 max-w-4xl mx-auto">
-                <div class="bg-green-500/10 border border-green-500/20 rounded-xl p-6 backdrop-blur-lg">
+                <div class="bg-green-800 border border-green-600 rounded-xl p-6">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
                             <svg class="w-8 h-8 text-green-400 mr-4" fill="none" stroke="currentColor"
@@ -89,7 +82,7 @@
             <!-- Current Subscription Warning -->
             @if ($currentSubscription)
                 <div class="mb-6 max-w-4xl mx-auto">
-                    <div class="bg-orange-500/10 border border-orange-500/20 rounded-xl p-4 backdrop-blur-lg">
+                    <div class="bg-orange-800 border border-orange-600 rounded-xl p-4">
                         <div class="flex items-center">
                             <svg class="w-5 h-5 text-orange-400 mr-3" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -111,7 +104,7 @@
                     <div wire:click="selectPlan('{{ $key }}')"
                         class="plan-card cursor-pointer transform transition-all duration-300 hover:scale-105 {{ $selectedPlan === $key ? 'selected' : '' }}">
                         <div
-                            class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 text-center border border-white/20 hover:border-green-400/40 transition-all duration-300 min-h-[200px] w-72">
+                            class="{{ $selectedPlan === $key ? 'bg-green-700 border-t-4 border-t-green-400' : 'bg-green-900 border-t-4 border-t-green-600' }} rounded-2xl p-8 text-center transition-all duration-300 min-h-[200px] w-72">
                             <h2
                                 class="text-3xl font-bold mb-4 font-Kuunari {{ $selectedPlan === $key ? 'text-[#E9BF80]' : 'text-white' }} transition-colors duration-300">
                                 {{ $plan['name'] }}
@@ -120,7 +113,7 @@
                             <div class="text-lg text-gray-300 mb-4">{{ $plan['duration'] }}</div>
                             <div class="space-y-2">
                                 @foreach ($plan['features'] as $feature)
-                                    <div class="text-sm text-gray-400 flex items-center justify-center">
+                                    <div class="text-sm text-gray-300 flex items-center justify-center">
                                         <svg class="w-4 h-4 text-green-400 mr-2" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -139,7 +132,7 @@
                 <!-- Selected Plan Details -->
                 <div class="w-full flex items-center justify-center mb-8" wire:key="selected-plan-{{ $selectedPlan }}">
                     <div
-                        class="selected-plan-content bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl px-12 py-8 border border-white/20 max-w-2xl w-full transform hover:shadow-3xl">
+                        class="selected-plan-content bg-green-900 rounded-3xl shadow-2xl px-12 py-8 border border-green-600 max-w-2xl w-full transform hover:shadow-3xl">
                         <div
                             class="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0 md:space-x-8">
                             <!-- Price -->
@@ -160,7 +153,7 @@
                                     @if (isset($this->selectedPlanData['features']) && is_array($this->selectedPlanData['features']))
                                         @foreach ($this->selectedPlanData['features'] as $feature)
                                             <div
-                                                class="text-gray-300 flex items-center {{ $loop->first ? '' : 'text-sm' }}">
+                                                class="text-gray-200 flex items-center {{ $loop->first ? '' : 'text-sm' }}">
                                                 <svg class="w-4 h-4 text-green-400 mr-2" fill="none"
                                                     stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -179,7 +172,7 @@
                 <!-- No Subscription Selected -->
                 <div class="w-full flex items-center justify-center mb-8" wire:key="no-plan-selected">
                     <div
-                        class="selected-plan-content bg-red-500/10 backdrop-blur-lg rounded-3xl shadow-2xl px-12 py-8 border border-red-500/20 max-w-2xl w-full transform hover:shadow-3xl">
+                        class="selected-plan-content bg-red-900 rounded-3xl shadow-2xl px-12 py-8 border border-red-600 max-w-2xl w-full transform hover:shadow-3xl">
                         <div class="text-center">
                             <!-- Warning Icon -->
                             <div class="mb-6">
@@ -232,7 +225,7 @@
 
     <!-- Payment Overlay -->
     <div
-        class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-300 {{ $showPaymentOverlay ? 'opacity-100 visible' : 'opacity-0 invisible' }}">
+        class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 transition-all duration-300 {{ $showPaymentOverlay ? 'opacity-100 visible' : 'opacity-0 invisible' }}">
         <div
             class="bg-white rounded-3xl shadow-2xl w-[95%] max-w-lg transform transition-all duration-300 {{ $showPaymentOverlay ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4' }}">
 
@@ -553,8 +546,8 @@
         }
 
         .plan-card.selected>div {
-            border-color: rgba(255, 255, 255, 0.6);
-            background: rgba(255, 255, 255, 0.15);
+            border-top-color: rgb(74, 222, 128);
+            background: rgb(21, 128, 61);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
 
