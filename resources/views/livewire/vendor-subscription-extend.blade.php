@@ -27,7 +27,7 @@
     <div class="relative z-10 container mx-auto px-4 py-8">
         <!-- Flash Messages -->
         @if (session()->has('success'))
-            <div class="mb-6 bg-green-500/10 border border-green-500/20 rounded-xl p-4 backdrop-blur-lg">
+            <div class="mb-6 bg-green-800 border border-green-600 rounded-xl p-4">
                 <div class="flex items-center">
                     <svg class="w-5 h-5 text-green-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -38,7 +38,7 @@
         @endif
 
         @if (session()->has('error'))
-            <div class="mb-6 bg-red-500/10 border border-red-500/20 rounded-xl p-4 backdrop-blur-lg">
+            <div class="mb-6 bg-red-800 border border-red-600 rounded-xl p-4">
                 <div class="flex items-center">
                     <svg class="w-5 h-5 text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
@@ -60,7 +60,7 @@
         <!-- Current Subscription Status -->
         @if ($currentSubscription)
             <div class="mb-8 max-w-4xl mx-auto">
-                <div class="bg-green-500/10 border border-green-500/20 rounded-xl p-6 backdrop-blur-lg">
+                <div class="bg-green-800 border border-green-600 rounded-xl p-6">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
                             <svg class="w-8 h-8 text-green-400 mr-4" fill="none" stroke="currentColor"
@@ -89,7 +89,7 @@
             <!-- Current Subscription Warning -->
             @if ($currentSubscription)
                 <div class="mb-6 max-w-4xl mx-auto">
-                    <div class="bg-orange-500/10 border border-orange-500/20 rounded-xl p-4 backdrop-blur-lg">
+                    <div class="bg-orange-800 border border-orange-600 rounded-xl p-4">
                         <div class="flex items-center">
                             <svg class="w-5 h-5 text-orange-400 mr-3" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -111,7 +111,7 @@
                     <div wire:click="selectPlan('{{ $key }}')"
                         class="plan-card cursor-pointer transform transition-all duration-300 hover:scale-105 {{ $selectedPlan === $key ? 'selected' : '' }}">
                         <div
-                            class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 text-center border border-white/20 hover:border-green-400/40 transition-all duration-300 min-h-[200px] w-72">
+                            class="bg-green-900 rounded-2xl p-8 text-center border border-green-600 hover:border-green-400 transition-all duration-300 min-h-[200px] w-72">
                             <h2
                                 class="text-3xl font-bold mb-4 font-Kuunari {{ $selectedPlan === $key ? 'text-[#E9BF80]' : 'text-white' }} transition-colors duration-300">
                                 {{ $plan['name'] }}
@@ -120,7 +120,7 @@
                             <div class="text-lg text-gray-300 mb-4">{{ $plan['duration'] }}</div>
                             <div class="space-y-2">
                                 @foreach ($plan['features'] as $feature)
-                                    <div class="text-sm text-gray-400 flex items-center justify-center">
+                                    <div class="text-sm text-gray-300 flex items-center justify-center">
                                         <svg class="w-4 h-4 text-green-400 mr-2" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -139,7 +139,7 @@
                 <!-- Selected Plan Details -->
                 <div class="w-full flex items-center justify-center mb-8" wire:key="selected-plan-{{ $selectedPlan }}">
                     <div
-                        class="selected-plan-content bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl px-12 py-8 border border-white/20 max-w-2xl w-full transform hover:shadow-3xl">
+                        class="selected-plan-content bg-green-900 rounded-3xl shadow-2xl px-12 py-8 border border-green-600 max-w-2xl w-full transform hover:shadow-3xl">
                         <div
                             class="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0 md:space-x-8">
                             <!-- Price -->
@@ -160,7 +160,7 @@
                                     @if (isset($this->selectedPlanData['features']) && is_array($this->selectedPlanData['features']))
                                         @foreach ($this->selectedPlanData['features'] as $feature)
                                             <div
-                                                class="text-gray-300 flex items-center {{ $loop->first ? '' : 'text-sm' }}">
+                                                class="text-gray-200 flex items-center {{ $loop->first ? '' : 'text-sm' }}">
                                                 <svg class="w-4 h-4 text-green-400 mr-2" fill="none"
                                                     stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -179,7 +179,7 @@
                 <!-- No Subscription Selected -->
                 <div class="w-full flex items-center justify-center mb-8" wire:key="no-plan-selected">
                     <div
-                        class="selected-plan-content bg-red-500/10 backdrop-blur-lg rounded-3xl shadow-2xl px-12 py-8 border border-red-500/20 max-w-2xl w-full transform hover:shadow-3xl">
+                        class="selected-plan-content bg-red-900 rounded-3xl shadow-2xl px-12 py-8 border border-red-600 max-w-2xl w-full transform hover:shadow-3xl">
                         <div class="text-center">
                             <!-- Warning Icon -->
                             <div class="mb-6">
@@ -232,7 +232,7 @@
 
     <!-- Payment Overlay -->
     <div
-        class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-300 {{ $showPaymentOverlay ? 'opacity-100 visible' : 'opacity-0 invisible' }}">
+        class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 transition-all duration-300 {{ $showPaymentOverlay ? 'opacity-100 visible' : 'opacity-0 invisible' }}">
         <div
             class="bg-white rounded-3xl shadow-2xl w-[95%] max-w-lg transform transition-all duration-300 {{ $showPaymentOverlay ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4' }}">
 
@@ -553,8 +553,8 @@
         }
 
         .plan-card.selected>div {
-            border-color: rgba(255, 255, 255, 0.6);
-            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(34, 197, 94, 0.8);
+            background: rgb(20, 83, 45);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
 
