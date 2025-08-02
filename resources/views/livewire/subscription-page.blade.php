@@ -283,7 +283,7 @@
 
         /* Enhanced Notyf styles */
         .notyf__toast {
-            max-width: 400px !important;
+            /* max-width: 400px !important; */
             min-width: 300px !important;
             border-radius: 12px !important;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;

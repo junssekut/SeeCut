@@ -352,7 +352,7 @@
     <style>
         /* Custom Notyf styles for wider notifications */
         .notyf__toast {
-            max-width: 500px !important;
+            /* max-width: 500px !important; */
             /* Increased from default ~320px */
             min-width: 300px !important;
         }
