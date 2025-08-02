@@ -5,24 +5,17 @@
 
     <!-- Floating Background Elements -->
     <div
-        class="absolute top-20 left-20 w-64 h-64 bg-gradient-to-br from-green-400/20 to-emerald-600/20 rounded-full mix-blend-multiply filter blur-xl animate-float">
+        class="absolute top-20 left-20 w-64 h-64 bg-gradient-to-br from-green-400/20 to-emerald-600/20 rounded-full mix-blend-multiply filter blur-xl">
     </div>
     <div
-        class="absolute top-40 right-32 w-80 h-80 bg-gradient-to-br from-teal-400/15 to-green-500/15 rounded-full mix-blend-multiply filter blur-xl animate-float-delayed">
+        class="absolute top-40 right-32 w-80 h-80 bg-gradient-to-br from-teal-400/15 to-green-500/15 rounded-full mix-blend-multiply filter blur-xl">
     </div>
     <div
-        class="absolute bottom-32 left-1/3 w-72 h-72 bg-gradient-to-br from-emerald-500/20 to-green-600/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse-glow">
+        class="absolute bottom-32 left-1/3 w-72 h-72 bg-gradient-to-br from-emerald-500/20 to-green-600/20 rounded-full mix-blend-multiply filter blur-xl">
     </div>
     <div
-        class="absolute bottom-20 right-20 w-56 h-56 bg-gradient-to-br from-green-300/25 to-teal-500/25 rounded-full mix-blend-multiply filter blur-xl animate-float">
+        class="absolute bottom-20 right-20 w-56 h-56 bg-gradient-to-br from-green-300/25 to-teal-500/25 rounded-full mix-blend-multiply filter blur-xl">
     </div>
-
-    <!-- Subtle geometric shapes -->
-    <div class="absolute top-1/4 left-1/4 w-4 h-4 bg-green-400/30 rotate-45 animate-rotate-slow"></div>
-    <div class="absolute top-3/4 right-1/4 w-6 h-6 bg-emerald-400/20 rotate-45 animate-rotate-slow"
-        style="animation-delay: 10s;"></div>
-    <div class="absolute top-1/2 left-3/4 w-3 h-3 bg-teal-400/40 rotate-45 animate-rotate-slow"
-        style="animation-delay: 15s;"></div>
 
     <div class="relative z-10 container mx-auto px-4 py-8">
         <!-- Flash Messages -->
@@ -111,7 +104,7 @@
                     <div wire:click="selectPlan('{{ $key }}')"
                         class="plan-card cursor-pointer transform transition-all duration-300 hover:scale-105 {{ $selectedPlan === $key ? 'selected' : '' }}">
                         <div
-                            class="bg-green-900 rounded-2xl p-8 text-center border border-green-600 hover:border-green-400 transition-all duration-300 min-h-[200px] w-72">
+                            class="{{ $selectedPlan === $key ? 'bg-green-700 border-t-4 border-t-green-400' : 'bg-green-900 border-t-4 border-t-green-600' }} rounded-2xl p-8 text-center transition-all duration-300 min-h-[200px] w-72">
                             <h2
                                 class="text-3xl font-bold mb-4 font-Kuunari {{ $selectedPlan === $key ? 'text-[#E9BF80]' : 'text-white' }} transition-colors duration-300">
                                 {{ $plan['name'] }}
@@ -553,8 +546,8 @@
         }
 
         .plan-card.selected>div {
-            border-color: rgba(34, 197, 94, 0.8);
-            background: rgb(20, 83, 45);
+            border-top-color: rgb(74, 222, 128);
+            background: rgb(21, 128, 61);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
 

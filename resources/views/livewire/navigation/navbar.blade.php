@@ -25,9 +25,9 @@
         <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out focus:outline-none {{ request()->routeIs('home') ? 'text-Ecru' : '' }}"
             href="{{ route('home') }}">BERANDA</a>
         <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out focus:outline-none {{ request()->routeIs('barbershop.*') ? 'text-Ecru' : '' }}"
-            href="{{ route('barbershop.index') }}">CARI BARBERSHOP</a>
+            href="{{ route('barbershop.index') }}">BARBERSHOP</a>
         <a class="font-Kuunari text-Seasalt text-xl hover:text-Ecru transition-colors duration-300 ease-in-out focus:outline-none {{ request()->routeIs('style.*') ? 'text-Ecru' : '' }}"
-            href="{{ route('style.recommendation') }}">REKOMENDASI GAYA</a>
+            href="{{ route('style.recommendation') }}">REKOMENDASI</a>
     </div>
 
     <!-- User section - hidden on mobile unless menu is open -->
