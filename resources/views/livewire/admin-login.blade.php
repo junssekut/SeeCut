@@ -139,7 +139,7 @@ $execLogin = function () {
                         <x-input-error :messages="$errors->get('login_field')" class="mb-4 text-Seasalt" />
 
                         {{-- PASSWORD INPUT FIELD --}}
-                        <div x-data="{ isFocused: false }"
+                        <div x-data="{ isFocused: false, showPassword: false }"
                             :class="{
                                 'bg-[#2C3E50]': isFocused || password,
                                 'bg-[#2C3E50]/60': !isFocused && !password
@@ -155,12 +155,26 @@ $execLogin = function () {
 
                                 <input wire:model="password" id="passwordlogin"
                                     class="peer flex-1 p-0 border-none bg-transparent placeholder-Seasalt text-Seasalt font-Poppins text-sm focus:outline-none focus:ring-0"
-                                    type="password" name="password" required autocomplete="current-password"
-                                    placeholder="Password" x-model="password" @focus="isFocused = true"
-                                    @blur="isFocused = false" />
+                                    :type="showPassword ? 'text' : 'password'" name="password" required
+                                    autocomplete="current-password" placeholder="Password" x-model="password"
+                                    @focus="isFocused = true" @blur="isFocused = false" />
                             </label>
-                            <div id="passwordToggle" class="w-4 h-4 mx-4 cursor-pointer">
-                                <x-svg.eye-icon />
+                            <div @click="showPassword = !showPassword"
+                                class="w-4 h-4 mx-4 cursor-pointer hover:opacity-70 transition-opacity duration-200">
+                                <svg x-show="!showPassword" class="w-4 h-4 text-Seasalt" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                    </path>
+                                </svg>
+                                <svg x-show="showPassword" class="w-4 h-4 text-Seasalt" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21">
+                                    </path>
+                                </svg>
                             </div>
                         </div>
 
